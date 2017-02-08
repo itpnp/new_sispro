@@ -34,7 +34,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">No. BAPOB:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['ID_BAPOB']; ?>" disabled>
+                <input type="text" class="form-control" id="email" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
@@ -46,7 +46,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Macam:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="Ini Macam"  disabled>
+                <input type="text" class="form-control" id="email" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled>
               </div>
             </div>
           </form>
@@ -72,9 +72,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-4">Bahan:</label>
+              <label class="control-label col-sm-4">Nama Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="Ini Bahan"  disabled>
+                <input type="text" class="form-control" id="bahan" value="<?php echo $bapob->NAMA_BAHAN; ?>"  disabled>
               </div>
             </div>
           </form>
@@ -128,13 +128,16 @@
             <input class="form-control" name="targetProduksi" value="<?php if($emboss!="") echo $emboss['KECEPATAN_MESIN']; ?>" readonly>
           </div>
           <div class="form-group">
-            <label>Hasil</label>
-            <input class="form-control" name="hasil" value="<?php if($emboss!="") echo $emboss['HASIL']; ?>" id="hasil" readonly>
+            <label>Formula</label>
+            <input class="form-control" name="formula" value="<?php if($emboss!="") echo $emboss['FORMULA']; ?>" id="formula">
           </div>
 
         </div>
         <div class="col-lg-6">
-          
+          <div class="form-group">
+            <label>Hasil</label>
+            <input class="form-control" name="hasil" value="<?php if($emboss!="") echo $emboss['HASIL']; ?>" id="hasil" readonly>
+          </div>
           <div class="form-group">
             <label>Stel PCH</label>
             <input class="form-control" name="stelPCH" value="<?php if($emboss!="") echo $emboss['STEL_PCH']; ?>" id="stelPCH" readonly>
@@ -212,9 +215,9 @@
     stelBahan = panjangBahan/6000/24*waktuNaik;
     lamaProses = panjangBahan/targetProduksi/24;
 
-    stelPCH = Math.ceil(stelPCH * 100)/100;
-    stelBahan = Math.ceil(stelBahan * 100)/100;
-    lamaProses = Math.ceil(lamaProses * 100)/100;
+    // stelPCH = Math.ceil(stelPCH * 100)/100;
+    // stelBahan = Math.ceil(stelBahan * 100)/100;
+    // lamaProses = Math.ceil(lamaProses * 100)/100;
 
     secondsPCH = (stelPCH*24)*3600;
     secondsBahan = (stelBahan*24)*3600;

@@ -34,7 +34,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">No. BAPOB:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['ID_BAPOB']; ?>" disabled>
+                <input type="text" class="form-control" id="email" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
@@ -46,7 +46,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Macam:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="Ini Macam"  disabled>
+                <input type="text" class="form-control" id="email" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled>
               </div>
             </div>
           </form>
@@ -72,9 +72,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-4">Bahan:</label>
+              <label class="control-label col-sm-4">Nama Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="Ini Bahan"  disabled>
+                <input type="text" class="form-control" id="bahan" value="<?php echo $bapob->NAMA_BAHAN; ?>"  disabled>
               </div>
             </div>
           </form>
@@ -219,8 +219,8 @@
     lamaProses =  hasilProsesRewind/targetProduksi/24;
 
 
-    stelBahan = Math.ceil(stelBahan * 100)/100;
-    lamaProses = Math.ceil(lamaProses * 100)/100;
+    // stelBahan = Math.ceil(stelBahan * 100)/100;
+    // lamaProses = Math.ceil(lamaProses * 100)/100;
 
     secondsBahan = (stelBahan*24)*3600;
     secondsProses = (lamaProses*24)*3600;

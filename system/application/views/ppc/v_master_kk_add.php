@@ -32,11 +32,15 @@
                                 </div>
                                 <div class="form-group">
                                 	<label>No. BAPOB</label>
-                                    <input class="form-control" name="noBapob" value="<?php if($header!="") echo $header['ID_BAPOB']; ?>" placeholder="No. BAPOB">
+                                    <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NOMOR_BAPOB; ?>" placeholder="No. BAPOB" disabled>
                                 </div>
                                 <div class="form-group">
                                 	<label>Tanggal Proses Mesin</label>
                                     <input class="form-control" id="date" name="tanggalProses" value="<?php if($header!="") echo $header['TGL_PROSES_MESIN']; ?>" placeholder="DD/MM/YYYY" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Macam</label>
+                                    <input class="form-control" name="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" placeholder="Macam">
                                 </div>
                                 
                  		</div>
@@ -49,6 +53,10 @@
                                 <label>Waste Proses</label>
                                 <input class="form-control" value="<?php if($header!="") echo $header['JUMLAH_WASTE_PROSES']; ?>"        name="wasteProses" placeholder="Waste Proses">
                             </div>
+                            <div class="form-group">
+                                    <label>Nama Bahan</label>
+                                    <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NAMA_BAHAN; ?>" placeholder="No. BAPOB" disabled>
+                                </div>
                             <button type="submit" class="btn btn-success ">SIMPAN</button>
                         </div>
                  	</form>

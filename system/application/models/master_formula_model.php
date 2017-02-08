@@ -57,4 +57,11 @@ class Master_formula_model extends Model
 		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA where ID_FORMULA = '$idFormula'");
 		return $t;
 	}
+
+	public function findByIdMesin($idMesin)
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA where ID_Mesin= '$idMesin'");
+		return $t->result();
+	}
 }

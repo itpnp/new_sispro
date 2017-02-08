@@ -14,6 +14,7 @@ class Ppc extends Controller {
 		$this->load->model('Master_mesin_model');
 		$this->load->model('Master_formula_model');
 		$this->load->model('Master_mesin_model');
+		$this->load->model('Master_bapob_model');
 	}
 	function index(){
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
@@ -130,39 +131,44 @@ class Ppc extends Controller {
 		$data = array();
 		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
 		$sessionHeader = isset($_SESSION['data_header']);
-		if($session!=""){
-			if($sessionHeader != ""){
-				$data["header"] = $_SESSION['data_header'];
+		$dataBapob = $this->Master_bapob_model->getDefaultBapob();
+		
+		if($dataBapob !=NULL){
+			if($session!=""){
+				if($sessionHeader != ""){
+					$data["header"] = $_SESSION['data_header'];
+				}else{
+					$data["header"] = "";
+				}
+				$pecah=explode("|",$session);
+				$data["nim"]=$pecah[0];
+				$data["nama"]=$pecah[1];
+				$data["status"]=$pecah[2];
+				$data["bapob"] = $dataBapob[0];
+				$_SESSION['data_bapob']=$dataBapob[0];
+				if($data["status"]=="PPC"){
+					$data["tanggal"] = mdate($datestring, $time);
+					$this->load->view('ppc/v_header',$data);
+					$this->load->view('ppc/v_side_menu',$data);
+					$this->load->view('ppc/v_master_kk_add',$data);
+					$this->load->view('ppc/v_footer',$data);
+				}
+				else{
+					?>
+					<script type="text/javascript" language="javascript">
+						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+					</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				}
 			}else{
-				$data["header"] = "";
-			}
-			$pecah=explode("|",$session);
-			$data["nim"]=$pecah[0];
-			$data["nama"]=$pecah[1];
-			$data["status"]=$pecah[2];
-			if($data["status"]=="PPC"){
-				$data["tanggal"] = mdate($datestring, $time);
-				$this->load->view('ppc/v_header',$data);
-				$this->load->view('ppc/v_side_menu',$data);
-				$this->load->view('ppc/v_master_kk_add',$data);
-				$this->load->view('ppc/v_footer',$data);
-			}
-			else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+					alert("Login dulu donk...!!!");
 				</script>
 				<?php
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
 			}
-		}
-		else{
-			?>
-			<script type="text/javascript" language="javascript">
-				alert("Login dulu donk...!!!");
-			</script>
-			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
 		}
 	}
 
@@ -172,12 +178,13 @@ class Ppc extends Controller {
 		$data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['TGL_PROSES_MESIN'] = $this->input->post('tanggalProses');
 		$data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
-
+		$data['MACAM'] = $this->input->post('macam');
 		$jumlahPesanan = $this->input->post('jumlahPesanan');
 		$wasteProses = $this->input->post('wasteProses');
 		$wasteDalamPersen = $wasteProses/100;
 
 		$panjangBahan = $jumlahPesanan + ($jumlahPesanan * $wasteDalamPersen);
+		$panjangBahan = round($panjangBahan, 0);
 		$data['JUMLAH_WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['PANJANG_BAHAN'] = $panjangBahan;
 
@@ -204,6 +211,7 @@ class Ppc extends Controller {
 		$data['LAMA_PROSES'] = $this->input->post('lamaProses');
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
+		$data['FORMULA'] = $this->input->post('formula');
 		$data['HASIL'] = $this->input->post('hasil');
 
 		$_SESSION['proses_emboss']=$data;
@@ -224,8 +232,6 @@ class Ppc extends Controller {
 				$emboss = isset($_SESSION['proses_emboss']);
 				if($emboss != ""){
 					$sessionHeader = $_SESSION['proses_emboss'];
-					// echo "ahahahah".$sessionHeader['URUTAN_PRODUKSI'];
-					// echo exit();
 					$data["emboss"] = $_SESSION['proses_emboss'];
 				}else{
 					$data["emboss"] = "";
@@ -235,6 +241,7 @@ class Ppc extends Controller {
 				$data["nama"]=$pecah[1];
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -295,6 +302,7 @@ class Ppc extends Controller {
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["emboss"] = $_SESSION['proses_emboss'];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -375,6 +383,7 @@ class Ppc extends Controller {
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["demet"] = $_SESSION['proses_demet'];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -451,6 +460,7 @@ class Ppc extends Controller {
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["rewind"] = $_SESSION['proses_rewind'];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -529,6 +539,7 @@ class Ppc extends Controller {
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["sensi"] = $_SESSION['proses_sensi'];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -645,6 +656,7 @@ class Ppc extends Controller {
 				$rewind = $_SESSION['proses_rewind'];
 				$sensi = $_SESSION['proses_sensi'];
 				$belah = $_SESSION['proses_belah'];
+				$bapob = $_SESSION['data_bapob'];
 
             	//proses cetak Kartu Kerja Mesin
             	//membuat objek PHPExcel
@@ -683,8 +695,7 @@ class Ppc extends Controller {
 				// as you can see, we can specify a range of cells, like here: cells from A1 to A4
 				// write header
 				$objSheet->getStyle('C3:K3')->getFont()->setBold(true)->setUnderline(true)->setSize(14);
-				$objSheet->getStyle('C3:K3')->getAlignment()
-    ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				$objSheet->getStyle('C3:K3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 				$objSheet->mergeCells('C3:K3');
 				$objSheet->getCell('C3')->setValue('KARTU KERJA MESIN');
 
@@ -702,10 +713,10 @@ class Ppc extends Controller {
 				$objSheet->getCell('C5')->setValue($header["NO_KK"]);
 
 				$objSheet->mergeCells('C6:D6');
-				$objSheet->getCell('C6')->setValue($header["ID_BAPOB"]);
+				$objSheet->getCell('C6')->setValue($bapob->NOMOR_BAPOB);
 
 				$objSheet->mergeCells('C7:D7');
-				$objSheet->getCell('C7')->setValue("Ini Macam Bahan");
+				$objSheet->getCell('C7')->setValue($header["MACAM"]);
 
 				$objSheet->getCell('C8')->setValue($header["JML_PESANAN"]);
 				$objSheet->getCell('D8')->setValue("meter");
@@ -752,7 +763,7 @@ class Ppc extends Controller {
 				$objSheet->getCell('K5')->setValue($header["TGL_PROSES_MESIN"]);
 
 				$objSheet->mergeCells('K7:N7');
-				$objSheet->getCell('K7')->setValue("INI BAHAN");
+				$objSheet->getCell('K7')->setValue($bapob->NAMA_BAHAN);
 				$objSheet->getCell('K8')->setValue($header["PANJANG_BAHAN"]);
 				$objSheet->getCell('L8')->setValue("meter");
 				$objSheet->getCell('M8')->setValue("UK");
@@ -764,13 +775,33 @@ class Ppc extends Controller {
 				}
 				
 				$objSheet->getStyle('A10')->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A10')->setValue('Proces (1)');
+				$objSheet->getCell('A10')->setValue('Proces (I)');
 				$objSheet->getCell('B10')->setValue(':');
 				$objSheet->getCell('C10')->setValue('EMBOSS');
 
 				$objSheet->getCell('A11')->setValue('Bahan');
 				$objSheet->getCell('B11')->setValue(':');
-				$objSheet->getCell('C11')->setValue('INI BAHAN');
+				$objSheet->getCell('C11')->setValue($bapob->NAMA_BAHAN);
+
+				$objSheet->getCell('A13')->setValue('Bahan');
+				$objSheet->getCell('B13')->setValue(':');
+				$objSheet->getCell('C13')->setValue($emboss["FORMULA"]);
+				$objSheet->getCell('C14')->setValue("Jumlah");
+				$objSheet->getCell('C15')->setValue("Uk");
+				$objSheet->getCell('D14')->setValue(":");
+				$objSheet->getCell('D15')->setValue(":");
+
+				$idMesin = $emboss["ID_MESIN"];
+				$formula = $this->Master_formula_model->findByIdMesin($idMesin);
+				$ukuran = $formula[0]->UKURAN;
+
+				$jml = $header["PANJANG_BAHAN"]/$ukuran;
+
+				$jml = round($jml, 0, PHP_ROUND_HALF_UP);
+
+				$objSheet->getCell('E14')->setValue($jml." pch");
+				$objSheet->getCell('E15')->setValue("42 cm x 67 cm");
+
 				$objSheet->getCell('I11')->setValue('Target Prod');
 				$objSheet->getCell('J11')->setValue(':');
 				$objSheet->getCell('K11')->setValue($emboss["KECEPATAN_MESIN"]);
@@ -802,20 +833,76 @@ class Ppc extends Controller {
 					$objSheet->getStyle(''.$kolom[$i].'17')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
 				}
 
+				//ini proses selanjutnya
+				$row = 18;
+				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.$row)->setValue('Proces (II)');
+				$objSheet->getCell('B'.$row)->setValue(':');
+				$objSheet->getCell('C'.$row)->setValue('DEMET');
+
+				$objSheet->getCell('A'.($row+1))->setValue('Bahan');
+				$objSheet->getCell('B'.($row+1))->setValue(':');
+				$objSheet->getCell('C'.($row+1))->setValue('Hasil Emboss');
+				$objSheet->getCell('I'.($row+1))->setValue('Target Prod');
+				$objSheet->getCell('J'.($row+1))->setValue(':');
+				$objSheet->getCell('K'.($row+1))->setValue($demet["KECEPATAN_MESIN"]);
+				$objSheet->getCell('I'.($row+2))->setValue('Waktu');
+				$objSheet->getCell('J'.($row+2))->setValue(':');
+				$objSheet->getCell('K'.($row+2))->setValue("Stel Bahan");
+				$objSheet->getCell('L'.($row+2))->setValue($demet["STEL_BAHAN"]);
+
+				$objSheet->getCell('K'.($row+3))->setValue("Proses");
+				$objSheet->getStyle('L'.($row+3))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+				$objSheet->getCell('L'.($row+3))->setValue($demet["LAMA_PROSES"]);
+
+				$objSheet->getCell('K'.($row+4))->setValue("TOTAL");
+				$objSheet->getCell('L'.($row+4))->setValue($demet["TOTAL_WAKTU"]);
+
+
+
+
+
+				$objSheet->getStyle('N'.($row+1).':Q'.($row+1))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('N'.($row+1))->setValue('WASTE');
+				$objSheet->getCell('O'.($row+1))->setValue(':');
+				$objSheet->getCell('P'.($row+1))->setValue($demet["WASTE_PROSES"]);
+				$objSheet->getCell('Q'.($row+1))->setValue("%");
+
+				$objSheet->getStyle('N'.($row+3).':Q'.($row+3))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('N'.($row+3))->setValue('Hasil');
+				$objSheet->getCell('O'.($row+3))->setValue(':');
+				$objSheet->getCell('P'.($row+3))->setValue(intval($demet["HASIL"]));
+				$objSheet->getCell('Q'.($row+3))->setValue("m");
+
+
+				$objSheet->getCell('A'.($row+2))->setValue('Formula');
+				$objSheet->getCell('B'.($row+2))->setValue(':');
+
+				$idMesin = $demet["ID_MESIN"];
+				$listFormula = $this->Master_formula_model->findByIdMesin($idMesin);
+
+				foreach($listFormula as $r){
+					$objSheet->getCell('C'.($row+2))->setValue($r->NAMA_FORMULA);
+					$row++;
+				}
+
 
 				// autosize the columns
 				$objSheet->getColumnDimension('A')->setAutoSize(true);
 				$objSheet->getColumnDimension('B')->setWidth(2);
+				$objSheet->getColumnDimension('C')->setAutoSize(true);
+				$objSheet->getColumnDimension('D')->setAutoSize(true);
+				$objSheet->getColumnDimension('E')->setAutoSize(true);
+				$objSheet->getColumnDimension('F')->setWidth(3);
+				$objSheet->getColumnDimension('H')->setWidth(3);
 				$objSheet->getColumnDimension('J')->setWidth(2);
 				$objSheet->getColumnDimension('O')->setWidth(2);
 				$objSheet->getColumnDimension('Q')->setWidth(3);
 				$objSheet->getColumnDimension('M')->setWidth(5);
-				$objSheet->getColumnDimension('C')->setAutoSize(true);
-				$objSheet->getColumnDimension('D')->setAutoSize(true);
 				$objSheet->getColumnDimension('I')->setAutoSize(true);
 				$objSheet->getColumnDimension('K')->setAutoSize(true);
 				$objSheet->getColumnDimension('P')->setAutoSize(true);
-
+				
 
 	            
 	            ob_end_clean();
