@@ -74,7 +74,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Nama Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="<?php echo $bapob->NAMA_BAHAN; ?>"  disabled>
+                <input type="text" class="form-control" id="bahan" value="<?php echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled>
               </div>
             </div>
           </form>
@@ -229,7 +229,7 @@
 
     var bahanTime = convertToHour(secondsBahan);
     $('input[name="stelBahan"]').val(bahanTime[0]+""+bahanTime[1]+""+bahanTime[2]).val();
-    $('input[name="stelSilinder"]').val("1 jam : 00 menit : 00 detik").val();
+    $('input[name="stelSilinder"]').val("01:00:00").val();
     var prosesTime = convertToHour(secondsProses);
     $('input[name="lamaProses"]').val(prosesTime[0]+""+prosesTime[1]+""+prosesTime[2]).val();
 

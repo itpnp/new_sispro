@@ -46,6 +46,19 @@
                  		</div>
                         <div class="col-lg-6">
                             <div class="form-group">
+                              <label>Mesin</label>
+                              <select class="form-control" name="chooseBahan" id="namaMesin">
+                                <option value="0-0">-- Pilih Bahan --</option>
+                                <?php 
+                                foreach($masterBahan as $row){
+                                  echo '<option value="'.$row->KODE_BAHAN.'@'.$row->NAMA_BAHAN.'@'.$row->LEBAR.'@'.$row->GSM.'@'.$row->PANJANG.'">'.$row->NAMA_BAHAN.'</option>';
+                                }
+
+                                ?>
+
+                              </select>
+                            </div>
+                            <div class="form-group">
                                 <label>Jumlah Pesanan</label>
                                 <input class="form-control" name="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan">
                             </div>
@@ -53,16 +66,12 @@
                                 <label>Waste Proses</label>
                                 <input class="form-control" value="<?php if($header!="") echo $header['JUMLAH_WASTE_PROSES']; ?>"        name="wasteProses" placeholder="Waste Proses">
                             </div>
-                            <div class="form-group">
-                                    <label>Nama Bahan</label>
-                                    <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NAMA_BAHAN; ?>" placeholder="No. BAPOB" disabled>
-                                </div>
+                            
                             <button type="submit" class="btn btn-success ">SIMPAN</button>
                         </div>
                  	</form>
                  	</div>
                  </div>
-
 			</div>
 		</div>
     </div>

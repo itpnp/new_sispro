@@ -74,7 +74,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Nama Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="<?php echo $bapob->NAMA_BAHAN; ?>"  disabled>
+                <input type="text" class="form-control" id="bahan" value="<?php echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled>
               </div>
             </div>
           </form>
