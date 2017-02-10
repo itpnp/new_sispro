@@ -737,8 +737,9 @@ class Ppc extends Controller {
 				$objSheet->getCell('C6')->setValue($bapob->NOMOR_BAPOB);
 
 				$objSheet->mergeCells('C7:D7');
+				$objSheet->getStyle('C7')->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('C7')->setValue($header["MACAM"]);
-
+				$objSheet->getStyle('C8')->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('C8')->setValue($header["JML_PESANAN"]);
 				$objSheet->getCell('D8')->setValue("meter");
 
@@ -785,6 +786,7 @@ class Ppc extends Controller {
 
 				$objSheet->mergeCells('K7:N7');
 				$objSheet->getCell('K7')->setValue($header["NAMA_BAHAN_BAKU"]);
+				$objSheet->getStyle('K8')->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('K8')->setValue($header["PANJANG_BAHAN"]);
 				$objSheet->getCell('L8')->setValue("meter");
 				$objSheet->getCell('M8')->setValue("UK");
@@ -847,6 +849,7 @@ class Ppc extends Controller {
 				$objSheet->getStyle('N13:Q13')->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('N13')->setValue('Hasil');
 				$objSheet->getCell('O13')->setValue(':');
+				$objSheet->getStyle('P13')->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('P13')->setValue(intval($emboss["HASIL"]));
 				$objSheet->getCell('Q13')->setValue("m");
 
@@ -888,6 +891,7 @@ class Ppc extends Controller {
 				$objSheet->getStyle('N'.($row+3).':Q'.($row+3))->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('N'.($row+3))->setValue('Hasil');
 				$objSheet->getCell('O'.($row+3))->setValue(':');
+				$objSheet->getStyle('P'.($row+3))->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('P'.($row+3))->setValue(intval($demet["HASIL"]));
 				$objSheet->getCell('Q'.($row+3))->setValue("m");
 
@@ -911,26 +915,31 @@ class Ppc extends Controller {
 							$message = "GSM Bahan Di Database == 0";
 						}else{
 							$generalWhite = ($header["PANJANG_BAHAN"]*($header["LEBAR_BAHAN_BAKU"]/100)*$header["GSM_BAHAN_BAKU"])/$r->SOLID_CONTAIN/1000 ;
-							$objSheet->getCell('D'.($row+2))->setValue($generalWhite." Kg");
+    						$display = round($generalWhite, 2);
+							$objSheet->getCell('E'.($row+2))->setValue($display." Kg");
 						}
 					}else if(stristr($namaFormula, 'medium') !== FALSE){
 						$zzz = str_replace(",", ".", $r->UKURAN);
 						$ukuran = floatval($zzz);
 						$mediumYra = $generalWhite * $ukuran;
-						$objSheet->getCell('D'.($row+2))->setValue($mediumYra." Kg");
+						$display = round($mediumYra, 2);
+						$objSheet->getCell('E'.($row+2))->setValue($display." Kg");
 
 					}else if(stristr($namaFormula, 'pigment') !== FALSE){
 						if(stristr($namaFormula, 'red') !== FALSE){
 							$pigmentRed = ($r->UKURAN/100)*$mediumYra;
-							$objSheet->getCell('D'.($row+2))->setValue($pigmentRed." Kg");
+							$display = round($pigmentRed, 2);
+							$objSheet->getCell('E'.($row+2))->setValue($display." Kg");
 						}else if(stristr($namaFormula, 'uv') !== FALSE){
-							$pigmentRed = ($r->UKURAN/100)*$generalWhite;
-							$objSheet->getCell('D'.($row+2))->setValue($pigmentRed." Kg");
+							$pigmentUv= ($r->UKURAN/100)*$generalWhite;
+							$display = round($pigmentUv, 2);
+							$objSheet->getCell('E'.($row+2))->setValue($display." Kg");
 						}
 						
 
 					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
-						$objSheet->getCell('D'.($row+2))->setValue(($demet["HASIL"]/400)." Kg");
+						$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+						$objSheet->getCell('E'.($row+2))->setValue(($demet["HASIL"]/400)." Kg");
 					}
 
 					if($message !== ""){
@@ -980,6 +989,7 @@ class Ppc extends Controller {
 				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('N'.($row))->setValue('Hasil');
 				$objSheet->getCell('O'.($row))->setValue(':');
+				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('P'.($row))->setValue(intval($rewind["HASIL"]));
 				$objSheet->getCell('Q'.($row))->setValue("m");
 
@@ -1032,6 +1042,7 @@ class Ppc extends Controller {
 				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('N'.($row))->setValue('Hasil');
 				$objSheet->getCell('O'.($row))->setValue(':');
+				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('P'.($row))->setValue(intval($sensi["HASIL"]));
 				$objSheet->getCell('Q'.($row))->setValue("m");
 
@@ -1041,18 +1052,112 @@ class Ppc extends Controller {
 
 				//bikin formula proses sensi
 
+				$endLineOfSensi = 0;
+				if($start < $row){
+					$endLineOfSensi = $row;
+				}else{
+					$endLineOfSensi = $start;
+				
+				}
+				for($i = 0; $i<17; $i++){
+					$objSheet->getStyle(''.$kolom[$i].$endLineOfSensi)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+				}
+				
+				//proses belah dan sortir
+				$endLineOfSensi++;
+				$row = $endLineOfSensi;
+				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.$row)->setValue('Proces (V)');
+				$objSheet->getCell('B'.$row)->setValue(':');
+				$objSheet->getCell('C'.$row)->setValue('Belah + Sortir');
 
+				$row++;
+				$objSheet->getCell('A'.($row))->setValue('Bahan');
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Hasil Sensi');
+				$objSheet->getCell('I'.($row))->setValue('Target Prod');
+				$objSheet->getCell('J'.($row))->setValue(':');
+				$objSheet->getCell('K'.($row))->setValue($belah["KECEPATAN_MESIN"]);
+				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('N'.($row))->setValue('WASTE');
+				$objSheet->getCell('O'.($row))->setValue(':');
+				$objSheet->getCell('P'.($row))->setValue($belah["WASTE_PROSES"]);
+				$objSheet->getCell('Q'.($row))->setValue("%");
 
+				$row++;
+				$row++;
+				$objSheet->getStyle('C'.($row).':G'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->mergeCells('C'.($row).':D'.($row));
+				$objSheet->getCell('C'.($row))->setValue('Hasil Belah ukuran 33 cm ');
+				$hasilBelah = $belah["HASIL"]*2;
+				$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+				$objSheet->getCell('E'.($row))->setValue($hasilBelah);
+				$objSheet->getCell('F'.($row))->setValue('Meter');
+				$objSheet->getCell('I'.($row))->setValue('Waktu');
+				$objSheet->getCell('J'.($row))->setValue(':');
+				$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
+				$objSheet->getCell('L'.($row))->setValue($belah["STEL_BAHAN"]);
+				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('N'.($row))->setValue('Hasil');
+				$objSheet->getCell('O'.($row))->setValue(':');
+				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+				$objSheet->getCell('P'.($row))->setValue(intval($belah["HASIL"]));
+				$objSheet->getCell('Q'.($row))->setValue("m");
+
+				$row++;
+				$objSheet->getCell('K'.($row))->setValue("Proses");
+				$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+				$objSheet->getCell('L'.($row))->setValue($belah["LAMA_PROSES"]);
+				
+
+				$row++;
+				$objSheet->getCell('K'.($row))->setValue("TOTAL");
+				$objSheet->getCell('L'.($row))->setValue($belah["TOTAL_WAKTU"]);
+
+				$row++;
 				for($i = 0; $i<17; $i++){
 					$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
 				}
+
+				$row++;
+				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue("Note");
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Pengerjaan setiap proses harus acc QC');
+
+				$row++;
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Arah baca harus jelas, teks BC RI Sensitizing harus searah dengan logo BCRI');
+
+				$row++;
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
 				
+				$row++;
+				$row++;
+				$objSheet->mergeCells('A'.($row).':C'.($row));
+				$objSheet->getCell('A'.($row))->setValue('Kudus, '.date('j F Y'));
+
+				$row++;
+				$objSheet->mergeCells('A'.($row).':B'.($row));
+				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue('Hormat Kami,');
+
+				$row++;
+				$row++;
+				$row++;
+				$objSheet->getStyle('A'.($row))->getFont()->setUnderline(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue('M. Taufiq');
+
+				$row++;
+				$objSheet->mergeCells('A'.($row).':C'.($row));
+				$objSheet->getCell('A'.($row))->setValue('Ka. Bid. PPC & Kiriman');
 
 
 				// autosize the columns
 				$objSheet->getColumnDimension('A')->setAutoSize(true);
 				$objSheet->getColumnDimension('B')->setWidth(2);
-				$objSheet->getColumnDimension('C')->setAutoSize(true);
+				$objSheet->getColumnDimension('C')->setWidth(15);;
 				$objSheet->getColumnDimension('D')->setAutoSize(true);
 				$objSheet->getColumnDimension('E')->setAutoSize(true);
 				$objSheet->getColumnDimension('F')->setWidth(3);
@@ -1069,7 +1174,7 @@ class Ppc extends Controller {
 	 
 	            //sesuaikan headernya 
 	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="file.xlsx"');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
 				header('Cache-Control: max-age=0');
 	           
 	            //ubah nama file saat diunduh
