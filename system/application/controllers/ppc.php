@@ -1176,13 +1176,10 @@ class Ppc extends Controller {
 	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
 				header('Cache-Control: max-age=0');
-	           
-	            //ubah nama file saat diunduh
-	            // header('Content-Disposition: attachment;filename="hasilExcel.xlsx"');
-
+				
 	            //unduh file
 	            $objWriter->save("php://output");
-	 
+
 	            //Mulai dari create object PHPExcel itu ada dokumentasi lengkapnya di PHPExcel, 
 	            // Folder Documentation dan Example
 	            // untuk belajar lebih jauh mengenai PHPExcel silakan buka disitu
