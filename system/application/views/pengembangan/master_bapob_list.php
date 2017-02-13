@@ -15,7 +15,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-green">
 			<div class="panel-heading">
-				Setting Formula
+				List Data BAPOB
 			</div>
 			<!-- /.panel-heading -->
 			<div class="panel-body">
@@ -24,12 +24,11 @@
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>Nama Formula</th>
-								<th>Nama Mesin</th>
-								<th>Viscositas</th>
-								<th>Solid Contain</th>
-								<th>Gramature</th>
-								<th>Suhu</th>
+								<th>Jenis Foil</th>
+								<th>Nomor BAPOB</th>
+								<th>Tanggal Pembuatan BAPOB</th>
+								<th>Jumlah Pesanan</th>
+								
 							</tr>
 						</thead>
 						<tbody>
@@ -41,23 +40,18 @@
 								if($nomor%2){
 									echo "<tr>
 									<td class='warning'>".$nomor."</td>
-									<td class='warning'>".$t->NAMA_FORMULA."</td>
-									<td class='warning'></td>
-									<td class='warning'>".$t->VISCOSITAS."</td>
-									<td class='warning'>".$t->SOLID_CONTAIN."</td>
-									<td class='warning'>".$t->GRAMATURE."</td>
-									<td class='warning'>".$t->SUHU."</td>
-									
+									<td class='warning'>".$t->NAMA_BAHAN."</td>
+									<td class='warning'>".$t->NOMOR_BAPOB."</td>
+									<td class='warning'>".$t->TANGGAL_DIBUAT."</td>
+									<td class='warning'>".$t->JML_PESANAN."</td>
 									</tr>";
 								}else{
 									echo "<tr>
-									<td class='info'>".$nomor."</td>
-									<td class='info'>".$t->NAMA_FORMULA."</td>
-									<td class='info'></td>
-									<td class='info'>".$t->VISCOSITAS."</td>
-									<td class='info'>".$t->SOLID_CONTAIN."</td>
-									<td class='info'>".$t->GRAMATURE."</td>
-									<td class='info'>".$t->SUHU."</td>
+									<td class='warning'>".$nomor."</td>
+									<td class='warning'>".$t->NAMA_BAHAN."</td>
+									<td class='warning'>".$t->NOMOR_BAPOB."</td>
+									<td class='warning'>".$t->TANGGAL_DIBUAT."</td>
+									<td class='warning'>".$t->JML_PESANAN."</td>
 									
 									</tr>";
 								}
@@ -67,6 +61,7 @@
 							?>
 						</tbody>
 					</table>
+
 				</div>
 				<!-- /.table-responsive -->
 			</div>

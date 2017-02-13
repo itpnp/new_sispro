@@ -15,7 +15,7 @@ echo" || Anda berkunjung dengan IP Address $ip";
 
 	<!-- jQuery -->
 
-    <script src="<?php echo base_url(); ?>assets/js/jquery1.9.min.js"></script>
+    
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url(); ?>assets/js/bootstrap.min.js"></script>
@@ -32,60 +32,22 @@ echo" || Anda berkunjung dengan IP Address $ip";
 
 	<!-- start: JavaScript-->
 
-	<!--<script<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery-1.9.1.min.js"></script>
-	<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery-migrate-1.0.0.min.js"></script>
+	 <script src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
 
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery-ui-1.10.0.custom.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.ui.touch-punch.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/modernizr.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/bootstrap.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.cookie.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/fullcalendar.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.dataTables.min.js"></script>
-
-		 src="<?php echo base_url(); ?>system/application/views/admin/js/excanvas.js"></script>
-	<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.flot.js"></script>
-	<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.flot.pie.js"></script>
-	<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.flot.stack.js"></script>
-	<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.flot.resize.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.chosen.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.uniform.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.cleditor.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.noty.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.elfinder.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.raty.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.iphone.toggle.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.uploadify-3.1.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.gritter.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.imagesloaded.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.masonry.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.knob.modified.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/jquery.sparkline.min.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/counter.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/retina.js"></script>
-
-		<script src="<?php echo base_url(); ?>system/application/views/admin/js/custom.js"></script>-->
+    <script src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.js"></script>
+    <script>
+    $(document).ready(function(){
+      var date_input=$('input[name="tanggalProses"]'); //our date input has the name "date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+        format: 'dd/mm/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    })
+    </script>
 	<!-- end: JavaScript-->
 
 </body>

@@ -25,14 +25,35 @@
 
     <!-- Custom Fonts -->
     <link href="<?php echo base_url(); ?>assets/css/font-awesome.min.css"rel="stylesheet" type="text/css">
-
+	
+	  <link href="<?php echo base_url(); ?>assets/css/bootstrap-datepicker3
+.css"rel="stylesheet" type="text/css">
+	
+	
+	<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery1.9.min.js"></script>
+	<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.min.js"></script>
+	
+	 <link href="<?php echo base_url(); ?>assets/css/"rel="stylesheet" type="text/css">
+ 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+  <script>
+    $(document).ready(function(){
+      var date_input=$('input[name="date"]'); //our date input has the name "date"
+      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+      var options={
+        format: 'mm/dd/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    })
+</script>
 </head>
 
 <body>

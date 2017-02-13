@@ -12,45 +12,119 @@
                             </div>
                             <!-- /input-group -->
                         </li>
+						<?php
+            if($menubapob != null){
+              foreach($menubapob as $t)
+              {
+               $jml_bapob=$t->JUMLAH;
+              }
+            foreach($menuprosesbapob as $d)
+              {
+               $jml_proses=$d->JUMLAH;
+              } 
+            }
+						
+						?>	
                         <li>
                             <a href="<?php echo base_url()?>index.php/pengembangan"><i class="fa fa-dashboard fa-fw"></i> Home</a>
                         </li>
                         <li>
                             <a href="#">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Master<span class="fa arrow"></span></a>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> MASTER<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+							 <li>
+                                    <a href="#"> BAPOB<span class="fa arrow"></span></a> 
+								   <ul class="nav nav-third-level">
+								     <?php
+									 if($jml_bapob < 1)
+									 {
+									 ?>
+									 <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/addNewBapob">Buat Master BAPOB Baru</a>
+                                     </li>
+									  <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataBapobEdit">Lihat Data Master BAPOB</a>
+                                     </li>
+									 <?php
+									 }
+									 else if($jml_bapob >= 1)
+									 {
+									 ?>
+									  <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataBapobEdit">Lihat Data Master BAPOB</a>
+                                     </li>
+									 <?php
+									 }
+									 ?>
+									</ul> 
+								 </li>
+                                <li>
+                                    <a href="#"> MESIN<span class="fa arrow"></span></a> 
+								   <ul class="nav nav-third-level">
+								   <li>   
+									  <a href="<?php echo base_url()?>index.php/pengembangan/addDataMesin">Tambah Data Setting Mesin Baru</a>
+								    </li>  
+									<li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataMesin">Lihat Data Setting Mesin</a>
+                                    </li>
+									<li>
+                                       <a href="#">SILINDER MESIN</a>
+									    <ul class="nav nav-fourth-level">
+                                         <li>   
+									     <a href="<?php echo base_url()?>index.php/pengembangan/addDataMesin">Tambah Silinder Mesin Baru</a>
+                                         </li>
+								       </ul> 
+                                    </li>
+                                  </ul>
+ 								 </li>  
+                                <li>
+                                    <a href="#"> FORMULA<span class="fa arrow"></span></a> 
+								   <ul class="nav nav-third-level">
+								     <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/addDataFormula">Tambah Data Formula baru</a>
+                                     </li>
+								      <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataFormula">Lihat Data Setting Formula</a>
+                                      </li>
+									</ul> 
+								 </li>
+								<li>
+                                    <a href="#"> PROSES PRODUKSI<span class="fa arrow"></span></a> 
+								   <ul class="nav nav-third-level">
+								     <?php
+									 if($jml_proses < 1)
+									 {
+									 ?>
+									 <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/addDataFormula">Tambah Data Proses Produksi Baru</a>
+                                     </li>
+								      <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataFormula">Lihat Data Proses Produksi</a>
+                                      </li>
+									  <?php
+									  }
+									 else if($jml_proses >= 1)
+									 {
+									 ?>
+								      <li>
+                                       <a href="<?php echo base_url()?>index.php/pengembangan/showDataFormula">Lihat Data Proses Produksi</a>
+                                      </li>
+									  <?php
+									  }
+									  ?> 
+									</ul> 
+								 </li>
+                               </ul>
+                           </li>
+                        
+                         <li>
+                            <a href="#">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> LAPORAN<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="<?php echo base_url()?>index.php/pengembangan/addDataMesin">Tambah Mesin Baru</a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo base_url()?>index.php/pengembangan/addDataFormula">Tambah Formula baru</a>
+                                    <a href="<?php echo base_url()?>index.php/pengembangan/addDataMesin">Cetak Form BAPOB</a>
                                 </li>
                             </ul>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> BAOPB<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="<?php echo base_url()?>index.php/pengembangan/editDataMesin">Buat BAOPB Baru</a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo base_url()?>index.php/pengembangan/showDataMesin">Lihat Setting Mesin</a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo base_url()?>index.php/pengembangan/showDataFormula">Lihat Setting Formula</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url()?>index.php/admin/katobat"><i class="fa fa-table fa-fw"></i> Kategori Obat</a>
-                        </li>
-                        <li>
-                            <a href="<?php echo base_url()?>index.php/admin/cekobat">
-                            <i class="fa fa-table fa-fw"></i>Stok Obat</a>
-                        </li>
-                        <li>
-                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
                         </li>
                         
                         <li>

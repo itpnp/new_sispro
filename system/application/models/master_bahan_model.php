@@ -13,4 +13,11 @@ class Master_bahan_model extends Model
 		$t=$this->oracle_db->get('TBL_MASTER_BAHAN');
 		return $t->result();
 	}
+
+	function getBahan()
+		{
+		    $this->oracle_db=$this->load->database('oracle',true);
+		    $t=$this->oracle_db->query("select * from tbl_master_bahan where JENIS='FL' and seri ='9' and aktif='1' ORDER BY KODE_BAHAN ");
+			return $t->result();
+		}
 }

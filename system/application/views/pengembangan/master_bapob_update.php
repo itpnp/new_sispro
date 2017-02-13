@@ -8,7 +8,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-             <h1 class="page-header">Master Mesin</h1>
+             <h1 class="page-header">Master BAPOB</h1>
         </div>
                 <!-- /.col-lg-12 -->
     </div>
@@ -17,36 +17,48 @@
         <div class="col-lg-12">
             <div class="panel panel-success">
                  <div class="panel-heading">
-                     Master Mesin
+                     Master BAPOB
                  </div>
                  
                  <div class="panel-body">
                  	<div class = "row">
                  		<div class="col-lg-6">
-                 			<form role="form" action="<?php echo base_url()?>index.php/MasterMesin/saveData" method="post">
+                 			<form role="form" action="<?php echo base_url()?>index.php/pengembangan/saveUpdateDataBapob" method="post">
+                            <?php
+                                foreach($mesin ->result_array() as $d){
+                                    $ps=array();
+                                    $idMesin=$d["ID_MESIN"];
+                                    $namaMesin=$d["NAMA_MESIN"];
+                                    $kecepatanMesin = $d["KECEPATAN_MESIN"];
+                                    $lamaPersiapan = $d["KECEPATAN_MESIN"];
+                                    $wasteStel = $d["WASTE_STEL"];
+                                    $wasteProses= $d["WASTE_PROSES"];
+
+                                }
+                            ?>
+                                <input type="hidden" name="idMesin" value="<?php echo $idMesin;?>" />
                  				<div class="form-group">
                                     <label>Nama Mesin</label>
-                                    <input class="form-control" name="namaMesin" placeholder="Nama Mesin">
-                                    
+                                    <input class="form-control" name="namaMesin" value="<?php echo $namaMesin; ?>" >
                                 </div>
                                 <div class="form-group">
                                 	<label>Kecepatan Mesin</label>
-                                    <input class="form-control" name="kecepatanMesin" placeholder="Kecepatan Mesin">
+                                    <input class="form-control" name="kecepatanMesin" value="<?php echo $kecepatanMesin; ?>">
                                 </div>
                                 <div class="form-group">
                                 	<label>Lama Persiapan</label>
-                                    <input class="form-control" name="lamaPersiapan" placeholder="lama Persiapan">
+                                    <input class="form-control" name="lamaPersiapan" value="<?php echo $lamaPersiapan; ?>" >
                                 </div>
                                 <div class="form-group">
                                 	<label>Waste Stel</label>
-                                    <input class="form-control" name="wasteStel" placeholder="Waste Stel">
+                                    <input class="form-control" name="wasteStel" value="<?php echo $wasteStel; ?>">
                                 </div>
                                 <div class="form-group">
                                 	<label>Waste Proses</label>
-                                    <input class="form-control" name="wasteProses" placeholder="Waste Stel">
+                                    <input class="form-control" name="wasteProses" value="<?php echo $wasteProses; ?>">
                                 </div>
                                 <div class="form-group">
-                                            <label>Pilih Proses Produksi</label>
+                                            <label>Pilih Master Proses</label>
                                             <select class="form-control" name="proses">
                                             <?php 
                                             	foreach($masterProses as $row)
@@ -69,17 +81,3 @@
 		</div>
     </div>
 </div>
-
-	<!-- <div class="modal hide fade" id="myModal">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">×</button>
-			<h3>Settings</h3>
-		</div>
-		<div class="modal-body">
-			<p>Here settings can be configured...</p>
-		</div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal">Close</a>
-			<a href="#" class="btn btn-primary">Save changes</a>
-		</div>
-	</div> -->

@@ -18,5 +18,18 @@ class Web_model extends Model
 		{
 			$this->db->query("update tblkepegawaian set password=md5('$pwd') where username='$nim'");
 		}
+
+		function CekMenuBapob()
+		{
+		    $this->oracle_db=$this->load->database('oracle',true);
+			$t=$this->oracle_db->query("select count(id_bapob) as jumlah from tbl_master_bapob");
+			return $t->result();
+		}
+		function CekMenuProsesBapob()
+		{
+		    $this->oracle_db=$this->load->database('oracle',true);
+			$t=$this->oracle_db->query("select count(id_master_proses_bapob) as jumlah from tbl_master_proses_bapob");
+			return $t->result();
+		}
 	}
 ?>

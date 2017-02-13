@@ -24,11 +24,6 @@
                  	<div class = "row">
                  		<form role="form" action="<?php echo base_url()?>index.php/MasterFormula/saveData" method="post">
                             <div class="col-lg-6">
-                            <div class="form-group">
-                                    <label>Id Formula</label>
-                                    <input class="form-control" name="idFormula" placeholder="Id Formula">
-                                    
-                                </div>
                  				<div class="form-group">
                                     <label>Nama Formula</label>
                                     <input class="form-control" name="namaFormula" placeholder="Nama Formula">
@@ -51,7 +46,10 @@
                                 	<label>Viscositas</label>
                                     <input class="form-control" name="viscositas" placeholder="Viscositas">
                                 </div>
-                                
+                                <div class="form-group">
+                                    <label>Suhu</label>
+                                    <input class="form-control" name="suhu" placeholder="Suhu">
+                                </div>
                  			
                  		 </div>
                          <div class="col-lg-6">
@@ -67,10 +65,7 @@
                                     <label>Berat</label>
                                     <input class="form-control" name="berat" placeholder="Berat">
                                 </div>
-                                <div class="form-group">
-                                    <label>Suhu</label>
-                                    <input class="form-control" name="suhu" placeholder="Suhu">
-                                </div>
+                                
                                 <button type="submit" class="btn btn-default">Submit Button</button>
                          </div>
                  		</form>
