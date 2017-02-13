@@ -569,10 +569,7 @@ class Ppc extends Controller {
 					$this->load->view('ppc/v_side_menu',$data);
 					$this->load->view('ppc/v_add_proses_belah',$data);
 					$this->load->view('ppc/v_footer',$data);
-					if($data["belah"]!=""){
-						// $this->cetakKK();
-						$this->saveAllData();
-					}
+				
 				}
 				else{
 					?>
@@ -606,7 +603,6 @@ class Ppc extends Controller {
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
-		// $data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['NAMA_PROSES'] = 'Proses Belah dan Sortir';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
@@ -617,51 +613,107 @@ class Ppc extends Controller {
 		$data['HASIL'] = $this->input->post('hasil');
 		$_SESSION['proses_belah']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
-		redirect("ppc/addProsesBelah");
+		$this->saveAllData();
 
 	}
 
 	function saveAllData(){
+
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
 		$data = array();
-		$header = $_SESSION['data_header'];
-		$emboss = $_SESSION['proses_emboss'];
-		$demet = $_SESSION['proses_demet'];
-		$rewind = $_SESSION['proses_rewind'];
-		$sensi = $_SESSION['proses_sensi'];
-		$belah = $_SESSION['proses_belah'];
-		$bapob = $_SESSION['data_bapob'];
-
-		$emboss["STEL_SILINDER"] = 'test update';
-		$emboss["PANJANG_BAHAN"] = $header["PANJANG_BAHAN"];
-		$emboss["ID_BAPOB"] = $bapob->ID_BAPOB;
-
-		if($this->Master_proses_model->saveData($emboss)){
-			$demet["STEL_SILINDER"] = '0';
-			$demet["STEL_PCH"] = '0';
-			$demet["PANJANG_BAHAN"] = intval($emboss["HASIL"]);
-			$demet["ID_BAPOB"] = $bapob->ID_BAPOB;
-			if($this->Master_proses_model->saveData($demet)){
-				$rewind["STEL_SILINDER"] = '0';
-				$rewind["STEL_PCH"] = '0';
-				$rewind["PANJANG_BAHAN"] = intval($demet["HASIL"]);
-				$rewind["ID_BAPOB"] = $bapob->ID_BAPOB;
-				if($this->Master_proses_model->saveData($rewind)){
-					$sensi["STEL_PCH"] = '0';
-					$sensi["PANJANG_BAHAN"] = intval($rewind["HASIL"]);
-					$sensi["ID_BAPOB"] = $bapob->ID_BAPOB;
-					if($this->Master_proses_model->saveData($sensi)){
-						$belah["STEL_SILINDER"] = '0';
-						$belah["STEL_PCH"] = '0';
-						$belah["PANJANG_BAHAN"] = intval($sensi["HASIL"]);
-						$belah["ID_BAPOB"] = $bapob->ID_BAPOB;
-						if($this->Master_proses_model->saveData($belah)){
-
-						}
-
-					}
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$sessionSensi=isset($_SESSION['proses_sensi']);
+			if($sessionSensi!="") {
+				$belah = isset($_SESSION['proses_belah']);
+				if($belah!= ""){
+					$data["belah"] = $_SESSION['proses_belah'];
+				}else{
+					$data["belah"] = "";
 				}
+				$pecah=explode("|",$session);
+				$data["nim"]=$pecah[0];
+				$data["nama"]=$pecah[1];
+				$data["status"]=$pecah[2];
+				$data["header"] = $_SESSION['data_header'];
+				$data["sensi"] = $_SESSION['proses_sensi'];
+				$data["bapob"] = $_SESSION['data_bapob'];
+				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				if($data["status"]=="PPC"){
+					$data["tanggal"] = mdate($datestring, $time);
+
+					$this->load->view('ppc/v_header',$data);
+					$this->load->view('ppc/v_side_menu',$data);
+					$this->load->view('ppc/v_add_proses_belah',$data);
+					$this->load->view('ppc/v_footer',$data);
+
+					$header = $_SESSION['data_header'];
+					$emboss = $_SESSION['proses_emboss'];
+					$demet = $_SESSION['proses_demet'];
+					$rewind = $_SESSION['proses_rewind'];
+					$sensi = $_SESSION['proses_sensi'];
+					$belah = $_SESSION['proses_belah'];
+					$bapob = $_SESSION['data_bapob'];
+
+					$emboss["STEL_SILINDER"] = 'test update';
+					$emboss["PANJANG_BAHAN"] = $header["PANJANG_BAHAN"];
+					$emboss["ID_BAPOB"] = $bapob->ID_BAPOB;
+
+					if($this->Master_proses_model->saveData($emboss)){
+						$demet["STEL_SILINDER"] = '0';
+						$demet["STEL_PCH"] = '0';
+						$demet["PANJANG_BAHAN"] = intval($emboss["HASIL"]);
+						$demet["ID_BAPOB"] = $bapob->ID_BAPOB;
+						if($this->Master_proses_model->saveData($demet)){
+							$rewind["STEL_SILINDER"] = '0';
+							$rewind["STEL_PCH"] = '0';
+							$rewind["PANJANG_BAHAN"] = intval($demet["HASIL"]);
+							$rewind["ID_BAPOB"] = $bapob->ID_BAPOB;
+							if($this->Master_proses_model->saveData($rewind)){
+								$sensi["STEL_PCH"] = '0';
+								$sensi["PANJANG_BAHAN"] = intval($rewind["HASIL"]);
+								$sensi["ID_BAPOB"] = $bapob->ID_BAPOB;
+								if($this->Master_proses_model->saveData($sensi)){
+									$belah["STEL_SILINDER"] = '0';
+									$belah["STEL_PCH"] = '0';
+									$belah["PANJANG_BAHAN"] = intval($sensi["HASIL"]);
+									$belah["ID_BAPOB"] = $bapob->ID_BAPOB;
+									if($this->Master_proses_model->saveData($belah)){
+										$this->cetakKK();
+									}
+
+								}
+							}
+						}
+					}
+					
+				}
+				else{
+					?>
+					<script type="text/javascript" language="javascript">
+						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+					</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				}
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Please Fill Data KK First");
+				</script>
+				<?php
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesBelah'>";
 			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
 		}
+
 
 	}
 
