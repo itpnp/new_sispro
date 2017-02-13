@@ -16,6 +16,7 @@ class Ppc extends Controller {
 		$this->load->model('Master_mesin_model');
 		$this->load->model('Master_bapob_model');
 		$this->load->model('Master_bahan_model');
+		$this->load->model('Master_proses_model');
 	}
 	function index(){
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
@@ -365,7 +366,7 @@ class Ppc extends Controller {
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
 		// $data['ID_BAPOB'] = $this->input->post('noBapob');
-		$data['NAMA_PROSES'] = 'Proses Emboss';
+		$data['NAMA_PROSES'] = 'Proses Demet';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
@@ -446,7 +447,7 @@ class Ppc extends Controller {
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
 		// $data['ID_BAPOB'] = $this->input->post('noBapob');
-		$data['NAMA_PROSES'] = 'Proses Emboss';
+		$data['NAMA_PROSES'] = 'Proses Rewind';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
@@ -523,7 +524,7 @@ class Ppc extends Controller {
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
 		// $data['ID_BAPOB'] = $this->input->post('noBapob');
-		$data['NAMA_PROSES'] = 'Proses Sens';
+		$data['NAMA_PROSES'] = 'Proses Sensi';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
@@ -569,7 +570,8 @@ class Ppc extends Controller {
 					$this->load->view('ppc/v_add_proses_belah',$data);
 					$this->load->view('ppc/v_footer',$data);
 					if($data["belah"]!=""){
-						$this->cetakKK();
+						// $this->cetakKK();
+						$this->saveAllData();
 					}
 				}
 				else{
@@ -613,10 +615,53 @@ class Ppc extends Controller {
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['HASIL'] = $this->input->post('hasil');
-		$data['STEL_SILINDER'] = $this->input->post('stelSilinder');
 		$_SESSION['proses_belah']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesBelah");
+
+	}
+
+	function saveAllData(){
+		$data = array();
+		$header = $_SESSION['data_header'];
+		$emboss = $_SESSION['proses_emboss'];
+		$demet = $_SESSION['proses_demet'];
+		$rewind = $_SESSION['proses_rewind'];
+		$sensi = $_SESSION['proses_sensi'];
+		$belah = $_SESSION['proses_belah'];
+		$bapob = $_SESSION['data_bapob'];
+
+		$emboss["STEL_SILINDER"] = 'test update';
+		$emboss["PANJANG_BAHAN"] = $header["PANJANG_BAHAN"];
+		$emboss["ID_BAPOB"] = $bapob->ID_BAPOB;
+
+		if($this->Master_proses_model->saveData($emboss)){
+			$demet["STEL_SILINDER"] = '0';
+			$demet["STEL_PCH"] = '0';
+			$demet["PANJANG_BAHAN"] = intval($emboss["HASIL"]);
+			$demet["ID_BAPOB"] = $bapob->ID_BAPOB;
+			if($this->Master_proses_model->saveData($demet)){
+				$rewind["STEL_SILINDER"] = '0';
+				$rewind["STEL_PCH"] = '0';
+				$rewind["PANJANG_BAHAN"] = intval($demet["HASIL"]);
+				$rewind["ID_BAPOB"] = $bapob->ID_BAPOB;
+				if($this->Master_proses_model->saveData($rewind)){
+					$sensi["STEL_PCH"] = '0';
+					$sensi["PANJANG_BAHAN"] = intval($rewind["HASIL"]);
+					$sensi["ID_BAPOB"] = $bapob->ID_BAPOB;
+					if($this->Master_proses_model->saveData($sensi)){
+						$belah["STEL_SILINDER"] = '0';
+						$belah["STEL_PCH"] = '0';
+						$belah["PANJANG_BAHAN"] = intval($sensi["HASIL"]);
+						$belah["ID_BAPOB"] = $bapob->ID_BAPOB;
+						if($this->Master_proses_model->saveData($belah)){
+
+						}
+
+					}
+				}
+			}
+		}
 
 	}
 
@@ -796,69 +841,159 @@ class Ppc extends Controller {
 				for($i = 0; $i<17; $i++){
 					$objSheet->getStyle(''.$kolom[$i].'9')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
 				}
-				
-				$objSheet->getStyle('A10')->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A10')->setValue('Proces (I)');
-				$objSheet->getCell('B10')->setValue(':');
-				$objSheet->getCell('C10')->setValue('EMBOSS');
 
-				$objSheet->getCell('A11')->setValue('Bahan');
-				$objSheet->getCell('B11')->setValue(':');
-				$objSheet->getCell('C11')->setValue($header["NAMA_BAHAN_BAKU"]);
+				$row = 10;
+				$endLineOfSensi = 0;
 
-				$objSheet->getCell('A13')->setValue('Bahan');
-				$objSheet->getCell('B13')->setValue(':');
-				$objSheet->getCell('C13')->setValue($emboss["FORMULA"]);
-				$objSheet->getCell('C14')->setValue("Jumlah");
-				$objSheet->getCell('C15')->setValue("Uk");
-				$objSheet->getCell('D14')->setValue(":");
-				$objSheet->getCell('D15')->setValue(":");
-
-				$idMesin = $emboss["ID_MESIN"];
-				$formula = $this->Master_formula_model->findByIdMesin($idMesin);
-				$ukuran = $formula[0]->UKURAN;
-
-				$jml = $header["PANJANG_BAHAN"]/$ukuran;
-
-				$jml = round($jml, 0, PHP_ROUND_HALF_UP);
-
-				$objSheet->getCell('E14')->setValue($jml." pch");
-				$objSheet->getCell('E15')->setValue("42 cm x 67 cm");
-
-				$objSheet->getCell('I11')->setValue('Target Prod');
-				$objSheet->getCell('J11')->setValue(':');
-				$objSheet->getCell('K11')->setValue($emboss["KECEPATAN_MESIN"]);
-
-				$objSheet->getCell('I13')->setValue('WAKTU');
-				$objSheet->getCell('J13')->setValue(':');
-				$objSheet->getCell('k13')->setValue('Stel PCH'); $objSheet->getCell('L13')->setValue($emboss["STEL_PCH"]);
-				$objSheet->getCell('k14')->setValue('Stel Bahan'); $objSheet->getCell('L14')->setValue($emboss["STEL_BAHAN"]);
-				$objSheet->getCell('k14')->setValue('Stel Bahan'); $objSheet->getCell('L14')->setValue($emboss["STEL_BAHAN"]);
-				$objSheet->getCell('k15')->setValue('Stel Proses');$objSheet->getCell('L15')->setValue($emboss["LAMA_PROSES"]);
-				$objSheet->getStyle('L15')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-				$objSheet->getStyle('K16')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-				$objSheet->getCell('k16')->setValue('TOTAL');
-				$objSheet->getCell('L16')->setValue($emboss["TOTAL_WAKTU"]);
-
-				$objSheet->getStyle('N11:Q11')->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N11')->setValue('WASTE');
-				$objSheet->getCell('O11')->setValue(':');
-				$objSheet->getCell('P11')->setValue($emboss["WASTE_PROSES"]);
-				$objSheet->getCell('Q11')->setValue("%");
-
-				$objSheet->getStyle('N13:Q13')->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N13')->setValue('Hasil');
-				$objSheet->getCell('O13')->setValue(':');
-				$objSheet->getStyle('P13')->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('P13')->setValue(intval($emboss["HASIL"]));
-				$objSheet->getCell('Q13')->setValue("m");
-
-				for($i = 0; $i<17; $i++){
-					$objSheet->getStyle(''.$kolom[$i].'17')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
-				}
-
+				//Mulai proses pertama
+					$this->cetakEmboss($objSheet, $emboss, $header, $row, $kolom);
 				//ini proses selanjutnya
-				$row = 18;
+					$this->cetakDemet($objSheet, $demet, $header, $row, $kolom);
+				//Ini Proses Selanjutnya
+					$this->cetakRewind($objSheet, $demet, $header, $row, $kolom);
+				//ini proses selanjutnya
+					$this->cetakSensi($objSheet,$sensi, $header, $row, $kolom, $endLineOfSensi);
+				//proses belah dan sortir
+					$this->cetakBelah($objSheet,$belah,$header,$row, $kolom, $endLineOfSensi);
+
+				$row++;
+				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue("Note");
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Pengerjaan setiap proses harus acc QC');
+
+				$row++;
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Arah baca harus jelas, teks BC RI Sensitizing harus searah dengan logo BCRI');
+
+				$row++;
+				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
+				
+				$row++;
+				$row++;
+				$objSheet->mergeCells('A'.($row).':C'.($row));
+				$objSheet->getCell('A'.($row))->setValue('Kudus, '.date('j F Y'));
+
+				$row++;
+				$objSheet->mergeCells('A'.($row).':B'.($row));
+				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue('Hormat Kami,');
+
+				$row++;
+				$row++;
+				$row++;
+				$objSheet->getStyle('A'.($row))->getFont()->setUnderline(true)->setSize(11);
+				$objSheet->getCell('A'.($row))->setValue('M. Taufiq');
+
+				$row++;
+				$objSheet->mergeCells('A'.($row).':C'.($row));
+				$objSheet->getCell('A'.($row))->setValue('Ka. Bid. PPC & Kiriman');
+
+
+				// autosize the columns
+				$objSheet->getColumnDimension('A')->setAutoSize(true);
+				$objSheet->getColumnDimension('B')->setWidth(2);
+				$objSheet->getColumnDimension('C')->setWidth(15);;
+				$objSheet->getColumnDimension('D')->setAutoSize(true);
+				$objSheet->getColumnDimension('E')->setAutoSize(true);
+				$objSheet->getColumnDimension('F')->setWidth(3);
+				$objSheet->getColumnDimension('H')->setWidth(3);
+				$objSheet->getColumnDimension('J')->setWidth(2);
+				$objSheet->getColumnDimension('O')->setWidth(2);
+				$objSheet->getColumnDimension('Q')->setWidth(3);
+				$objSheet->getColumnDimension('M')->setWidth(5);
+				$objSheet->getColumnDimension('I')->setAutoSize(true);
+				$objSheet->getColumnDimension('K')->setAutoSize(true);
+				$objSheet->getColumnDimension('P')->setAutoSize(true);
+
+	            ob_end_clean();
+	 
+	            //sesuaikan headernya 
+	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
+				header('Cache-Control: max-age=0');
+				
+	            //unduh file
+	            $objWriter->save("php://output");
+
+	            //Mulai dari create object PHPExcel itu ada dokumentasi lengkapnya di PHPExcel, 
+	            // Folder Documentation dan Example
+	            // untuk belajar lebih jauh mengenai PHPExcel silakan buka disitu
+
+            }//end if - else
+ 
+        }
+
+        function cetakEmboss($objSheet, $emboss, $header, &$row, $kolom){
+
+        	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('A'.$row)->setValue('Proces (I)');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue('EMBOSS');
+
+        	$row++;
+        	$objSheet->getCell('A'.$row)->setValue('Bahan');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue($header["NAMA_BAHAN_BAKU"]);
+        	$objSheet->getCell('I'.$row)->setValue('Target Prod');
+        	$objSheet->getCell('J'.$row)->setValue(':');
+        	$objSheet->getCell('K'.$row)->setValue($emboss["KECEPATAN_MESIN"]);
+        	$objSheet->getStyle('N'.$row.':Q'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.$row)->setValue('WASTE');
+        	$objSheet->getCell('O'.$row)->setValue(':');
+        	$objSheet->getCell('P'.$row)->setValue($emboss["WASTE_PROSES"]);
+        	$objSheet->getCell('Q'.$row)->setValue("%");
+
+        	$row++;
+        	$row++;
+        	$objSheet->getCell('A'.$row)->setValue('Formula');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue($emboss["FORMULA"]);
+        	$objSheet->getCell('I'.$row)->setValue('WAKTU');
+        	$objSheet->getCell('J'.$row)->setValue(':');
+        	$objSheet->getCell('k'.$row)->setValue('Stel PCH'); 
+        	$objSheet->getCell('L'.$row)->setValue($emboss["STEL_PCH"]);
+        	$objSheet->getStyle('N'.$row.':Q'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.$row)->setValue('Hasil');
+        	$objSheet->getCell('O'.$row)->setValue(':');
+        	$objSheet->getStyle('P'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
+        	$objSheet->getCell('P'.$row)->setValue(intval($emboss["HASIL"]));
+        	$objSheet->getCell('Q'.$row)->setValue("m");
+
+        	$row++;
+        	$objSheet->getCell('C'.$row)->setValue("Jumlah");
+        	$objSheet->getCell('D'.$row)->setValue(":");
+        	$idMesin = $emboss["ID_MESIN"];
+        	$formula = $this->Master_formula_model->findByIdMesin($idMesin);
+        	$ukuran = $formula[0]->UKURAN;
+        	$jml = $header["PANJANG_BAHAN"]/$ukuran;
+        	$jml = round($jml, 0, PHP_ROUND_HALF_UP);
+        	$objSheet->getCell('E'.$row)->setValue($jml." pch");
+        	$objSheet->getCell('k'.$row)->setValue('Stel Bahan'); $objSheet->getCell('L'.$row)->setValue($emboss["STEL_BAHAN"]);
+
+        	$row++;
+        	$objSheet->getCell('C'.$row)->setValue("Uk");
+        	$objSheet->getCell('D'.$row)->setValue(":");
+        	$objSheet->getCell('E'.$row)->setValue("42 cm x 67 cm");
+        	$objSheet->getCell('k'.$row)->setValue('Stel Proses');$objSheet->getCell('L'.$row)->setValue($emboss["LAMA_PROSES"]);
+        	$objSheet->getStyle('L'.$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+        	$row++;
+        	$objSheet->getStyle('K'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        	$objSheet->getCell('k'.$row)->setValue('TOTAL');
+        	$objSheet->getCell('L'.$row)->setValue($emboss["TOTAL_WAKTU"]);
+
+        	$row++;
+        	for($i = 0; $i<17; $i++){
+        		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+        	}
+
+        }
+
+        function cetakDemet($objSheet, $demet, $header, &$row, $kolom){
+
+        		$row++;
 				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('A'.$row)->setValue('Proces (II)');
 				$objSheet->getCell('B'.$row)->setValue(':');
@@ -956,236 +1091,172 @@ class Ppc extends Controller {
 					$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
 				}
 
-				//Ini Proses Selanjutnya
-				$row++;
-				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.$row)->setValue('Proces (III)');
-				$objSheet->getCell('B'.$row)->setValue(':');
-				$objSheet->getCell('C'.$row)->setValue('Rewind');
+        }
+        function cetakRewind($objSheet, $rewind, $header, &$row, $kolom){
 
-				$row++;
-				$objSheet->getCell('A'.($row))->setValue('Bahan');
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Hasil Demet');
-				$objSheet->getCell('I'.($row))->setValue('Target Prod');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue($rewind["KECEPATAN_MESIN"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('WASTE');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getCell('P'.($row))->setValue($rewind["WASTE_PROSES"]);
-				$objSheet->getCell('Q'.($row))->setValue("%");
+        	$row++;
+        	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('A'.$row)->setValue('Proces (III)');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue('Rewind');
 
-				$row++;
-				$objSheet->getCell('I'.($row))->setValue('Waktu');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
-				$objSheet->getCell('L'.($row))->setValue($rewind["STEL_BAHAN"]);
+        	$row++;
+        	$objSheet->getCell('A'.($row))->setValue('Bahan');
+        	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->getCell('C'.($row))->setValue('Hasil Demet');
+        	$objSheet->getCell('I'.($row))->setValue('Target Prod');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue($rewind["KECEPATAN_MESIN"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('WASTE');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getCell('P'.($row))->setValue($rewind["WASTE_PROSES"]);
+        	$objSheet->getCell('Q'.($row))->setValue("%");
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("Proses");
-				$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-				$objSheet->getCell('L'.($row))->setValue($rewind["LAMA_PROSES"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('Hasil');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('P'.($row))->setValue(intval($rewind["HASIL"]));
-				$objSheet->getCell('Q'.($row))->setValue("m");
+        	$row++;
+        	$objSheet->getCell('I'.($row))->setValue('Waktu');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
+        	$objSheet->getCell('L'.($row))->setValue($rewind["STEL_BAHAN"]);
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("TOTAL");
-				$objSheet->getCell('L'.($row))->setValue($rewind["TOTAL_WAKTU"]);
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("Proses");
+        	$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        	$objSheet->getCell('L'.($row))->setValue($rewind["LAMA_PROSES"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('Hasil');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+        	$objSheet->getCell('P'.($row))->setValue(intval($rewind["HASIL"]));
+        	$objSheet->getCell('Q'.($row))->setValue("m");
 
-				$row++;
-				$row++;
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("TOTAL");
+        	$objSheet->getCell('L'.($row))->setValue($rewind["TOTAL_WAKTU"]);
 
-				for($i = 0; $i<17; $i++){
-					$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
-				}
+        	$row++;
+        	$row++;
 
-				//ini proses selanjutnya
-				$row++;
-				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.$row)->setValue('Proces (IV)');
-				$objSheet->getCell('B'.$row)->setValue(':');
-				$objSheet->getCell('C'.$row)->setValue('Sensitizing');
+        	for($i = 0; $i<17; $i++){
+        		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+        	}
+        }
 
-				$row++;
-				$objSheet->getCell('A'.($row))->setValue('Bahan');
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Hasil rewind');
-				$objSheet->getCell('I'.($row))->setValue('Target Prod');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue($sensi["KECEPATAN_MESIN"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('WASTE');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getCell('P'.($row))->setValue($sensi["WASTE_PROSES"]);
-				$objSheet->getCell('Q'.($row))->setValue("%");
+        function cetakSensi($objSheet, $sensi, $header, &$row, $kolom, &$endLineOfSensi){
+        	$row++;
+        	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('A'.$row)->setValue('Proces (IV)');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue('Sensitizing');
 
-				$row++;
-				$start = $row;
-				$objSheet->getCell('I'.($row))->setValue('Waktu');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue("Stel Silinder 1");
-				$objSheet->getCell('L'.($row))->setValue($sensi["STEL_SILINDER"]);
+        	$row++;
+        	$objSheet->getCell('A'.($row))->setValue('Bahan');
+        	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->getCell('C'.($row))->setValue('Hasil rewind');
+        	$objSheet->getCell('I'.($row))->setValue('Target Prod');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue($sensi["KECEPATAN_MESIN"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('WASTE');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getCell('P'.($row))->setValue($sensi["WASTE_PROSES"]);
+        	$objSheet->getCell('Q'.($row))->setValue("%");
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
-				$objSheet->getCell('L'.($row))->setValue($sensi["STEL_BAHAN"]);
+        	$row++;
+        	$start = $row;
+        	$objSheet->getCell('I'.($row))->setValue('Waktu');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue("Stel Silinder 1");
+        	$objSheet->getCell('L'.($row))->setValue($sensi["STEL_SILINDER"]);
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("Proses");
-				$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-				$objSheet->getCell('L'.($row))->setValue($sensi["LAMA_PROSES"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('Hasil');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('P'.($row))->setValue(intval($sensi["HASIL"]));
-				$objSheet->getCell('Q'.($row))->setValue("m");
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
+        	$objSheet->getCell('L'.($row))->setValue($sensi["STEL_BAHAN"]);
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("TOTAL");
-				$objSheet->getCell('L'.($row))->setValue($sensi["TOTAL_WAKTU"]);
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("Proses");
+        	$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        	$objSheet->getCell('L'.($row))->setValue($sensi["LAMA_PROSES"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('Hasil');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+        	$objSheet->getCell('P'.($row))->setValue(intval($sensi["HASIL"]));
+        	$objSheet->getCell('Q'.($row))->setValue("m");
+
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("TOTAL");
+        	$objSheet->getCell('L'.($row))->setValue($sensi["TOTAL_WAKTU"]);
 
 				//bikin formula proses sensi
+        	
+        	if($start < $row){
+        		$endLineOfSensi = $row;
+        	}else{
+        		$endLineOfSensi = $start;
 
-				$endLineOfSensi = 0;
-				if($start < $row){
-					$endLineOfSensi = $row;
-				}else{
-					$endLineOfSensi = $start;
-				
-				}
-				for($i = 0; $i<17; $i++){
-					$objSheet->getStyle(''.$kolom[$i].$endLineOfSensi)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
-				}
-				
-				//proses belah dan sortir
-				$endLineOfSensi++;
-				$row = $endLineOfSensi;
-				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.$row)->setValue('Proces (V)');
-				$objSheet->getCell('B'.$row)->setValue(':');
-				$objSheet->getCell('C'.$row)->setValue('Belah + Sortir');
+        	}
+        	for($i = 0; $i<17; $i++){
+        		$objSheet->getStyle(''.$kolom[$i].$endLineOfSensi)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+        	}
 
-				$row++;
-				$objSheet->getCell('A'.($row))->setValue('Bahan');
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Hasil Sensi');
-				$objSheet->getCell('I'.($row))->setValue('Target Prod');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue($belah["KECEPATAN_MESIN"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('WASTE');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getCell('P'.($row))->setValue($belah["WASTE_PROSES"]);
-				$objSheet->getCell('Q'.($row))->setValue("%");
+        }
 
-				$row++;
-				$row++;
-				$objSheet->getStyle('C'.($row).':G'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->mergeCells('C'.($row).':D'.($row));
-				$objSheet->getCell('C'.($row))->setValue('Hasil Belah ukuran 33 cm ');
-				$hasilBelah = $belah["HASIL"]*2;
-				$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('E'.($row))->setValue($hasilBelah);
-				$objSheet->getCell('F'.($row))->setValue('Meter');
-				$objSheet->getCell('I'.($row))->setValue('Waktu');
-				$objSheet->getCell('J'.($row))->setValue(':');
-				$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
-				$objSheet->getCell('L'.($row))->setValue($belah["STEL_BAHAN"]);
-				$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('N'.($row))->setValue('Hasil');
-				$objSheet->getCell('O'.($row))->setValue(':');
-				$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('P'.($row))->setValue(intval($belah["HASIL"]));
-				$objSheet->getCell('Q'.($row))->setValue("m");
+        function cetakBelah($objSheet, $belah, $header, &$row, $kolom, $endLineOfSensi){
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("Proses");
-				$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-				$objSheet->getCell('L'.($row))->setValue($belah["LAMA_PROSES"]);
-				
+        	$endLineOfSensi++;
+        	$row = $endLineOfSensi;
+        	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('A'.$row)->setValue('Proces (V)');
+        	$objSheet->getCell('B'.$row)->setValue(':');
+        	$objSheet->getCell('C'.$row)->setValue('Belah + Sortir');
 
-				$row++;
-				$objSheet->getCell('K'.($row))->setValue("TOTAL");
-				$objSheet->getCell('L'.($row))->setValue($belah["TOTAL_WAKTU"]);
+        	$row++;
+        	$objSheet->getCell('A'.($row))->setValue('Bahan');
+        	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->getCell('C'.($row))->setValue('Hasil Sensi');
+        	$objSheet->getCell('I'.($row))->setValue('Target Prod');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue($belah["KECEPATAN_MESIN"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('WASTE');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getCell('P'.($row))->setValue($belah["WASTE_PROSES"]);
+        	$objSheet->getCell('Q'.($row))->setValue("%");
 
-				$row++;
-				for($i = 0; $i<17; $i++){
-					$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
-				}
+        	$row++;
+        	$row++;
+        	$objSheet->getStyle('C'.($row).':G'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->mergeCells('C'.($row).':D'.($row));
+        	$objSheet->getCell('C'.($row))->setValue('Hasil Belah ukuran 33 cm ');
+        	$hasilBelah = $belah["HASIL"]*2;
+        	$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+        	$objSheet->getCell('E'.($row))->setValue($hasilBelah);
+        	$objSheet->getCell('F'.($row))->setValue('Meter');
+        	$objSheet->getCell('I'.($row))->setValue('Waktu');
+        	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->getCell('K'.($row))->setValue("Stel Bahan");
+        	$objSheet->getCell('L'.($row))->setValue($belah["STEL_BAHAN"]);
+        	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
+        	$objSheet->getCell('N'.($row))->setValue('Hasil');
+        	$objSheet->getCell('O'.($row))->setValue(':');
+        	$objSheet->getStyle('P'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
+        	$objSheet->getCell('P'.($row))->setValue(intval($belah["HASIL"]));
+        	$objSheet->getCell('Q'.($row))->setValue("m");
 
-				$row++;
-				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.($row))->setValue("Note");
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Pengerjaan setiap proses harus acc QC');
-
-				$row++;
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Arah baca harus jelas, teks BC RI Sensitizing harus searah dengan logo BCRI');
-
-				$row++;
-				$objSheet->getCell('B'.($row))->setValue(':');
-				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
-				
-				$row++;
-				$row++;
-				$objSheet->mergeCells('A'.($row).':C'.($row));
-				$objSheet->getCell('A'.($row))->setValue('Kudus, '.date('j F Y'));
-
-				$row++;
-				$objSheet->mergeCells('A'.($row).':B'.($row));
-				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.($row))->setValue('Hormat Kami,');
-
-				$row++;
-				$row++;
-				$row++;
-				$objSheet->getStyle('A'.($row))->getFont()->setUnderline(true)->setSize(11);
-				$objSheet->getCell('A'.($row))->setValue('M. Taufiq');
-
-				$row++;
-				$objSheet->mergeCells('A'.($row).':C'.($row));
-				$objSheet->getCell('A'.($row))->setValue('Ka. Bid. PPC & Kiriman');
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("Proses");
+        	$objSheet->getStyle('L'.($row))->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        	$objSheet->getCell('L'.($row))->setValue($belah["LAMA_PROSES"]);
 
 
-				// autosize the columns
-				$objSheet->getColumnDimension('A')->setAutoSize(true);
-				$objSheet->getColumnDimension('B')->setWidth(2);
-				$objSheet->getColumnDimension('C')->setWidth(15);;
-				$objSheet->getColumnDimension('D')->setAutoSize(true);
-				$objSheet->getColumnDimension('E')->setAutoSize(true);
-				$objSheet->getColumnDimension('F')->setWidth(3);
-				$objSheet->getColumnDimension('H')->setWidth(3);
-				$objSheet->getColumnDimension('J')->setWidth(2);
-				$objSheet->getColumnDimension('O')->setWidth(2);
-				$objSheet->getColumnDimension('Q')->setWidth(3);
-				$objSheet->getColumnDimension('M')->setWidth(5);
-				$objSheet->getColumnDimension('I')->setAutoSize(true);
-				$objSheet->getColumnDimension('K')->setAutoSize(true);
-				$objSheet->getColumnDimension('P')->setAutoSize(true);
+        	$row++;
+        	$objSheet->getCell('K'.($row))->setValue("TOTAL");
+        	$objSheet->getCell('L'.($row))->setValue($belah["TOTAL_WAKTU"]);
 
-	            ob_end_clean();
-	 
-	            //sesuaikan headernya 
-	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
-				header('Cache-Control: max-age=0');
-				
-	            //unduh file
-	            $objWriter->save("php://output");
-
-	            //Mulai dari create object PHPExcel itu ada dokumentasi lengkapnya di PHPExcel, 
-	            // Folder Documentation dan Example
-	            // untuk belajar lebih jauh mengenai PHPExcel silakan buka disitu
-
-            }//end if - else
-           
- 
+        	$row++;
+        	for($i = 0; $i<17; $i++){
+        		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+        	}
         }
 }
