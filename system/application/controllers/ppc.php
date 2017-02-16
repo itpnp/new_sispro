@@ -17,6 +17,7 @@ class Ppc extends Controller {
 		$this->load->model('Master_bapob_model');
 		$this->load->model('Master_bahan_model');
 		$this->load->model('Master_proses_model');
+		$this->load->model('Master_proses_bapob_model');
 	}
 	function index(){
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
@@ -133,8 +134,7 @@ class Ppc extends Controller {
 		$data = array();
 		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
 		$sessionHeader = isset($_SESSION['data_header']);
-		$dataBapob = $this->Master_bapob_model->getDefaultBapob();
-		
+		$dataBapob = $this->Master_bapob_model->getDefaultBapob();		
 		if($dataBapob !=NULL){
 			if($session!=""){
 				if($sessionHeader != ""){
@@ -149,7 +149,6 @@ class Ppc extends Controller {
 				$data["bapob"] = $dataBapob[0];
 				$_SESSION['data_bapob']=$dataBapob[0];
 				$data["masterBahan"] = $this->Master_bahan_model->getAllData();
-
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -223,11 +222,9 @@ class Ppc extends Controller {
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
-		// $data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['NAMA_PROSES'] = 'Proses Emboss';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
-		// $data['PANJANG_BAHAN'] = $this->input->post('panjangBahan');
 		$data['STEL_PCH'] = $this->input->post('stelPCH');
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
 		$data['LAMA_PROSES'] = $this->input->post('lamaProses');
@@ -235,9 +232,7 @@ class Ppc extends Controller {
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['FORMULA'] = $this->input->post('formula');
 		$data['HASIL'] = $this->input->post('hasil');
-
 		$_SESSION['proses_emboss']=$data;
-
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesDemet");
 	}
@@ -258,12 +253,19 @@ class Ppc extends Controller {
 				}else{
 					$data["emboss"] = "";
 				}
+					
 				$pecah=explode("|",$session);
 				$data["nim"]=$pecah[0];
 				$data["nama"]=$pecah[1];
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Emboss');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -311,9 +313,6 @@ class Ppc extends Controller {
 			if($sessionEmboss!="") {
 				$emboss = isset($_SESSION['proses_demet']);
 				if($emboss != ""){
-					// $sessionHeader = $_SESSION['proses_demet'];
-					// echo "ahahahah".$sessionHeader['URUTAN_PRODUKSI'];
-					// echo exit();
 					$data["demet"] = $_SESSION['proses_demet'];
 				}else{
 					$data["demet"] = "";
@@ -325,6 +324,12 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["emboss"] = $_SESSION['proses_emboss'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Demet');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -365,7 +370,6 @@ class Ppc extends Controller {
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
-		// $data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['NAMA_PROSES'] = 'Proses Demet';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
@@ -374,9 +378,7 @@ class Ppc extends Controller {
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['HASIL'] = $this->input->post('hasil');
-
 		$_SESSION['proses_demet']=$data;
-
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesRewind");
 	}
@@ -392,9 +394,6 @@ class Ppc extends Controller {
 			if($sessionDemet!="") {
 				$rewind = isset($_SESSION['proses_rewind']);
 				if($rewind != ""){
-					// $sessionHeader = $_SESSION['proses_rewind'];
-					// echo "ahahahah".$sessionHeader['URUTAN_PRODUKSI'];
-					// echo exit();
 					$data["rewind"] = $_SESSION['proses_rewind'];
 				}else{
 					$data["rewind"] = "";
@@ -406,6 +405,12 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["demet"] = $_SESSION['proses_demet'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Rewind');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -446,7 +451,6 @@ class Ppc extends Controller {
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
-		// $data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['NAMA_PROSES'] = 'Proses Rewind';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
@@ -455,9 +459,7 @@ class Ppc extends Controller {
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['HASIL'] = $this->input->post('hasil');
-
 		$_SESSION['proses_rewind']=$data;
-
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesSensi");
 	}
@@ -483,6 +485,12 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["rewind"] = $_SESSION['proses_rewind'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Sensitizing');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -523,7 +531,6 @@ class Ppc extends Controller {
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
 		$data['ID_MESIN'] = $mesin[0];
-		// $data['ID_BAPOB'] = $this->input->post('noBapob');
 		$data['NAMA_PROSES'] = 'Proses Sensi';
 		$data['URUTAN_PRODUKSI'] = $this->input->post('urutanProduksi');
 		$data['KECEPATAN_MESIN'] = $this->input->post('targetProduksi');
@@ -533,9 +540,7 @@ class Ppc extends Controller {
 		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
 		$data['HASIL'] = $this->input->post('hasil');
 		$data['STEL_SILINDER'] = $this->input->post('stelSilinder');
-
 		$_SESSION['proses_sensi']=$data;
-
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesBelah");
 	}
@@ -562,6 +567,12 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["sensi"] = $_SESSION['proses_sensi'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Belah');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -639,6 +650,12 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["sensi"] = $_SESSION['proses_sensi'];
 				$data["bapob"] = $_SESSION['data_bapob'];
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Belah');
+				$data["mesin"] = $dataMesin[0];
+				$idBapob = $data["bapob"]->ID_BAPOB;
+				$idMesin = $data["mesin"]->ID_MESIN;
+				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
+				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -721,7 +738,7 @@ class Ppc extends Controller {
         {
             //load librarynya terlebih dahulu
             //jika digunakan terus menerus lebih baik load ini ditaruh di auto load
-            $this->load->library("PHPExcel");
+
             $dataHeader = isset($_SESSION['data_header']);
             $prosesSensi = isset($_SESSION['proses_sensi']);
             $prosesBelah = isset($_SESSION['proses_belah']);
@@ -767,17 +784,37 @@ class Ppc extends Controller {
 				<?php
             }else{
 
-            	$data = array();
+            	$data 	= array();
             	$header = $_SESSION['data_header'];
 				$emboss = $_SESSION['proses_emboss'];
-				$demet= $_SESSION['proses_demet'];
+				$demet 	= $_SESSION['proses_demet'];
 				$rewind = $_SESSION['proses_rewind'];
-				$sensi = $_SESSION['proses_sensi'];
-				$belah = $_SESSION['proses_belah'];
-				$bapob = $_SESSION['data_bapob'];
+				$sensi 	= $_SESSION['proses_sensi'];
+				$belah 	= $_SESSION['proses_belah'];
+				$bapob 	= $_SESSION['data_bapob'];
 
+				$this->load->library("PHPExcel");
+
+	            require_once APPPATH.'libraries\dompdf\dompdf_config.inc.php';
+
+				$rendererName = PHPExcel_Settings::PDF_RENDERER_DOMPDF;
+				//$rendererLibrary = 'tcPDF5.9';
+				// $rendererLibrary = 'mPDF5.4';
+				$rendererLibraryPath = APPPATH.'libraries\dompdf';
             	//proses cetak Kartu Kerja Mesin
             	//membuat objek PHPExcel
+
+				if (!PHPExcel_Settings::setPdfRenderer(
+					$rendererName,
+					$rendererLibraryPath
+					)) {
+					die(
+						'NOTICE: Please set the $rendererName and $rendererLibraryPath values' .
+						EOL .
+						'at the top of this script as appropriate for your directory structure'
+						);
+			}
+				
 	            $objPHPExcel = new PHPExcel();
 	 
 	            $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
@@ -787,6 +824,10 @@ class Ppc extends Controller {
 
 				// create the writer
 				$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+				// $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
+
+				 $objWriter->setSheetIndex(0);
+				// $objWriter = new PHPExcel_Writer_PDF($objPHPExcel);
 
 				/**
 
@@ -799,8 +840,6 @@ class Ppc extends Controller {
 
 				// number format, with thousands separator and two decimal points.
 				// $numberFormat = '#,#0.##;[Red]-#,#0.##';
-
-				 
 
 				// writer already created the first sheet for us, let's get it
 				$objSheet = $objPHPExcel->getActiveSheet();
@@ -921,27 +960,6 @@ class Ppc extends Controller {
 				$row++;
 				$objSheet->getCell('B'.($row))->setValue(':');
 				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
-				
-				$row++;
-				$row++;
-				$objSheet->mergeCells('A'.($row).':C'.($row));
-				$objSheet->getCell('A'.($row))->setValue('Kudus, '.date('j F Y'));
-
-				$row++;
-				$objSheet->mergeCells('A'.($row).':B'.($row));
-				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.($row))->setValue('Hormat Kami,');
-
-				$row++;
-				$row++;
-				$row++;
-				$objSheet->getStyle('A'.($row))->getFont()->setUnderline(true)->setSize(11);
-				$objSheet->getCell('A'.($row))->setValue('M. Taufiq');
-
-				$row++;
-				$objSheet->mergeCells('A'.($row).':C'.($row));
-				$objSheet->getCell('A'.($row))->setValue('Ka. Bid. PPC & Kiriman');
-
 
 				// autosize the columns
 				$objSheet->getColumnDimension('A')->setAutoSize(true);
@@ -962,8 +980,12 @@ class Ppc extends Controller {
 	            ob_end_clean();
 	 
 	            //sesuaikan headernya 
-	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
+	   //          header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
+				// header('Cache-Control: max-age=0');
+
+				header('Content-Type: application/pdf');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
 				header('Cache-Control: max-age=0');
 				
 	            //unduh file

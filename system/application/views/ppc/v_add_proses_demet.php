@@ -62,7 +62,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Waste Proses</label>
               <div class="col-sm-8">
-                <input class="form-control" name="wasteProses"  value="<?php echo $header['JUMLAH_WASTE_PROSES']; ?>" disabled>
+                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->TOTAL_WASTE; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
@@ -103,7 +103,7 @@
           </div>
           <div class="form-group">
             <label>Waste</label>
-            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($demet!="") echo $demet['WASTE_PROSES']; ?>" placeholder = "waste proses" onblur="test()">
+            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>" placeholder = "waste proses" readonly>
           </div>
           <div class="form-group">
             <label>Mesin</label>
@@ -245,6 +245,16 @@
     m= Math.floor(totalTime % 3600 / 60);
     s = Math.floor(totalTime% 3600 % 60);
 
+    if(h<10){
+      h = "0"+h;
+    }
+    if(s<10){
+      s = "0"+s;
+    }
+    if(m<10){
+      m = "0"+m;
+    }
+
     // var hDisplay = h > 0 ? h + (h == 1 ? " hour" : " jam ") : "";
     // var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " menit ") : "";
     // var sDisplay = s > 0 ? s + (s == 1 ? " second" : " detik ") : "";
@@ -256,6 +266,8 @@
     result[2] = s;
 
     return result;
-
   }
+   window.onload = function() {
+    test();
+  };
 </script> 

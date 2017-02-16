@@ -9,7 +9,7 @@ class Master_proses_model extends Model
 	public function getProses()
 		{
 		    $this->oracle_db=$this->load->database('oracle',true);
-		    $t=$this->oracle_db->query("select * from tbl_master_proses");
+		    $t=$this->oracle_db->query("select * from tbl_master_proses_kk");
 			return $t->result();
 		}
 

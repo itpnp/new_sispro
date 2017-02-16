@@ -57,4 +57,15 @@ class Master_mesin_model extends Model
 		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_MESIN where ID_MESIN = '$idMesin'");
 		return $t;
 	}
+
+	public function findByName($namaMesin)
+	{
+		try{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_MESIN where NAMA_MESIN = '$namaMesin'");
+		return $t->result();
+		}catch(Exception $e){
+			var_dump($e);
+		}
+	}
 }

@@ -28,19 +28,19 @@
             <div class="form-group">
               <label class="control-label col-sm-4">No. KK:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['NO_KK']; ?>" disabled>
+                <input type="text" class="form-control" id="noKK" value="<?php echo $header['NO_KK']; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">No. BAPOB:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
+                <input type="text" class="form-control" id="noBapob" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Tanggal Proses:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled>
+                <input type="text" class="form-control" id="tanggalProses" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -62,7 +62,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Waste Proses</label>
               <div class="col-sm-8">
-                <input class="form-control" name="wasteProses"  value="<?php echo $header['JUMLAH_WASTE_PROSES']; ?>" disabled>
+                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->TOTAL_WASTE; ?>" disabled>
               </div>
             </div>
             <div class="form-group">
@@ -103,7 +103,7 @@
           </div>
           <div class="form-group">
             <label>Waste</label>
-            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($emboss!="") echo $emboss['WASTE_PROSES']; ?>" placeholder = "waste proses" onblur="test()">
+            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>" placeholder = "waste proses" readonly>
           </div>
           <div class="form-group">
             <label>Mesin</label>
@@ -218,7 +218,6 @@
     // stelPCH = Math.ceil(stelPCH * 100)/100;
     // stelBahan = Math.ceil(stelBahan * 100)/100;
     // lamaProses = Math.ceil(lamaProses * 100)/100;
-
     secondsPCH = (stelPCH*24)*3600;
     secondsBahan = (stelBahan*24)*3600;
     secondsProses = (lamaProses*24)*3600;
@@ -251,12 +250,16 @@
     m= Math.floor(totalTime % 3600 / 60);
     s = Math.floor(totalTime% 3600 % 60);
 
-    // var hDisplay = h > 0 ? h + (h == 1 ? " hour" : " jam ") : "";
-    // var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " menit ") : "";
-    // var sDisplay = s > 0 ? s + (s == 1 ? " second" : " detik ") : "";
-
     var result = new Array();
-
+    if(h<10){
+      h = "0"+h;
+    }
+    if(s<10){
+      s = "0"+s;
+    }
+    if(m<10){
+      m = "0"+m;
+    }
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
@@ -264,4 +267,7 @@
     return result;
 
   }
+  window.onload = function() {
+  test();
+};
 </script> 
