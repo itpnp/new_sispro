@@ -201,7 +201,7 @@ class Ppc extends Controller {
 		$data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
 		$data['MACAM'] = $this->input->post('macam');
 		$jumlahPesanan = $this->input->post('jumlahPesanan');
-		$wasteProses = $this->input->post('wasteProses');
+		$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
 		$wasteDalamPersen = $wasteProses/100;
 
 		$panjangBahan = $jumlahPesanan + ($jumlahPesanan * $wasteDalamPersen);
@@ -620,7 +620,7 @@ class Ppc extends Controller {
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
 		$data['LAMA_PROSES'] = $this->input->post('lamaProses');
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
-		$data['WASTE_PROSES'] = $this->input->post('wasteProses');
+		$data['WASTE_PROSES'] = $_SESSION['data_bapob']->WASTE_BELAH;
 		$data['HASIL'] = $this->input->post('hasil');
 		$_SESSION['proses_belah']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
@@ -826,7 +826,7 @@ class Ppc extends Controller {
 				$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 				// $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
 
-				 $objWriter->setSheetIndex(0);
+				 // $objWriter->setSheetIndex(0);
 				// $objWriter = new PHPExcel_Writer_PDF($objPHPExcel);
 
 				/**
@@ -927,7 +927,7 @@ class Ppc extends Controller {
 				$objSheet->getCell('L8')->setValue("meter");
 				$objSheet->getCell('M8')->setValue("UK");
 				$objSheet->getCell('M8')->setValue("66 Cm");
-				$objSheet->getCell('K9')->setValue($header["JUMLAH_WASTE_PROSES"]."%");
+				$objSheet->getCell('K9')->setValue($bapob->WASTE_BELAH."%");
 
 				for($i = 0; $i<17; $i++){
 					$objSheet->getStyle(''.$kolom[$i].'9')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
@@ -980,13 +980,13 @@ class Ppc extends Controller {
 	            ob_end_clean();
 	 
 	            //sesuaikan headernya 
-	   //          header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
-				// header('Cache-Control: max-age=0');
-
-				header('Content-Type: application/pdf');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
 				header('Cache-Control: max-age=0');
+
+				// header('Content-Type: application/pdf');
+				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+				// header('Cache-Control: max-age=0');
 				
 	            //unduh file
 	            $objWriter->save("php://output");

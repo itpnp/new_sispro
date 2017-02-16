@@ -56,19 +56,19 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Jumlah Pesanan</label>
               <div class="col-sm-8">
-                <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?>" disabled>
+                <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled>
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-4">Waste Proses</label>
+              <label class="control-label col-sm-4">Waste Belah</label>
               <div class="col-sm-8">
-                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->TOTAL_WASTE; ?>" disabled>
+                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" disabled>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?>"  disabled>
+                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?> Meter"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -191,7 +191,7 @@
 
     wasteProses = document.getElementById("wasteProses").value;
     panjangBahan = document.getElementById("panjangBahan").value;
-    jmlPesanan = document.getElementById("jmlPesanan").value;
+    jmlPesanan = "<?php echo $header['JML_PESANAN']; ?>";
 
     var hasilProsesEmboss = parseInt(document.getElementById("hasilDiProsesEmboss").value);
 
