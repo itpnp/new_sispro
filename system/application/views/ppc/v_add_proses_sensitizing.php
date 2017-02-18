@@ -68,7 +68,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?> Meter"  disabled>
+                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -103,7 +103,7 @@
           </div>
           <div class="form-group">
             <label>Waste</label>
-            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>" placeholder = "waste proses" readonly>
+            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>%" placeholder = "waste proses" readonly>
           </div>
           <div class="form-group">
             <label>Mesin</label>
@@ -193,17 +193,17 @@
     var targetProduksi = val * 60;
     $('input[name="targetProduksi"]').val(targetProduksi + " Meter/Jam").val();
 
-    wasteProses = document.getElementById("wasteProses").value;
-    panjangBahan = document.getElementById("panjangBahan").value;
-    jmlPesanan = "<?php echo $header['JML_PESANAN']; ?>";
+    wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
+    panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
 
-    var hasilProsesRewind= parseInt(document.getElementById("hasilDiProsesRewind").value);
+    var hasilProsesRewind= parseFloat(document.getElementById("hasilDiProsesRewind").value);
 
     if(wasteProses != "" || wasteProses >0){
-      hasil = hasilProsesRewind-((wasteProses/100)*jmlPesanan);
+      hasil = hasilProsesRewind-((wasteProses/100)*panjangBahan);
     }else{
       hasil = hasilProsesRewind;
     }
+    hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
 
 
@@ -224,7 +224,8 @@
 
     secondsBahan = (stelBahan*24)*3600;
     secondsProses = (lamaProses*24)*3600;
-    totalTime = secondsBahan + secondsProses;
+
+    totalTime = secondsBahan + secondsProses + 3600;
 ;
 
     var bahanTime = convertToHour(secondsBahan);

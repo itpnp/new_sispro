@@ -68,7 +68,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?> Meter"  disabled>
+                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -103,7 +103,7 @@
           </div>
           <div class="form-group">
             <label>Waste</label>
-            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>" placeholder = "waste proses" readonly>
+            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>%" placeholder = "waste proses" readonly>
           </div>
           <div class="form-group">
             <label>Mesin</label>
@@ -189,25 +189,25 @@
     var targetProduksi = val * 60;
     $('input[name="targetProduksi"]').val(targetProduksi + " Meter/Jam").val();
 
-    wasteProses = document.getElementById("wasteProses").value;
-    panjangBahan = document.getElementById("panjangBahan").value;
-    jmlPesanan = "<?php echo $header['JML_PESANAN']; ?>";
+    wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
+    panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
 
-    var hasilProsesEmboss = parseInt(document.getElementById("hasilDiProsesDemet").value);
+    var hasilProsesDemet= parseFloat(document.getElementById("hasilDiProsesDemet").value);
 
     if(wasteProses != "" || wasteProses >0){
-      hasil = hasilProsesEmboss-((wasteProses/100)*jmlPesanan);
+      hasil = hasilProsesDemet-((wasteProses/100)*panjangBahan);
     }else{
-      hasil = hasilProsesEmboss;
+      hasil = hasilProsesDemet;
     }
+    hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
 
 
     var zzz = waktuNaik.replace(",", ".");
     var waktuNaik = parseFloat(zzz);
 
-    stelBahan = ((hasilProsesEmboss/6000)*waktuNaik)/24;
-    lamaProses = hasilProsesEmboss/targetProduksi/24;
+    stelBahan = ((hasilProsesDemet/6000)*waktuNaik)/24;
+    lamaProses = hasilProsesDemet/targetProduksi/24;
 
     // stelBahan = Math.ceil(stelBahan * 100)/100;
     // lamaProses = Math.ceil(lamaProses * 100)/100;

@@ -67,4 +67,37 @@ class Master_formula_model extends Model
 		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA where ID_Mesin= '$idMesin'");
 		return $t->result();
 	}
+	public function findFormula1ByIdMesin($idMesin){
+
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT ID_FORMULA FROM TBL_MASTER_FORMULA where ID_MESIN= '$idMesin' AND NAMA_FORMULA = 'formula1'");
+		$x = $t->result();
+		$idFormula = $x[0]->ID_FORMULA;
+
+		$result=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA_ANAK where ID_FORMULA = '$idFormula'");
+		return $result->result();
+	}
+
+	public function findFormula2ByIdMesin($idMesin){
+
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT ID_FORMULA FROM TBL_MASTER_FORMULA where ID_MESIN= '$idMesin' AND NAMA_FORMULA = 'formula2'");
+		$x = $t->result();
+		$idFormula = $x[0]->ID_FORMULA;
+
+		$result=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA_ANAK where ID_FORMULA = '$idFormula'");
+		return $result->result();
+	}
+
+	public function findFormula3ByIdMesin($idMesin){
+
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT ID_FORMULA FROM TBL_MASTER_FORMULA where ID_MESIN= '$idMesin' AND NAMA_FORMULA = 'formula3'");
+		$x = $t->result();
+		$idFormula = $x[0]->ID_FORMULA;
+
+		$result=$this->oracle_db->query("SELECT * FROM TBL_MASTER_FORMULA_ANAK where ID_FORMULA = '$idFormula'");
+		return $result->result();
+	}
+
 }

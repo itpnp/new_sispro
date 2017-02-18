@@ -68,7 +68,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?> Meter"  disabled>
+                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -127,7 +127,7 @@
             <label>Target Produksi</label>
             <input class="form-control" name="targetProduksi" value="<?php if($belah!="") echo $belah['KECEPATAN_MESIN']; ?>" readonly>
           </div>
-          <input type="hidden" id="hasilDiProsesEmboss" value="<?php if($sensi!="") echo $sensi['HASIL']; ?>"/>
+          <input type="hidden" id="hasilDiProsesSensi" value="<?php if($sensi!="") echo $sensi['HASIL']; ?>"/>
 
         </div>
         <div class="col-lg-6">
@@ -190,18 +190,17 @@
     $('input[name="targetProduksi"]').val(targetProduksi + " Meter/Jam").val();
 
     wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
-    panjangBahan = document.getElementById("panjangBahan").value;
-    jmlPesanan = "<?php echo $header['JML_PESANAN']; ?>";
+    panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
 
-    var hasilProsesEmboss = parseInt(document.getElementById("hasilDiProsesEmboss").value);
+    var hasilProsesSensi = parseFloat(document.getElementById("hasilDiProsesSensi").value);
 
     if(wasteProses != "" || wasteProses >0){
-      hasil = hasilProsesEmboss-((wasteProses/100)*jmlPesanan);
+      hasil = hasilProsesSensi-((wasteProses/100)*panjangBahan);
     }else{
-      hasil = hasilProsesEmboss;
+      hasil = hasilProsesSensi;
     }
+    hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
-
 
     var zzz = waktuNaik.replace(",", ".");
     var waktuNaik = parseFloat(zzz);
@@ -210,8 +209,8 @@
     var waktuMendidih = parseFloat(zzz);
 
 
-    stelBahan = (hasilProsesEmboss/3500)*waktuNaik/24;
-    lamaProses = hasilProsesEmboss/targetProduksi/24;
+    stelBahan = (hasilProsesSensi/3500)*waktuNaik/24;
+    lamaProses = hasilProsesSensi/targetProduksi/24;
 
     // stelBahan = Math.ceil(stelBahan * 100)/100;
     // lamaProses = Math.ceil(lamaProses * 100)/100;

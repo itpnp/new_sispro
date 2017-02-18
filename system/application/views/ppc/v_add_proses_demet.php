@@ -68,7 +68,7 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['PANJANG_BAHAN']; ?> Meter"  disabled>
+                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
               </div>
             </div>
             <div class="form-group">
@@ -94,8 +94,13 @@
      </div>
 
      <div class="panel-body">
+     <div class = "row">
+        <div class="col-lg-6 form-group">
+          <label class="control-label col-sm-4">Delivery Time :</label>
+          <p id="deliveryTime" name="deliveryTime"></p>
+        </div>
+     </div>
       <div class = "row">
-
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -103,7 +108,7 @@
           </div>
           <div class="form-group">
             <label>Waste</label>
-            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>" placeholder = "waste proses" readonly>
+            <input class="form-control" name="wasteProses" id="wasteProses" value="<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>%" placeholder = "waste proses" readonly>
           </div>
           <div class="form-group">
             <label>Mesin</label>
@@ -189,17 +194,17 @@
     var targetProduksi = val * 60;
     $('input[name="targetProduksi"]').val(targetProduksi + " Meter/Jam").val();
 
-    wasteProses = document.getElementById("wasteProses").value;
-    panjangBahan = document.getElementById("panjangBahan").value;
-    jmlPesanan = "<?php echo $header['JML_PESANAN']; ?>";
+    wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
+    panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
 
-    var hasilProsesEmboss = parseInt(document.getElementById("hasilDiProsesEmboss").value);
+    var hasilProsesEmboss = parseFloat(document.getElementById("hasilDiProsesEmboss").value);
 
     if(wasteProses != "" || wasteProses >0){
-      hasil = hasilProsesEmboss-((wasteProses/100)*jmlPesanan);
+      hasil = hasilProsesEmboss-((wasteProses/100)*panjangBahan);
     }else{
       hasil = hasilProsesEmboss;
     }
+    hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
 
 
@@ -233,18 +238,24 @@
 
     $('input[name="totalTime"]').val(times[0]+""+times[1]+""+times[2]).val();
 
+    var cb = document.getElementById('deliveryTime');
+    cb.innerHTML = times[3];
+
   }
 
   function convertToHour(time){
     var h;
     var m;
     var s;
+    var d;
     var totalTime= Number(time);
 
+    d = Math.floor(totalTime / (3600*24));
     h = Math.floor(totalTime / 3600);
     m= Math.floor(totalTime % 3600 / 60);
     s = Math.floor(totalTime% 3600 % 60);
 
+    var result = new Array();
     if(h<10){
       h = "0"+h;
     }
@@ -254,18 +265,27 @@
     if(m<10){
       m = "0"+m;
     }
+    
+    // Apply each element to the Date function
+    var date = new Date(<?php echo strtotime($header['TGL_PROSES_MESIN'])*1000;?>);
+    var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    date.setDate(date.getDate() + d);
 
-    // var hDisplay = h > 0 ? h + (h == 1 ? " hour" : " jam ") : "";
-    // var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " menit ") : "";
-    // var sDisplay = s > 0 ? s + (s == 1 ? " second" : " detik ") : "";
-
-    var result = new Array();
+    var days = date.getDate();
+    var month = monthNames[date.getMonth()];
+    var year = date.getFullYear();
+    var deliv = days+" "+month+" "+year
+    // dat = dat.format("dd mmm yyyy")
 
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
+    result[3] = deliv;
 
     return result;
+
   }
    window.onload = function() {
     test();

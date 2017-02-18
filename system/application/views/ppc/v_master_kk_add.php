@@ -39,16 +39,54 @@
                                     <input class="form-control" id="date" name="tanggalProses" value="<?php if($header!="") echo $header['TGL_PROSES_MESIN']; ?>" placeholder="DD/MM/YYYY" type="text"/>
                                 </div>
                                 <div class="form-group">
+                                    <label>Macam</label>
+                                    <div class="form-group">
+                                       <div class="col-sm-3">
+                                        <input class="form-control" name="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" placeholder="Macam">
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <select class="form-control" name="tahun">
+                                          <option value="2015">2015</option>
+                                          <option value="2016">2016</option>
+                                          <option value="2017">2017</option>
+                                          <option value="2018">2018</option>
+                                          <option value="2019">2019</option>
+                                          <option value="2020">2020</option>
+                                          <option value="2021">2021</option>
+                                          <option value="2022">2022</option>
+                                          <option value="2023">2023</option>
+                                          <option value="2024">2024</option>
+                                          <option value="2025">2025</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <select class="form-control" name="seri">
+                                          <option value="Seri I">Seri I</option>
+                                          <option value="Seri II">Seri II</option>
+                                          <option value="Seri III">Seri III</option>
+                                          <option value="Seri MMEA">Seri MMEA</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                      
+                                </div>
+                                <br>
+                                <!-- <div class="form-group">
                                 <label>Macam</label>
                                 <input class="form-control" name="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" placeholder="Macam">
-                              </div>
+                              </div> -->
                               <div class="form-group">
                               <label>Bahan</label>
                               <select class="form-control" name="chooseBahan" id="namaMesin">
                                 <option value="0-0">-- Pilih Bahan --</option>
                                 <?php 
                                 foreach($masterBahan as $row){
-                                  echo '<option value="'.$row->KODE_BAHAN.'@'.$row->NAMA_BAHAN.'@'.$row->LEBAR.'@'.$row->GSM.'@'.$row->PANJANG.'">'.$row->NAMA_BAHAN.'</option>';
+                                  if ($row->NAMA_BAHAN === $header['NAMA_BAHAN_BAKU']) {
+                                       $selected = 'selected';
+                                  } else {
+                                       $selected = '';
+                                  }
+                                  echo '<option value="'.$row->KODE_BAHAN.'@'.$row->NAMA_BAHAN.'@'.$row->LEBAR.'@'.$row->GSM.'@'.$row->PANJANG.'"'.$selected.'>'.$row->NAMA_BAHAN.'</option>';
                                 }
 
                                 ?>
@@ -61,7 +99,35 @@
                             
                             <div class="form-group">
                                 <label>Jumlah Pesanan</label>
-                                <input class="form-control" name="jumlahPesanan" id="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan" onBlur=count()>
+                                <div class="form-group input-group">
+                                  <input class="form-control" name="jumlahPesanan" id="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan" onBlur=count()>
+                                  <span class="input-group-addon">Meter</span>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group">
+                                <label>Waste Perekatan</label>
+                                  <div class="form-group">
+                                    <div class="col-sm-3">
+                                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>%" name="percentWastePerekatan" id = "percentWastePerekatan" placeholder="Waste Perekatan" readonly>
+                                    </div>
+                                    <div class="col-sm-6 form-group input-group">
+                                      <input class="form-control col-sm-2"  name="jumlahWastePerekatan" id="jumlahWastePerekatan" value="<?php if($header!="") echo $header['panjangWastePerekatan']; ?>" placeholder="Waste Perekatan" readonly>
+                                    <span class="input-group-addon">Meter</span>
+                                    </div>
+                                  </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Waste Pita</label>
+                                  <div class="form-group">
+                                    <div class="col-sm-3">
+                                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>%" name="percentWastePita" id = "percentWastePita"  readonly>
+                                    </div>
+                                    <div class="col-sm-6 form-group input-group">
+                                      <input class="form-control col-sm-2"  name="jumlahWastePita" id="jumlahWastePita" value="<?php if($header!="") echo $header['panjangWastePita']; ?>" placeholder="Waste Pita" readonly>
+                                      <span class="input-group-addon">Meter</span>
+                                    </div>
+                                  </div>
                             </div>
                             <div class="form-group">
                                 <label>Waste Belah</label>
@@ -69,25 +135,13 @@
                                     <div class="col-sm-3">
                                       <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" name="percentWasteBelah" placeholder="Waste Belah" readonly>
                                     </div>
-                                    <div class="col-sm-6">
-                                      <input class="form-control col-sm-2" name="jumlahWasteBelah" placeholder="Waste Belah" readonly>
+                                    <div class="col-sm-6 form-group input-group">
+                                      <input class="form-control col-sm-2" name="jumlahWasteBelah" placeholder="Waste Belah" value="<?php if($header!="") echo $header['panjangWasteBelah']; ?>" readonly>
+                                    <span class="input-group-addon">Meter</span>
                                     </div>
                                   </div>
                             </div>
                             <br>
-                            <br>
-                            <div class="form-group">
-                                <label>Waste Perekatan</label>
-                                  <div class="form-group">
-                                    <div class="col-sm-3">
-                                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>%" name="percentWastePerekatan" id = "percentWastePerekatan" placeholder="Waste Perekatan" readonly>
-                                    </div>
-                                    <div class="col-sm-6">
-                                      <input class="form-control col-sm-2"  name="jumlahWastePerekatan" id="jumlahWastePerekatan" placeholder="Waste Perekatan" readonly>
-                                    </div>
-                                  </div>
-                            </div>
-                           <br>
                            <br>
                             <div class="form-group">
                             <button type="submit" class=" form-control btn btn-success ">SIMPAN</button>
@@ -105,21 +159,27 @@
   var panjangWastePerekatan;
   var panjangWastePita;
   var panjangWasteBelah;
+  var percentWastePerekatan;
+  var percentWastePita;
+  var percentWasteBelah;
 
   function count(){
 
-    percentWasteBelah = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
+    percentWastePerekatan = "<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>";
+    percentWastePita      = "<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>";
+    percentWasteBelah     = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
 
-    panjangWasteBelah = parseFloat(document.getElementById("jumlahPesanan").value) + ((document.getElementById("jumlahPesanan").value)*(percentWasteBelah/100));
+    panjangWastePerekatan = parseFloat(document.getElementById("jumlahPesanan").value) + ((parseFloat(percentWastePerekatan)/100)*parseFloat(document.getElementById("jumlahPesanan").value) );
 
-    panjangWastePerekatan = parseFloat(document.getElementById("jumlahPesanan").value) / 1.09;
+    panjangWastePita = panjangWastePerekatan + ((parseFloat(percentWastePita)/100)*parseFloat(panjangWastePerekatan));
 
-    panjangWastePerekatan = Math.ceil(panjangWastePerekatan * 100)/100
+    panjangWasteBelah = panjangWastePita + ((parseFloat(percentWasteBelah)/100)*parseFloat(panjangWastePita));
 
-  $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah +" Meter").val();
-  $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan +" Meter").val();
-
+  $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah).val();
+  $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan).val();
+  $('input[name="jumlahWastePita"]').val(panjangWastePita).val();
   }
+
 </script> 
 
 
