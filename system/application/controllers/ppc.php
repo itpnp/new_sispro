@@ -1298,15 +1298,16 @@ class Ppc extends Controller {
         	$listFormula1 = $this->Master_formula_model->findFormula1ByIdMesin($idMesin);
 			$listFormula2 = $this->Master_formula_model->findFormula2ByIdMesin($idMesin);
 			$listFormula3 = $this->Master_formula_model->findFormula3ByIdMesin($idMesin);
-			$mediumPs = 0;
-			$message = "";
+			
+			
 			if(count($listFormula1) >0){
 
 				$objSheet->getCell('A'.($start))->setValue('Formula 01');
         		$objSheet->getCell('B'.($start))->setValue(':');
+        		$mediumPs = 0;
+        		$message = "";
         		foreach($listFormula1 as $r){
 					$namaFormula = $r->NAMA_FORMULA_ANAK;
-
 					$objSheet->getCell('C'.($start))->setValue($namaFormula);
 					if(stristr($namaFormula, 'medium') !== FALSE ){
 						$gsm = str_replace(",", ".", $r->GRAMATURE);
@@ -1334,7 +1335,7 @@ class Ppc extends Controller {
 					}else if(stristr($namaFormula, 'pigment') !== FALSE){
 						
 						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
-						$objSheet->getCell('E'.($start))->setValue(($mediumPs/(($r->UKURAN)/100))." Kg");					
+						$objSheet->getCell('E'.($start))->setValue(round(($mediumPs/(($r->UKURAN))/100),2)." Kg");					
 					}
 
 
@@ -1343,7 +1344,7 @@ class Ppc extends Controller {
 				if($message !== ""){
 						echo $message;
 						exit();
-					}
+				}
 				$objSheet->getCell('C'.($start))->setValue("Silinder Motif Bingkai BC ".$header["tahun"]." ,".$header["seri"]);
 
 
@@ -1354,10 +1355,41 @@ class Ppc extends Controller {
 			if(count($listFormula2)>0){
 				$objSheet->getCell('A'.($start))->setValue('Formula 02');
         		$objSheet->getCell('B'.($start))->setValue(':');
+        		$message = "";
         		foreach($listFormula2 as $r){
 					$namaFormula = $r->NAMA_FORMULA_ANAK;
 					$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					if(stristr($namaFormula, 'medium') !== FALSE ){
+						$gsm = str_replace(",", ".", $r->GRAMATURE);
+						$gsm = floatval($gsm);
+						
+						if($gsm == 0){
+							$message = " GRAMATURE Di Database == 0";
+						}else if($r->SOLID_CONTAIN == 0){
+							$message = " SOLID CONTAIN Di Database == 0";
+						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
+							$message = "lebar Bahan Di Database == 0";
+						}else if($header["GSM_BAHAN_BAKU"] == 0){
+							$message = "GSM Bahan Di Database == 0";
+						}else{
+							$mediumPs = ($header["panjangWasteBelah"]*($header["LEBAR_BAHAN_BAKU"]/100)*$gsm)/$r->SOLID_CONTAIN/1000 ;
+    						$display = round($mediumPs, 2);
+    						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+							$objSheet->getCell('E'.($start))->setValue($display." Kg");
+							// $objSheet->getCell('E'.($start))->setValue($r->GRAMATURE);
+						}
+					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
+						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+						$objSheet->getCell('E'.($start))->setValue(($sensi["HASIL"]/$r->UKURAN)." Kg");
+
+					}
+
 					$start++;
+				}
+				if($message !== ""){
+						echo $message;
+						exit();
+				
 				}
 				$objSheet->getCell('C'.($start))->setValue("Silinder Raster 80 Barcode ");
 
@@ -1370,7 +1402,38 @@ class Ppc extends Controller {
         		foreach($listFormula3 as $r){
 					$namaFormula = $r->NAMA_FORMULA_ANAK;
 					$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					if(stristr($namaFormula, 'readible') !== FALSE ){
+						$gsm = str_replace(",", ".", $r->GRAMATURE);
+						$gsm = floatval($gsm);
+						
+						if($gsm == 0){
+							$message = " GRAMATURE Di Database == 0";
+						}else if($r->SOLID_CONTAIN == 0){
+							$message = " SOLID CONTAIN Di Database == 0";
+						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
+							$message = "lebar Bahan Di Database == 0";
+						}else if($header["GSM_BAHAN_BAKU"] == 0){
+							$message = "GSM Bahan Di Database == 0";
+						}else{
+							$mediumPs = ($header["panjangWasteBelah"]*($header["LEBAR_BAHAN_BAKU"]/100)*$gsm)/$r->SOLID_CONTAIN/1000 ;
+    						$display = round($mediumPs, 2);
+    						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+							$objSheet->getCell('E'.($start))->setValue($display." Kg");
+							// $objSheet->getCell('E'.($start))->setValue($r->GRAMATURE);
+						}
+					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
+						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+						$objSheet->getCell('E'.($start))->setValue(($sensi["HASIL"]/$r->UKURAN)." Kg");
+
+					}
+
 					$start++;
+				}
+				if($message !== ""){
+						echo $message;
+						exit();
+				
+				
 				}
 				$objSheet->mergeCells('C'.$start.':E'.$start);
 				$objSheet->getCell('C'.($start))->setValue("Silinder Raster 80 barcode ".$header["tahun"]." ,".$header["seri"]);
