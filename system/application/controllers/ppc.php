@@ -828,7 +828,7 @@ class Ppc extends Controller {
 						EOL .
 						'at the top of this script as appropriate for your directory structure'
 						);
-			}
+				}
 				
 	            $objPHPExcel = new PHPExcel();
 	 
@@ -840,6 +840,7 @@ class Ppc extends Controller {
 				// create the writer
 				$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 				// $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
+
 
 				 // $objWriter->setSheetIndex(0);
 				// $objWriter = new PHPExcel_Writer_PDF($objPHPExcel);
@@ -888,7 +889,7 @@ class Ppc extends Controller {
 				$objSheet->mergeCells('C6:D6');
 				$objSheet->getCell('C6')->setValue($bapob->NOMOR_BAPOB);
 
-				$objSheet->mergeCells('C7:D7');
+				$objSheet->mergeCells('C7:E7');
 				$objSheet->getStyle('C7')->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('C7')->setValue($header["MACAM"]." Tahun ".$header["tahun"]." ".$header["seri"]);
 				$objSheet->getStyle('C8')->getNumberFormat()->setFormatCode('#,##0.00');
@@ -971,14 +972,17 @@ class Ppc extends Controller {
 				$objSheet->getStyle('A'.($row))->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('A'.($row))->setValue("Note");
 				$objSheet->getCell('B'.($row))->setValue(':');
+        		$objSheet->mergeCells('C'.$row.':I'.$row);
 				$objSheet->getCell('C'.($row))->setValue('Pengerjaan setiap proses harus acc QC');
 
 				$row++;
 				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->mergeCells('C'.$row.':I'.$row);
 				$objSheet->getCell('C'.($row))->setValue('Arah baca harus jelas, teks BC RI Sensitizing harus searah dengan logo BCRI');
 
 				$row++;
 				$objSheet->getCell('B'.($row))->setValue(':');
+				$objSheet->mergeCells('C'.$row.':I'.$row);
 				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
 
 				// autosize the columns
@@ -998,18 +1002,29 @@ class Ppc extends Controller {
 				$objSheet->getColumnDimension('P')->setAutoSize(true);
 
 	            ob_end_clean();
-	 
-	            //sesuaikan headernya 
-	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
-				header('Cache-Control: max-age=0');
 
-				// header('Content-Type: application/pdf');
-				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+	            //sesuaikan headernya 
+	   //          header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
 				// header('Cache-Control: max-age=0');
+
+				// file_put_contents('E://'.$header["NO_KK"].'.xlsx', $this->output());
+
+				header('Content-Type: application/pdf');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+				header('Cache-Control: max-age=0');
 				
 	            //unduh file
-	            $objWriter->save("php://output");
+	            // $objWriter->save("php://output");
+	            $filename = str_replace("/","-",$header["NO_KK"]);$header["NO_KK"];
+	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
+
+	            $objPHPexcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".xlsx");
+	            // $objWriter->save(dirname(__FILE__)."'".$header["NO_KK"]."'.xlsx");
+	            $objWriter = PHPExcel_IOFactory::createWriter($objPHPexcel, 'PDF');
+	            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
+	            $objWorksheet = $objPHPexcel->setActiveSheetIndex(0)->setShowGridlines(false);
+	            $objWriter->save('php://output');
 
 	            //Mulai dari create object PHPExcel itu ada dokumentasi lengkapnya di PHPExcel, 
 	            // Folder Documentation dan Example
@@ -1029,7 +1044,7 @@ class Ppc extends Controller {
         	$row++;
         	$objSheet->getCell('A'.$row)->setValue('Bahan');
         	$objSheet->getCell('B'.$row)->setValue(':');
-        	// $objSheet->getCell('C'.$row)->setValue($header["NAMA_BAHAN_BAKU"]);
+        	$objSheet->mergeCells('C'.$row.':E'.$row);
         	$objSheet->getCell('C'.$row)->setValue('PETM 12 mic. Gudang Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.$row)->setValue('Target Prod');
         	$objSheet->getCell('J'.$row)->setValue(':');
@@ -1101,6 +1116,7 @@ class Ppc extends Controller {
 
 				$objSheet->getCell('A'.($row+1))->setValue('Bahan');
 				$objSheet->getCell('B'.($row+1))->setValue(':');
+				$objSheet->mergeCells('C'.($row+1).':E'.($row+1));
 				$objSheet->getCell('C'.($row+1))->setValue('PETM 12 mic. Holo Emboss Soft Yellow TA '.$header["tahun"]);
 				$objSheet->getCell('I'.($row+1))->setValue('Target Prod');
 				$objSheet->getCell('J'.($row+1))->setValue(':');
@@ -1208,6 +1224,7 @@ class Ppc extends Controller {
         	$row++;
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->mergeCells('C'.$row.':E'.$row);
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
@@ -1257,6 +1274,7 @@ class Ppc extends Controller {
         	$row++;
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->mergeCells('C'.$row.':E'.$row);
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
@@ -1464,6 +1482,7 @@ class Ppc extends Controller {
         	$row++;
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
+        	$objSheet->mergeCells('C'.$row.':E'.$row);
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Sensi Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');

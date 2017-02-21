@@ -44,7 +44,7 @@
                                        <div class="col-sm-3">
                                         <input class="form-control" name="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" placeholder="Macam">
                                       </div>
-                                      <div class="col-sm-3">
+                                      <div class="col-sm-4">
                                         <select class="form-control" name="tahun">
                                           <option value="2015">2015</option>
                                           <option value="2016">2016</option>
@@ -59,7 +59,7 @@
                                           <option value="2025">2025</option>
                                         </select>
                                       </div>
-                                      <div class="col-sm-3">
+                                      <div class="col-sm-4">
                                         <select class="form-control" name="seri">
                                           <option value="Seri I">Seri I</option>
                                           <option value="Seri II">Seri II</option>
@@ -124,7 +124,7 @@
                                       <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>%" name="percentWastePita" id = "percentWastePita"  readonly>
                                     </div>
                                     <div class="col-sm-6 form-group input-group">
-                                      <input class="form-control col-sm-2"  name="jumlahWastePita" id="jumlahWastePita" value="<?php if($header!="") echo $header['panjangWastePita']; ?>" placeholder="Waste Pita" readonly>
+                                      <input class="form-control col-sm-2"  name="jumlahWastePita" id="jumlahWastePita" value="<?php if($header!="") echo number_format($header['panjangWastePita']); ?>" placeholder="Waste Pita" readonly>
                                       <span class="input-group-addon">Meter</span>
                                     </div>
                                   </div>

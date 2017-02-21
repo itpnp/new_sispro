@@ -28,25 +28,29 @@
             <div class="form-group">
               <label class="control-label col-sm-4">No. KK:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="noKK" value="<?php echo $header['NO_KK']; ?>" disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php echo $header['NO_KK']; ?></p>
+                <!-- <input type="text" class="form-control" id="noKK" value="<?php echo $header['NO_KK']; ?>" disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">No. BAPOB:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="noBapob" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php echo $bapob->NOMOR_BAPOB; ?></p>
+                <!-- <input type="text" class="form-control" id="noBapob" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Tanggal Proses:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="tanggalProses" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php echo $header['TGL_PROSES_MESIN']; ?></p>
+                <!-- <input type="text" class="form-control" id="tanggalProses" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Macam:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['MACAM']; ?></p>
+                <!-- <input type="text" class="form-control" id="macam" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled> -->
               </div>
             </div>
           </form>
@@ -56,25 +60,30 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Jumlah Pesanan</label>
               <div class="col-sm-8">
-                <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['JML_PESANAN']); ?> Meter</p>
+
+               <!--  <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Waste Belah</label>
               <div class="col-sm-8">
-                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%</p>
+                <!-- <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['panjangWasteBelah']); ?> Meter</p>
+               <!--  <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled> -->
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-4">Nama Bahan:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="<?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled>
+              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?></p>
+                <!-- <input type="text" class="form-control" id="bahan" value="<?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled> -->
               </div>
             </div>
           </form>
