@@ -93,14 +93,36 @@
 
                               </select>
                             </div>
-                                
-                 		</div>
-                        <div class="col-lg-6">
-                            
                             <div class="form-group">
                                 <label>Jumlah Pesanan</label>
                                 <div class="form-group input-group">
                                   <input class="form-control" name="jumlahPesanan" id="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan" onBlur=count()>
+                                  <span class="input-group-addon">Meter</span>
+                                </div>
+                                
+                            </div>
+                 		</div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Panjang Bahan</label>
+                                <div class="form-group input-group">
+                                  <input class="form-control" name="panjangBahan" id="panjangBahan" value="<?php if($header!="") echo $header['PANJANG_BAHAN']; ?>" placeholder="Panjang Bahan" onBlur=count()>
+                                  <span class="input-group-addon">Roll</span>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group">
+                                <label>Konversi Roll</label>
+                                <div class="form-group input-group">
+                                  <input class="form-control" name="konversiRoll" id="konversiRoll" value="<?php if($header!="") echo $header['konversi_roll']; ?>" placeholder="jumlah roll" onBlur=count()>
+                                  <span class="input-group-addon">Roll</span>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group">
+                                <label>Bahan (Konversi)</label>
+                                <div class="form-group input-group">
+                                  <input class="form-control" name="bahanKonversi" id="bahanKonversi" value="<?php if($header!="") echo $header['bahan_konversi']; ?>" placeholder="Bahan Konversi" onBlur=count()>
                                   <span class="input-group-addon">Meter</span>
                                 </div>
                                 
@@ -112,7 +134,7 @@
                                       <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>%" name="percentWastePerekatan" id = "percentWastePerekatan" placeholder="Waste Perekatan" readonly>
                                     </div>
                                     <div class="col-sm-6 form-group input-group">
-                                      <input class="form-control col-sm-2"  name="jumlahWastePerekatan" id="jumlahWastePerekatan" value="<?php if($header!="") echo $header['panjangWastePerekatan']; ?>" placeholder="Waste Perekatan" readonly>
+                                      <input class="form-control col-sm-2"  name="jumlahWastePerekatan" id="jumlahWastePerekatan" value="<?php if($header!="") echo number_format($header['panjangWastePerekatan']); ?>" placeholder="Waste Perekatan" readonly>
                                     <span class="input-group-addon">Meter</span>
                                     </div>
                                   </div>
@@ -136,13 +158,11 @@
                                       <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" name="percentWasteBelah" placeholder="Waste Belah" readonly>
                                     </div>
                                     <div class="col-sm-6 form-group input-group">
-                                      <input class="form-control col-sm-2" name="jumlahWasteBelah" placeholder="Waste Belah" value="<?php if($header!="") echo $header['panjangWasteBelah']; ?>" readonly>
+                                      <input class="form-control col-sm-2" name="jumlahWasteBelah" placeholder="Waste Belah" value="<?php if($header!="") echo number_format($header['panjangWasteBelah']); ?>" readonly>
                                     <span class="input-group-addon">Meter</span>
                                     </div>
                                   </div>
                             </div>
-                            <br>
-                           <br>
                             <div class="form-group">
                             <button type="submit" class=" form-control btn btn-success ">SIMPAN</button>
                             </div>
@@ -168,7 +188,7 @@
     percentWastePerekatan = "<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>";
     percentWastePita      = "<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>";
     percentWasteBelah     = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
-
+    
     panjangWastePerekatan = parseFloat(document.getElementById("jumlahPesanan").value) + ((parseFloat(percentWastePerekatan)/100)*parseFloat(document.getElementById("jumlahPesanan").value) );
 
     panjangWastePita = panjangWastePerekatan + ((parseFloat(percentWastePita)/100)*parseFloat(panjangWastePerekatan));
@@ -178,7 +198,34 @@
   $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah).val();
   $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan).val();
   $('input[name="jumlahWastePita"]').val(panjangWastePita).val();
+  $('input[name="panjangBahan"]').val(panjangWasteBelah).val();
+
+  jmlRoll = Math.round(panjangWasteBelah/6000);
+  $('input[name="konversiRoll"]').val(jmlRoll).val();
+
+  bahanKonversi = jmlRoll * 6000;
+  $('input[name="bahanKonversi"]').val(bahanKonversi).val();
+    percentBahanKonversi = (bahanKonversi - panjangWastePita)/panjangWastePita;
+
+  if(percentBahanKonversi<(percentWasteBelah/100) ){
+    percentBahanKonversi = (percentBahanKonversi*100).toFixed(3);
+    $('input[name="percentWasteBelah"]').val(percentBahanKonversi+"%").val();
+    panjangWasteBelah = panjangWastePita + ((parseFloat(percentBahanKonversi)/100)*parseFloat(panjangWastePita));
+    $('input[name="jumlahWasteBelah"]').val(Math.round(panjangWasteBelah)).val();
+  }else if(percentBahanKonversi>(percentWasteBelah/100) ){
+    panjangWasteBelah = bahanKonversi/(1+(parseFloat(percentWasteBelah)/100));
+    $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah.toFixed(3)).val();
+
+    panjangWastePita = panjangWasteBelah/(1+(parseFloat(percentWastePita)/100));
+    $('input[name="jumlahWastePita"]').val(panjangWastePita.toFixed(3)).val();
+
+    panjangWastePerekatan = panjangWastePita/(1+(parseFloat(percentWastePerekatan)/100));
+    $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan.toFixed(3)).val();
+
+
   }
+}
+  // 2.7934109423585913
 
 </script> 
 

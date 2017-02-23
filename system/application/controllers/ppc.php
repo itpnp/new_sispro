@@ -208,6 +208,8 @@ class Ppc extends Controller {
 		$data['panjangWastePerekatan'] = $this->input->post('jumlahWastePerekatan');
 		$data['panjangWastePita'] = $this->input->post('jumlahWastePita');
 		$data['panjangWasteBelah'] = $this->input->post('jumlahWasteBelah');
+		$data['konversi_roll'] = $this->input->post('konversiRoll');
+		$data['bahan_konversi'] = $this->input->post('bahanKonversi');
 
 		$jumlahPesanan = $this->input->post('jumlahPesanan');
 		$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
@@ -243,6 +245,7 @@ class Ppc extends Controller {
 		$data['HASIL'] = $this->input->post('hasil');
 		$_SESSION['delivery_emboss'] = $this->input->post('deliveryTime');
 		$_SESSION['proses_emboss']=$data;
+
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesDemet");
 	}
@@ -810,15 +813,18 @@ class Ppc extends Controller {
 
 				$this->load->library("PHPExcel");
 
-	            require_once APPPATH.'libraries\dompdf\dompdf_config.inc.php';
+				
+	            $objPHPExcel = new PHPExcel();
+	 
+	            $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
+
+				// set default font size
+				$objPHPExcel->getDefaultStyle()->getFont()->setSize(11);
+
+				require_once APPPATH.'libraries\dompdf\dompdf_config.inc.php';
 
 				$rendererName = PHPExcel_Settings::PDF_RENDERER_DOMPDF;
-				//$rendererLibrary = 'tcPDF5.9';
-				// $rendererLibrary = 'mPDF5.4';
 				$rendererLibraryPath = APPPATH.'libraries\dompdf';
-            	//proses cetak Kartu Kerja Mesin
-            	//membuat objek PHPExcel
-
 				if (!PHPExcel_Settings::setPdfRenderer(
 					$rendererName,
 					$rendererLibraryPath
@@ -829,33 +835,9 @@ class Ppc extends Controller {
 						'at the top of this script as appropriate for your directory structure'
 						);
 				}
-				
-	            $objPHPExcel = new PHPExcel();
-	 
-	            $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
-
-				// set default font size
-				$objPHPExcel->getDefaultStyle()->getFont()->setSize(11);
 
 				// create the writer
 				$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
-				// $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
-
-
-				 // $objWriter->setSheetIndex(0);
-				// $objWriter = new PHPExcel_Writer_PDF($objPHPExcel);
-
-				/**
-
-				 * Define currency and number format.
-
-				 */
-
-				// currency format, € with < 0 being in red color
-				// $currencyFormat = '#,#0.## \€;[Red]-#,#0.## \€';
-
-				// number format, with thousands separator and two decimal points.
-				// $numberFormat = '#,#0.##;[Red]-#,#0.##';
 
 				// writer already created the first sheet for us, let's get it
 				$objSheet = $objPHPExcel->getActiveSheet();
@@ -988,47 +970,69 @@ class Ppc extends Controller {
 				// autosize the columns
 				$objSheet->getColumnDimension('A')->setAutoSize(true);
 				$objSheet->getColumnDimension('B')->setWidth(2);
-				$objSheet->getColumnDimension('C')->setWidth(15);;
+				$objSheet->getColumnDimension('C')->setWidth(15);
 				$objSheet->getColumnDimension('D')->setAutoSize(true);
 				$objSheet->getColumnDimension('E')->setAutoSize(true);
 				$objSheet->getColumnDimension('F')->setWidth(3);
+				$objSheet->getColumnDimension('F')->setWidth(5);
 				$objSheet->getColumnDimension('H')->setWidth(3);
 				$objSheet->getColumnDimension('J')->setWidth(2);
 				$objSheet->getColumnDimension('O')->setWidth(2);
 				$objSheet->getColumnDimension('Q')->setWidth(3);
 				$objSheet->getColumnDimension('M')->setWidth(5);
 				$objSheet->getColumnDimension('I')->setAutoSize(true);
-				$objSheet->getColumnDimension('K')->setAutoSize(true);
+				$objSheet->getColumnDimension('K')->setWidth(15);
 				$objSheet->getColumnDimension('P')->setAutoSize(true);
+
+				$objPHPExcel->getActiveSheet()->getSheetView()->setZoomScale(90);
+	            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+				$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
+				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
+				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
+				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+	            $objWorksheet = $objPHPExcel->setActiveSheetIndex(0)->setShowGridlines(false);
 
 	            ob_end_clean();
 
+	            $filename = str_replace("/","-",$header["NO_KK"]);
+	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
 	            //sesuaikan headernya 
-	   //          header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
-				// header('Cache-Control: max-age=0');
+	            // GENERATE EXCEL
+	            $objPHPexcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".xlsx");
 
-				// file_put_contents('E://'.$header["NO_KK"].'.xlsx', $this->output());
-
-				header('Content-Type: application/pdf');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
 				header('Cache-Control: max-age=0');
 				
-	            //unduh file
-	            // $objWriter->save("php://output");
-	            $filename = str_replace("/","-",$header["NO_KK"]);$header["NO_KK"];
-	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
 
-	            $objPHPexcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".xlsx");
-	            // $objWriter->save(dirname(__FILE__)."'".$header["NO_KK"]."'.xlsx");
-	            $objWriter = PHPExcel_IOFactory::createWriter($objPHPexcel, 'PDF');
-	            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
-	            $objWorksheet = $objPHPexcel->setActiveSheetIndex(0)->setShowGridlines(false);
-	            $objWriter->save('php://output');
+	            // unduh file
+	   //          $objPHPExcel->getActiveSheet()->getSheetView()->setZoomScale(90);
+	   //          $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+	   //          $objWorksheet = $objPHPexcel->setActiveSheetIndex(0)->setShowGridlines(false);
 
-	            //Mulai dari create object PHPExcel itu ada dokumentasi lengkapnya di PHPExcel, 
-	            // Folder Documentation dan Example
-	            // untuk belajar lebih jauh mengenai PHPExcel silakan buka disitu
+
+	            //GENERATE PDF
+	   //          header('Content-Type: application/pdf');
+				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
+				// header('Cache-Control: max-age=0');
+	   //          $objPHPExcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".HTML");
+	   //          $objSheet = $objPHPExcel->getActiveSheet()->setShowGridlines(false);
+	   //          $objPHPExcel->getActiveSheet()->getSheetView()->setZoomScale(90);
+	   //          $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
+				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+
+	   //          $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
+
+				$objWriter->save('php://output');
+
+				
 
             }//end if - else
  
@@ -1048,6 +1052,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('C'.$row)->setValue('PETM 12 mic. Gudang Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.$row)->setValue('Target Prod');
         	$objSheet->getCell('J'.$row)->setValue(':');
+        	$objSheet->mergeCells('K'.($row).':L'.($row));
         	$objSheet->getCell('K'.$row)->setValue($emboss["KECEPATAN_MESIN"]);
         	$objSheet->getStyle('N'.$row.':Q'.$row)->getFont()->setBold(true)->setSize(11);
         	$objSheet->getCell('N'.$row)->setValue('WASTE');
@@ -1120,6 +1125,7 @@ class Ppc extends Controller {
 				$objSheet->getCell('C'.($row+1))->setValue('PETM 12 mic. Holo Emboss Soft Yellow TA '.$header["tahun"]);
 				$objSheet->getCell('I'.($row+1))->setValue('Target Prod');
 				$objSheet->getCell('J'.($row+1))->setValue(':');
+				$objSheet->mergeCells('K'.($row).':L'.($row));
 				$objSheet->getCell('K'.($row+1))->setValue($demet["KECEPATAN_MESIN"]);
 				$objSheet->getCell('I'.($row+2))->setValue('Waktu');
 				$objSheet->getCell('J'.($row+2))->setValue(':');
@@ -1228,6 +1234,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->mergeCells('K'.($row).':L'.($row));
         	$objSheet->getCell('K'.($row))->setValue($rewind["KECEPATAN_MESIN"]);
         	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
         	$objSheet->getCell('N'.($row))->setValue('WASTE');
@@ -1278,6 +1285,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->mergeCells('K'.($row).':L'.($row));
         	$objSheet->getCell('K'.($row))->setValue($sensi["KECEPATAN_MESIN"]);
         	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
         	$objSheet->getCell('N'.($row))->setValue('WASTE');
@@ -1486,6 +1494,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Sensi Soft Yellow TA '.$header["tahun"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
+        	$objSheet->mergeCells('K'.($row).':L'.($row));
         	$objSheet->getCell('K'.($row))->setValue($belah["KECEPATAN_MESIN"]);
         	$objSheet->getStyle('N'.($row).':Q'.($row))->getFont()->setBold(true)->setSize(11);
         	$objSheet->getCell('N'.($row))->setValue('WASTE');
@@ -1501,6 +1510,7 @@ class Ppc extends Controller {
         	$hasilBelah = $belah["HASIL"]*2;
         	$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
         	$objSheet->getCell('E'.($row))->setValue($hasilBelah);
+        	$objSheet->mergeCells('F'.($row).':G'.($row));
         	$objSheet->getCell('F'.($row))->setValue('Meter');
         	$objSheet->getCell('I'.($row))->setValue('Waktu');
         	$objSheet->getCell('J'.($row))->setValue(':');
