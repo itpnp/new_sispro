@@ -176,55 +176,72 @@ class Ppc extends Controller {
 	}
 
 	function saveHeaderKK(){
+			$x = $this->input->post('chooseBahan');
+			$bahanBaku = explode("@", $x);
+
+			if($bahanBaku[4] === ""){
+				$bahanBaku[4] = 0; 
+			}
+			if($bahanBaku[3] === ""){
+				$bahanBaku[3] = 0;
+			}
+			if($bahanBaku[2] === ""){
+				$bahanBaku[2] = 0;
+			}
+			$tahun = $this->input->post('tahun');
+			$seri = $this->input->post('seri');
+
+			$data['NAMA_BAHAN_BAKU'] = $bahanBaku[1];
+			$data['KODE_BAHAN'] = $bahanBaku[0];
+			$data['LEBAR_BAHAN_BAKU'] = $bahanBaku[2];
+			$data['GSM_BAHAN_BAKU'] = $bahanBaku[3];
+			$data['PANJANG_BAHAN_BAKU'] = $bahanBaku[4];
+
+			$data['ID_BAPOB'] = $this->input->post('noBapob');
+			$data['TGL_PROSES_MESIN'] = $this->input->post('tanggalProses');
+			$data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
+			$data['MACAM'] = $this->input->post('macam');
+			$data['tahun'] = $tahun;
+			$data['seri'] = $seri;
+			$data['panjangWastePerekatan'] = $this->input->post('jumlahWastePerekatan');
+			$data['panjangWastePita'] = $this->input->post('jumlahWastePita');
+			$data['panjangWasteBelah'] = $this->input->post('jumlahWasteBelah');
+			$data['konversi_roll'] = $this->input->post('konversiRoll');
+			$data['bahan_konversi'] = $this->input->post('bahanKonversi');
+			$x = str_replace(",", ".", $this->input->post('percentWasteBelah'));
+			$percentWasteBelahKonversi = str_replace("%", "", $x);
+			$data['percent_belah_konversi'] = $percentWasteBelahKonversi;
+
+			$jumlahPesanan = $this->input->post('jumlahPesanan');
+			$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
+			$wasteDalamPersen = $wasteProses/100;
+
+			// $panjangBahan = $jumlahPesanan + ($jumlahPesanan * $wasteDalamPersen);
+			// $panjangBahan = round($panjangBahan, 0);
+			// $data['JUMLAH_WASTE_PROSES'] = $this->input->post('wasteProses');
+			$data['PANJANG_BAHAN'] = $this->input->post('panjangBahan');;
+			$data['JML_PESANAN_KONVERSI'] = $this->input->post('jumlahPesananKonversi');;
+			$_SESSION['data_header']=$data;
+
+			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
+
+		$x = str_replace("/", "-", $this->input->post('noKK'));
+		$fileLocation = '//192.168.17.102/Data KK/'.$x.'.pdf';
+
+		if (file_exists($fileLocation)) {
+		    $data['NO_KK'] = null;
+		    $_SESSION['data_header']=$data;
+		    $this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
+			redirect("ppc/createHeaderKK");
+		} else {
+
+		    $data['NO_KK'] = $this->input->post('noKK');
+			$_SESSION['data_header']=$data;
+			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
+			redirect("ppc/addProsesEmboss");
+		}
 		
-		$x = $this->input->post('chooseBahan');
-		$bahanBaku = explode("@", $x);
-
-		if($bahanBaku[4] === ""){
-			$bahanBaku[4] = 0; 
-		}
-		if($bahanBaku[3] === ""){
-			$bahanBaku[3] = 0;
-		}
-		if($bahanBaku[2] === ""){
-			$bahanBaku[2] = 0;
-		}
-		$tahun = $this->input->post('tahun');
-		$seri = $this->input->post('seri');
-
-		$data['NAMA_BAHAN_BAKU'] = $bahanBaku[1];
-		$data['KODE_BAHAN'] = $bahanBaku[0];
-		$data['LEBAR_BAHAN_BAKU'] = $bahanBaku[2];
-		$data['GSM_BAHAN_BAKU'] = $bahanBaku[3];
-		$data['PANJANG_BAHAN_BAKU'] = $bahanBaku[4];
-
-		$data['NO_KK'] = $this->input->post('noKK');
-		$data['ID_BAPOB'] = $this->input->post('noBapob');
-		$data['TGL_PROSES_MESIN'] = $this->input->post('tanggalProses');
-		$data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
-		$data['MACAM'] = $this->input->post('macam');
-		$data['tahun'] = $tahun;
-		$data['seri'] = $seri;
-		$data['panjangWastePerekatan'] = $this->input->post('jumlahWastePerekatan');
-		$data['panjangWastePita'] = $this->input->post('jumlahWastePita');
-		$data['panjangWasteBelah'] = $this->input->post('jumlahWasteBelah');
-		$data['konversi_roll'] = $this->input->post('konversiRoll');
-		$data['bahan_konversi'] = $this->input->post('bahanKonversi');
-
-		$jumlahPesanan = $this->input->post('jumlahPesanan');
-		$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
-		$wasteDalamPersen = $wasteProses/100;
-
-		$panjangBahan = $jumlahPesanan + ($jumlahPesanan * $wasteDalamPersen);
-		$panjangBahan = round($panjangBahan, 0);
-		$data['JUMLAH_WASTE_PROSES'] = $this->input->post('wasteProses');
-		$data['PANJANG_BAHAN'] = $panjangBahan;
-
-		$_SESSION['data_header']=$data;
-
-		$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
 		
-		redirect("ppc/addProsesEmboss");
 
 		// echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/createHeaderKK'>";	
 	}
@@ -299,7 +316,7 @@ class Ppc extends Controller {
 			}else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
+					alert("Mohon isi Data Kartu Kerja");
 				</script>
 				<?php
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/createHeaderKK'>";
@@ -365,7 +382,7 @@ class Ppc extends Controller {
 			}else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
+					alert("Mohon Isi Proses Emboss Dahulu");
 				</script>
 				<?php
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesEmboss'>";
@@ -447,7 +464,7 @@ class Ppc extends Controller {
 			}else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
+					alert("Mohon Isi Proses Demet");
 				</script>
 				<?php
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesDemet'>";
@@ -528,10 +545,10 @@ class Ppc extends Controller {
 			}else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
+					alert("Mohon Isi Proses Rewind");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesDemet'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesRewind'>";
 			}
 		}else{
 			?>
@@ -611,10 +628,10 @@ class Ppc extends Controller {
 			}else{
 				?>
 				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
+					alert("Mohon Isi Proses Sensi");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesBelah'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesSensi'>";
 			}
 		}else{
 			?>
@@ -628,6 +645,7 @@ class Ppc extends Controller {
 
 	}
 
+
 	function saveBelahOnSession(){
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
@@ -638,50 +656,64 @@ class Ppc extends Controller {
 		$data['STEL_BAHAN'] = $this->input->post('stelBahan');
 		$data['LAMA_PROSES'] = $this->input->post('lamaProses');
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
-		$data['WASTE_PROSES'] = $_SESSION['data_bapob']->WASTE_BELAH;
+		$x = str_replace(",", ".", $this->input->post('wasteProses'));
+		$percentWasteBelah= str_replace("%", "", $x);
+		$data['WASTE_PROSES'] = floatval($percentWasteBelah);
 		$data['HASIL'] = $this->input->post('hasil');
 		$_SESSION['proses_belah']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		$this->saveAllData();
+		redirect("ppc/preview");
 
 	}
 
-	function saveAllData(){
-
+	function preview(){
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
 		$time = time();
 		$data = array();
 		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
 		if($session!=""){
-			$sessionSensi=isset($_SESSION['proses_sensi']);
-			if($sessionSensi!="") {
-				$belah = isset($_SESSION['proses_belah']);
-				if($belah!= ""){
-					$data["belah"] = $_SESSION['proses_belah'];
-				}else{
-					$data["belah"] = "";
-				}
+				
 				$pecah=explode("|",$session);
 				$data["nim"]=$pecah[0];
 				$data["nama"]=$pecah[1];
 				$data["status"]=$pecah[2];
+				$data["bapob"] = $_SESSION['data_bapob'];
 				$data["header"] = $_SESSION['data_header'];
 				$data["sensi"] = $_SESSION['proses_sensi'];
-				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Belah');
-				$data["mesin"] = $dataMesin[0];
-				$idBapob = $data["bapob"]->ID_BAPOB;
-				$idMesin = $data["mesin"]->ID_MESIN;
-				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
-				$data["prosesOnBapob"] = $prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["emboss"] = $_SESSION['proses_emboss'];
+				$data["demet"] = $_SESSION['proses_demet'];
+				$data["rewind"] = $_SESSION['proses_rewind'];
+				$data["sensi"] = $_SESSION['proses_sensi'];
+				$data["belah"] = $_SESSION['proses_belah'];
+
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
-
 					$this->load->view('ppc/v_header',$data);
 					$this->load->view('ppc/v_side_menu',$data);
-					$this->load->view('ppc/v_add_proses_belah',$data);
+					$this->load->view('ppc/v_preview_kk',$data);
 					$this->load->view('ppc/v_footer',$data);
+				
+				}else{
+					?>
+					<script type="text/javascript" language="javascript">
+						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+					</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+		}
+
+	}
+
+	function saveAllData(){
 
 					$header = $_SESSION['data_header'];
 					$emboss = $_SESSION['proses_emboss'];
@@ -692,7 +724,7 @@ class Ppc extends Controller {
 					$bapob = $_SESSION['data_bapob'];
 
 					$emboss["STEL_SILINDER"] = 'test update';
-					$emboss["PANJANG_BAHAN"] = $header["PANJANG_BAHAN"];
+					$emboss["PANJANG_BAHAN"] = $header["bahan_konversi"];
 					$emboss["ID_BAPOB"] = $bapob->ID_BAPOB;
 
 					if($this->Master_proses_model->saveData($emboss)){
@@ -722,33 +754,6 @@ class Ppc extends Controller {
 							}
 						}
 					}
-					
-				}
-				else{
-					?>
-					<script type="text/javascript" language="javascript">
-						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
-					</script>
-					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
-				}
-			}else{
-				?>
-				<script type="text/javascript" language="javascript">
-					alert("Please Fill Data KK First");
-				</script>
-				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/addProsesBelah'>";
-			}
-		}else{
-			?>
-			<script type="text/javascript" language="javascript">
-				alert("Login dulu donk...!!!");
-			</script>
-			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
-		}
-
 
 	}
 
@@ -858,10 +863,10 @@ class Ppc extends Controller {
 				$objSheet->getCell('A5')->setValue('No. KK');
 				$objSheet->getCell('A6')->setValue('No. BAPOB');
 				$objSheet->getCell('A7')->setValue('Macam');
-				$objSheet->getCell('A8')->setValue('Jml Pesanan');
-				$objSheet->getCell('A9')->setValue('Hasil Belah');
+				$objSheet->getCell('A8')->setValue('Jml Pesanan (Konversi)');
+				$objSheet->getCell('A11')->setValue('Hasil Belah (Konversi)');
 
-				for($i=5; $i<10; $i++){
+				for($i=5; $i<12; $i++){
 					$objSheet->getCell('B'.$i)->setValue(':');
 				}
 
@@ -875,12 +880,16 @@ class Ppc extends Controller {
 				$objSheet->getStyle('C7')->getFont()->setBold(true)->setSize(11);
 				$objSheet->getCell('C7')->setValue($header["MACAM"]." Tahun ".$header["tahun"]." ".$header["seri"]);
 				$objSheet->getStyle('C8')->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('C8')->setValue($header["JML_PESANAN"]);
-				$objSheet->getStyle('C9')->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('C9')->setValue($header["panjangWastePita"]);
+				$objSheet->getCell('C8')->setValue($header["JML_PESANAN_KONVERSI"]);
+				$objSheet->getCell('A9')->setValue("Waste Pita ");
+				$objSheet->getCell('A10')->setValue("Waste Belah ");
+				$objSheet->getCell('C9')->setValue($bapob->WASTE_PITA."%");
+				$objSheet->getCell('C10')->setValue($header["percent_belah_konversi"]."%");
+				$objSheet->getStyle('C11')->getNumberFormat()->setFormatCode('#,##0.00');
+				$objSheet->getCell('C11')->setValue($header["panjangWasteBelah"]);
 				$objSheet->getCell('D8')->setValue("meter");
-				$objSheet->getCell('D9')->setValue("meter");
-				$objSheet->getCell('E8')->setValue("Uk. 66 Cm");
+				$objSheet->getCell('D11')->setValue("meter");
+				$objSheet->getCell('E11')->setValue("Uk. 66 Cm");
 
 				$objSheet->mergeCells('H5:I5');
 				$objSheet->getCell('H5')->setValue("Tgl Pros Msn ");
@@ -890,12 +899,21 @@ class Ppc extends Controller {
 
 				$objSheet->mergeCells('H8:I8');
 				$objSheet->getCell('H8')->setValue("Panjang Bhn");
-
 				$objSheet->mergeCells('H9:I9');
-				$objSheet->getCell('H9')->setValue("Waste Pita ");
-				$objSheet->getCell('H10')->setValue("Waste Belah ");
+				$objSheet->getCell('H9')->setValue("Konversi Roll");
+				$objSheet->getCell('K9')->setValue($header["konversi_roll"]);
+				$objSheet->getCell('L9')->setValue("Roll");
+				$objSheet->mergeCells('H10:I10');
+				$objSheet->getCell('H10')->setValue("Bahan (konversi)");
+				$objSheet->getCell('L10')->setValue("Meter");
+				$objSheet->getCell('K10')->setValue(number_format($header["bahan_konversi"]));
+				$objSheet->mergeCells('H11:I11');
+				$objSheet->getCell('H11')->setValue("Waste Belah");
+				$objSheet->mergeCells('H11:I11');
+				$objSheet->getCell('L11')->setValue($header["percent_belah_konversi"]."%");
+							
 
-				for($i=5; $i<11; $i++){
+				for($i=5; $i<12; $i++){
 					if($i!=6){
 						$objSheet->getCell('J'.$i)->setValue(':');
 					}
@@ -925,18 +943,16 @@ class Ppc extends Controller {
 				$objSheet->mergeCells('K7:N7');
 				$objSheet->getCell('K7')->setValue($header["NAMA_BAHAN_BAKU"]);
 				$objSheet->getStyle('K8')->getNumberFormat()->setFormatCode('#,##0.00');
-				$objSheet->getCell('K8')->setValue($header["panjangWasteBelah"]);
+				$objSheet->getCell('K8')->setValue($header["PANJANG_BAHAN"]);
 				$objSheet->getCell('L8')->setValue("meter");
 				$objSheet->getCell('M8')->setValue("UK");
-				$objSheet->getCell('M8')->setValue("66 Cm");
-				$objSheet->getCell('K9')->setValue($bapob->WASTE_PITA."%");
-				$objSheet->getCell('K10')->setValue($bapob->WASTE_BELAH."%");
+				$objSheet->getCell('N8')->setValue("66 Cm");
 
 				for($i = 0; $i<17; $i++){
-					$objSheet->getStyle(''.$kolom[$i].'10')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
+					$objSheet->getStyle(''.$kolom[$i].'11')->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THICK);
 				}
 
-				$row = 11;
+				$row = 12;
 				$endLineOfSensi = 0;
 
 				//Mulai proses pertama
@@ -968,7 +984,7 @@ class Ppc extends Controller {
 				$objSheet->getCell('C'.($row))->setValue('Penyimpanan dan pengambilan harus sesuai dengan ketentuan yang berlaku');
 
 				// autosize the columns
-				$objSheet->getColumnDimension('A')->setAutoSize(true);
+				$objSheet->getColumnDimension('A')->setWidth(25);
 				$objSheet->getColumnDimension('B')->setWidth(2);
 				$objSheet->getColumnDimension('C')->setWidth(15);
 				$objSheet->getColumnDimension('D')->setAutoSize(true);
@@ -996,43 +1012,6 @@ class Ppc extends Controller {
 
 	            $filename = str_replace("/","-",$header["NO_KK"]);
 	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
-	            //sesuaikan headernya 
-	            // GENERATE EXCEL
-	            $objPHPexcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".xlsx");
-
-	            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.xlsx"');
-				header('Cache-Control: max-age=0');
-				
-
-	            // unduh file
-	   //          $objPHPExcel->getActiveSheet()->getSheetView()->setZoomScale(90);
-	   //          $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
-	   //          $objWorksheet = $objPHPexcel->setActiveSheetIndex(0)->setShowGridlines(false);
-
-
-	            //GENERATE PDF
-	   //          header('Content-Type: application/pdf');
-				// header('Content-Disposition: attachment;filename="'.$header["NO_KK"].'.pdf"');
-				// header('Cache-Control: max-age=0');
-	   //          $objPHPExcel = PHPExcel_IOFactory::load("//192.168.17.102/Data KK/".$filename.".HTML");
-	   //          $objSheet = $objPHPExcel->getActiveSheet()->setShowGridlines(false);
-	   //          $objPHPExcel->getActiveSheet()->getSheetView()->setZoomScale(90);
-	   //          $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
-				// $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
-
-	   //          $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'PDF');
-
-				$objWriter->save('php://output');
-
-				
 
             }//end if - else
  
@@ -1041,7 +1020,7 @@ class Ppc extends Controller {
         function cetakEmboss($objSheet, $emboss, $header, &$row, $kolom){
 
         	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-        	$objSheet->getCell('A'.$row)->setValue('Proces (I)');
+        	$objSheet->getCell('A'.$row)->setValue('Proses (I)');
         	$objSheet->getCell('B'.$row)->setValue(':');
         	$objSheet->getCell('C'.$row)->setValue('EMBOSS');
 
@@ -1115,7 +1094,7 @@ class Ppc extends Controller {
 
         		$row++;
 				$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-				$objSheet->getCell('A'.$row)->setValue('Proces (II)');
+				$objSheet->getCell('A'.$row)->setValue('Proses (II)');
 				$objSheet->getCell('B'.$row)->setValue(':');
 				$objSheet->getCell('C'.$row)->setValue('DEMET');
 
@@ -1223,7 +1202,7 @@ class Ppc extends Controller {
 
         	$row++;
         	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-        	$objSheet->getCell('A'.$row)->setValue('Proces (III)');
+        	$objSheet->getCell('A'.$row)->setValue('Proses (III)');
         	$objSheet->getCell('B'.$row)->setValue(':');
         	$objSheet->getCell('C'.$row)->setValue('Rewind');
 
@@ -1274,7 +1253,7 @@ class Ppc extends Controller {
         function cetakSensi($objSheet, $sensi, $header, &$row, $kolom, &$endLineOfSensi){
         	$row++;
         	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-        	$objSheet->getCell('A'.$row)->setValue('Proces (IV)');
+        	$objSheet->getCell('A'.$row)->setValue('Proses (IV)');
         	$objSheet->getCell('B'.$row)->setValue(':');
         	$objSheet->getCell('C'.$row)->setValue('Sensitizing');
 
@@ -1483,7 +1462,7 @@ class Ppc extends Controller {
         	$endLineOfSensi++;
         	$row = $endLineOfSensi;
         	$objSheet->getStyle('A'.$row)->getFont()->setBold(true)->setSize(11);
-        	$objSheet->getCell('A'.$row)->setValue('Proces (V)');
+        	$objSheet->getCell('A'.$row)->setValue('Proses (V)');
         	$objSheet->getCell('B'.$row)->setValue(':');
         	$objSheet->getCell('C'.$row)->setValue('Belah + Sortir');
 

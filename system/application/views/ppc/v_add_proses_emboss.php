@@ -13,87 +13,6 @@
    <!-- /.col-lg-12 -->
  </div>
  <!-- /.row -->
- <form class="form-horizontal" role="form" action="<?php echo base_url()?>index.php/ppc/saveEmbossOnSession" method="post">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="panel panel-success">
-       <div class="panel-heading">
-         Header
-       </div>
-
-       <div class="panel-body">
-
-        <div class = "row">
-          <div class="col-lg-6">
-            <div class="form-group">
-              <label class="control-label col-sm-4">No. KK:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo $header['NO_KK']; ?></p>
-                <!-- <input type="text" class="form-control" id="noKK" value="<?php echo $header['NO_KK']; ?>" disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">No. BAPOB:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo $bapob->NOMOR_BAPOB; ?></p>
-                <!-- <input type="text" class="form-control" id="noBapob" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Tanggal Proses:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo $header['TGL_PROSES_MESIN']; ?></p>
-                <!-- <input type="text" class="form-control" id="tanggalProses" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Macam:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['MACAM']; ?></p>
-                <!-- <input type="text" class="form-control" id="macam" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled> -->
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="col-lg-6">
-          <form class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label col-sm-4">Jumlah Pesanan</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['JML_PESANAN']); ?> Meter</p>
-
-               <!--  <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Waste Belah</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%</p>
-                <!-- <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Panjang Bahan:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['panjangWasteBelah']); ?> Meter</p>
-               <!--  <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled> -->
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Nama Bahan:</label>
-              <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?></p>
-                <!-- <input type="text" class="form-control" id="bahan" value="<?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled> -->
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-    </div><!--end of Panel Body-->
-  </div><!-- end of panel-->
-</div>
-</div>
 <form class="form" role="form" action="<?php echo base_url()?>index.php/ppc/saveEmbossOnSession" method="post">
 <div class="row">
   <div class="col-lg-12">
@@ -114,7 +33,7 @@
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
-            <input class="form-control" name="urutanProduksi" value="<?php if($emboss!="") echo $emboss['URUTAN_PRODUKSI']; ?>" placeholder="Urutan Produksi">
+            <input class="form-control" name="urutanProduksi" value="<?php if($emboss!="") echo $emboss['URUTAN_PRODUKSI']; ?>" placeholder="Urutan Produksi" required>
           </div>
           <div class="form-group">
             <label>Waste</label>
@@ -144,7 +63,7 @@
           </div>
           <div class="form-group">
             <label>Formula</label>
-            <input class="form-control" name="formula" value="<?php if($emboss!="") echo $emboss['FORMULA']; ?>" id="formula">
+            <input class="form-control" name="formula" value="<?php if($emboss!="") echo $emboss['FORMULA']; ?>" id="formula" required>
           </div>
 
         </div>
@@ -214,22 +133,22 @@
 
     wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
     panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
-    panjangBahanBelah = "<?php echo $header['panjangWasteBelah']; ?>";
+    panjangBahanKonversi= "<?php echo $header['bahan_konversi']; ?>";
 
     if(wasteProses != "" || wasteProses >0){
-      hasil = panjangBahanBelah-((wasteProses/100)*panjangBahan);
+      hasil = panjangBahanKonversi-((wasteProses/100)*panjangBahan);
     }else{
-      hasil = panjangBahanBelah;
+      hasil = panjangBahanKonversi;
     }
     hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
 
-    stelPCH = panjangBahanBelah/6000/24;
+    stelPCH = panjangBahanKonversi/6000/24;
 
     var zzz = waktuNaik.replace(",", ".");
     var waktuNaik = parseFloat(zzz);
-    stelBahan = panjangBahanBelah/6000/24*waktuNaik;
-    lamaProses = panjangBahanBelah/targetProduksi/24;
+    stelBahan = panjangBahanKonversi/6000/24*waktuNaik;
+    lamaProses = panjangBahanKonversi/targetProduksi/24;
 
     // stelPCH = Math.ceil(stelPCH * 100)/100;
     // stelBahan = Math.ceil(stelBahan * 100)/100;
@@ -293,7 +212,6 @@
     var month = monthNames[date.getMonth()];
     var year = date.getFullYear();
     var deliv = days+" "+month+" "+year
-    // dat = dat.format("dd mmm yyyy")
 
     result[0] = h+":";
     result[1] = m+":";

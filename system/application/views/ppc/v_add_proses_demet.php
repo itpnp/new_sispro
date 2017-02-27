@@ -13,78 +13,7 @@
    <!-- /.col-lg-12 -->
  </div>
  <!-- /.row -->
- <form class="form-horizontal" role="form" action="<?php echo base_url()?>index.php/ppc/saveEmbossOnSession" method="post">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="panel panel-success">
-       <div class="panel-heading">
-         Header
-       </div>
 
-       <div class="panel-body">
-
-        <div class = "row">
-          <div class="col-lg-6">
-            <div class="form-group">
-              <label class="control-label col-sm-4">No. KK:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['NO_KK']; ?>" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">No. BAPOB:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $bapob->NOMOR_BAPOB; ?>" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Tanggal Proses:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php echo $header['TGL_PROSES_MESIN']; ?>"  disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Macam:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" value="<?php if($header!="") echo $header['MACAM']; ?>" disabled>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="col-lg-6">
-          <form class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label col-sm-4">Jumlah Pesanan</label>
-              <div class="col-sm-8">
-                <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Waste Belah</label>
-              <div class="col-sm-8">
-                <input class="form-control" name="wasteProses"  value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Panjang Bahan:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Nama Bahan:</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="bahan" value="<?php echo $header['NAMA_BAHAN_BAKU']; ?>"  disabled>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-    </div><!--end of Panel Body-->
-  </div><!-- end of panel-->
-</div>
-</div>
 <form class="form" role="form" action="<?php echo base_url()?>index.php/ppc/saveDemetOnSession" method="post">
 <div class="row">
   <div class="col-lg-12">
