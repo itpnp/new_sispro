@@ -19,9 +19,7 @@
        <div class="panel-heading">
          Header
        </div>
-
        <div class="panel-body">
-
         <div class = "row">
           <div class="col-lg-6">
             <div class="form-group">
@@ -100,7 +98,7 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($emboss!="") echo $emboss['delivery_time_ind']; ?></p>
         </div>
      </div>
       <div class = "row">
@@ -165,7 +163,7 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($demet!="") echo $demet['delivery_time_ind']; ?></p>
         </div>
      </div>
       <div class = "row">
@@ -221,6 +219,12 @@
      </div>
      <div class="panel-body">
       <div class = "row">
+      <div class = "row">
+        <div class="col-lg-6 form-group">
+          <label class="control-label col-sm-4">Delivery Time :</label>
+          <p id="deliveryTime" name="deliveryTime"><?php if($rewind!="") echo $rewind['delivery_time_ind']; ?></p>
+        </div>
+     </div>
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -273,7 +277,12 @@
 
      <div class="panel-body">
       <div class = "row">
-
+        <div class = "row">
+        <div class="col-lg-6 form-group">
+          <label class="control-label col-sm-4">Delivery Time :</label>
+          <p id="deliveryTime" name="deliveryTime"><?php if($sensi!="") echo $sensi['delivery_time_ind']; ?></p>
+        </div>
+     </div>
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -320,7 +329,8 @@
   </div><!-- end of panel Sensi-->
 </div>
 </div>
-<div class="row">
+ <form class="form" role="form" action="<?php echo base_url()?>index.php/ppc/saveAllData" method="post">
+ <div class="row">
   <div class="col-lg-12">
     <div class="panel panel-success">
      <div class="panel-heading">
@@ -329,7 +339,12 @@
 
      <div class="panel-body">
       <div class = "row">
-
+        <div class = "row">
+        <div class="col-lg-6 form-group">
+          <label class="control-label col-sm-4">Delivery Time :</label>
+          <p id="deliveryTime" name="deliveryTime"><?php if($belah!="") echo $belah['delivery_time_ind']; ?></p>
+        </div>
+     </div>
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -368,20 +383,11 @@
             <label>Total Waktu</label>
             <p class="form-control" id="noKK" name="noKK"><?php if($belah!="") echo $belah['TOTAL_WAKTU']; ?></p>
           </div>
-          <button type="submit" class="btn btn-success" onclick="cetak()">Cetak KK</button>
+          <button type="submit" class="btn btn-success">Cetak KK</button>
         </div>
       </div>
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
 </div>
-<script type="text/javascript">
-  function cetak(){
-    var fileName = document.getElementById("fileName").value;
-    console.log(fileName);
-    fileName = fileName.replace(/\//g,"-");
-    
-    window.location.href = "http://192.168.17.102:8083/barcode.webservice/convert/"+fileName;
-  }
-
-</script>
+</form>

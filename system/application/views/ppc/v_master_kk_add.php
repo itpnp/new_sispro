@@ -33,12 +33,13 @@
                         <?php endif; ?>
                       <div class="form-group">
                         <label>No. KK</label>
-                        <input class="form-control" name="noKK" id="noKK" value="<?php if($header!="") echo $header['NO_KK']; ?>" onBlur="UrlExists()" placeholder="No KK" required>
+                        <!-- <input class="form-control" name="noKK" id="noKK" value="<?php if($header!="") echo $header['NO_KK']; ?>" onBlur="UrlExists()" placeholder="No KK" required> -->
+                        <input class="form-control" name="noKK" id="noKK" value="<?php if($nomorKkBaru!="") echo $nomorKkBaru; ?>" onBlur="UrlExists()" placeholder="No KK" readonly>
 
                       </div>
                       <div class="form-group">
                        <label>No. BAPOB</label>
-                       <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NOMOR_BAPOB; ?>" placeholder="No. BAPOB" disabled>
+                       <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NOMOR_BAPOB; ?>" placeholder="No. BAPOB" readonly>
                      </div>
                      <div class="form-group">
                        <label>Tanggal Proses Mesin</label>
@@ -211,7 +212,8 @@
   $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah).val();
   $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan).val();
   $('input[name="jumlahWastePita"]').val(panjangWastePita).val();
-  $('input[name="panjangBahan"]').val(panjangWasteBelah).val();
+
+  $('input[name="panjangBahan"]').val(panjangWasteBelah.toFixed(3)).val();
 
   jmlRoll = Math.round(panjangWasteBelah/6000);
   $('input[name="konversiRoll"]').val(jmlRoll).val();
@@ -230,16 +232,17 @@
 
   }else if(percentBahanKonversi>(percentWasteBelah/100) ){
 
-    panjangWasteBelah = bahanKonversi/(1+(parseFloat(percentWasteBelah)/100));
+    panjangWasteBelah = bahanKonversi;
     $('input[name="jumlahWasteBelah"]').val(panjangWasteBelah.toFixed(3)).val();
 
-    panjangWastePita = panjangWasteBelah/(1+(parseFloat(percentWastePita)/100));
+    panjangWastePita = panjangWasteBelah/(1+(parseFloat(percentWasteBelah)/100));
+
     $('input[name="jumlahWastePita"]').val(panjangWastePita.toFixed(3)).val();
 
-    panjangWastePerekatan = panjangWastePita/(1+(parseFloat(percentWastePerekatan)/100));
+    panjangWastePerekatan = panjangWastePita/(1+(parseFloat(percentWastePita)/100));
+    jmlPesananKonversi = panjangWastePerekatan/(1+(parseFloat(percentWastePerekatan)/100));
     $('input[name="jumlahWastePerekatan"]').val(panjangWastePerekatan.toFixed(3)).val();
-
-    $('input[name="jumlahPesananKonversi"]').val(panjangWastePerekatan.toFixed(3)).val();
+    $('input[name="jumlahPesananKonversi"]').val((jmlPesananKonversi).toFixed(3)).val();
     $('input[name="panjangBahan"]').val(panjangWasteBelahLama).val();
     $('input[name="percentWasteBelah"]').val(percentWasteBelah+"%").val();
   }

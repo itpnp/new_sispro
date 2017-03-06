@@ -24,7 +24,14 @@
 
      <div class="panel-body">
       <div class = "row">
-
+         <div class = "row">
+        <div class="col-lg-6 form-group">
+          <label class="control-label col-sm-4">Delivery Time :</label>
+          <p id="deliveryTime" name="deliveryTime"></p>
+          <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
+          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value="">
+        </div>
+     </div>
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -128,7 +135,7 @@
     }
     $('input[name="wasteProses"]').val(wasteProses+"%").val();
     if(wasteProses != "" || wasteProses >0){
-      hasil = hasilProsesSensi-((wasteProses/100)*panjangBahan);
+      hasil = hasilProsesSensi/(1+(wasteProses/100));
     }else{
       hasil = hasilProsesSensi;
     }
@@ -164,20 +171,23 @@
 
     $('input[name="totalTime"]').val(times[0]+""+times[1]+""+times[2]).val();
 
+    var cb = document.getElementById('deliveryTime');
+    cb.innerHTML = times[3];
+    $('input[name="delTimeInd"]').val(times[3]).val();
   }
 
   function convertToHour(time){
+    var d;
     var h;
     var m;
     var s;
     var totalTime= Number(time);
-
+    
+    d = Math.floor(totalTime / (3600*24));
     h = Math.floor(totalTime / 3600);
     m= Math.floor(totalTime % 3600 / 60);
     s = Math.floor(totalTime% 3600 % 60);
 
-    var result = new Array();
-    
     if(h<10){
       h = "0"+h;
     }
@@ -187,10 +197,30 @@
     if(m<10){
       m = "0"+m;
     }
+
+    var date = new Date(<?php echo strtotime($sensi['delivery_time'])*1000;?>);
+    var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    var monthEngNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "Nopember", "December"
+    ];
+
+    date.setDate(date.getDate() + d);
+    var days = date.getDate();
+    var month = monthNames[date.getMonth()];
+    var monthEng = monthEngNames[date.getMonth()];
+    var year = date.getFullYear();
+    var deliv = days+" "+month+" "+year;
+    var delivEng = days+" "+monthEng+" "+year;
+
+    var result = new Array();
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
-
+    result[3] = deliv;
+    $('input[name="delTimeEng"]').val(delivEng).val();
     return result;
 
   }

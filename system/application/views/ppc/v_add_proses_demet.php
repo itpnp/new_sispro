@@ -27,6 +27,8 @@
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
           <p id="deliveryTime" name="deliveryTime"></p>
+          <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
+          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value="">
         </div>
      </div>
       <div class = "row">
@@ -169,7 +171,7 @@
 
     var cb = document.getElementById('deliveryTime');
     cb.innerHTML = times[3];
-
+    $('input[name="delTimeInd"]').val(times[3]).val();
   }
 
   function convertToHour(time){
@@ -196,23 +198,28 @@
     }
     
     // Apply each element to the Date function
-    var date = new Date(<?php echo strtotime($header['TGL_PROSES_MESIN'])*1000;?>);
+    var date = new Date(<?php echo strtotime($emboss['delivery_time'])*1000;?>);
     var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
       "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
-    date.setDate(date.getDate() + d);
 
+    var monthEngNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "Nopember", "December"
+    ];
+    date.setDate(date.getDate() + d);
     var days = date.getDate();
     var month = monthNames[date.getMonth()];
+    var monthEng = monthEngNames[date.getMonth()];
     var year = date.getFullYear();
-    var deliv = days+" "+month+" "+year
+    var deliv = days+" "+month+" "+year;
+    var delivEng = days+" "+monthEng+" "+year;
     // dat = dat.format("dd mmm yyyy")
 
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
     result[3] = deliv;
-
+    $('input[name="delTimeEng"]').val(delivEng).val();
     return result;
 
   }
