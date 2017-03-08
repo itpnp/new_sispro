@@ -235,17 +235,25 @@ class Ppc extends Controller {
 			$_SESSION['data_header']=$data;
 			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
 			$x = str_replace("/", "-", $this->input->post('noKK'));
-			$fileLocation = '//192.168.17.102/Data KK/'.$x.'.pdf';
+			$fileLocation = '//192.168.17.102/Data KK/'.$x.'.xlsx';
 		if (file_exists($fileLocation)) {
 		    $data['NO_KK'] = null;
 		    $_SESSION['data_header']=$data;
 		    $this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
 			redirect("ppc/createHeaderKK");
 		} else {
-		    $data['NO_KK'] = $this->input->post('noKK');
-			$_SESSION['data_header']=$data;
-			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
-			redirect("ppc/addProsesEmboss");
+			if($this->Master_kk_model->checkNumber($data['NO_KK'] )){
+				$data['NO_KK'] = null;
+			    $_SESSION['data_header']=$data;
+			    $this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
+				redirect("ppc/createHeaderKK");
+			}else{
+				$data['NO_KK'] = $this->input->post('noKK');
+				$_SESSION['data_header']=$data;
+				$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
+				redirect("ppc/addProsesEmboss");
+			}
+		    
 		}
 		// echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/createHeaderKK'>";	
 	}
@@ -780,7 +788,6 @@ class Ppc extends Controller {
 				$_SESSION['proses_demet'] = null;
 				$_SESSION['proses_rewind'] = null;
 				$_SESSION['proses_belah'] = null;
-
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -1062,15 +1069,13 @@ class Ppc extends Controller {
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(1);
-	            
 	            ob_end_clean();
-
 	            $filename = str_replace("/","-",$header["NO_KK"]);
 	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
-
-
+	            // $objWriter->save("E://Data KK/".$filename.".xlsx");
+	            // $objWriter->save("V://Kartu Kerja Mesin/".$filename.".xlsx");
+	            // $objWriter->save("../../../../sisipro2/spool/Kartu Kerja Mesin/".$filename.".xlsx");
             }//end if - else
- 
         }
 
         function cetakEmboss($objSheet, $emboss, $header, &$row, $kolom){
@@ -1620,4 +1625,57 @@ class Ppc extends Controller {
         		return "XII";
         	}
         }
+
+        function viewListKK(){
+		
+		$this->load->helper('directory');
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$map = directory_map('//192.168.17.102/Data KK/');
+			$max = sizeof($map);
+			$listFiles = array();
+			$index = 0;
+			for($i=0; $i<$max;$i++){
+				if(stristr($map[$i], '.pdf') !== FALSE ){
+					// $x = str_replace("-", " ",$map[$i]);
+					$listFiles[$index] = $map[$i];
+					$index++;
+				}
+			}
+			$jumlahFile = sizeof($listFiles);
+			$data["listFile"] = $listFiles;
+			$data["jumlah"] = $jumlahFile;
+
+			if($data["status"]=="PPC"){
+				$this->load->view('ppc/v_header',$data);
+				$this->load->view('ppc/v_side_menu',$data);
+				$this->load->view('ppc/v_list_file', $data);
+				$this->load->view('ppc/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+
+
+	}
+
 }

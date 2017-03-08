@@ -17,7 +17,7 @@
                 </li>
                 <li>
                     <a href="#">
-                        <i class="fa fa-bar-chart-o fa-fw"></i> Master <span class="fa arrow"></span></a>
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Master BAPOB <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
                                 <a href="morris.html">Default BAPOB</a>
@@ -58,42 +58,7 @@
                                     </ul>
                             </li>
                             <li>
-                                <a href="morris.html">Kartu Kerja Mesin</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-
-                    <li>
-                        <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
-                    </li>
-
-                    <li>
-                        <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="#">Second Level Item</a>
-                            </li>
-                            <li>
-                                <a href="#">Second Level Item</a>
-                            </li>
-                            <li>
-                                <a href="#">Third Level <span class="fa arrow"></span></a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="#">Third Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level Item</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-third-level -->
+                                <a href="<?php echo base_url()?>index.php/ppc/viewListKK">Kartu Kerja Mesin</a>
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->

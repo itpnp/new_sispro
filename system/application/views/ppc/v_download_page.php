@@ -40,11 +40,9 @@
 
 <script type="text/javascript">
   function cetak(){
-
     var fileName = "<?php echo $header;?>";
-    console.log(fileName);
-    fileName = fileName.replace(/\//g,"-");
-    window.location.href = "http://192.168.17.102:8083/barcode.webservice/convert/"+fileName;
+      fileName = fileName.replace(/\//g,"-");
+      window.location.href = "http://192.168.17.102:8083/barcode.webservice/convert/"+fileName;
   }
 
   window.onload = function() {

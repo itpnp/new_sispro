@@ -30,10 +30,20 @@ class Master_kk_model extends Model
 				array_push($errors, array($errNo, $errMess));
 			}
 			return $success;
-
 		}catch(Exception $e){
 			var_dump($e);
 		}
 
+	}
+
+	function checkNumber($number){
+		$this->oracle_db=$this->load->database('oracle',true);
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_KK where NOMOR_KK = '$number'");
+		$count  = $t->num_rows();
+
+		if($count === 0){
+			return false;
+		}
+			return true;		
 	}
 }
