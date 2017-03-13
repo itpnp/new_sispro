@@ -235,7 +235,7 @@ class Ppc extends Controller {
 			$_SESSION['data_header']=$data;
 			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
 			$x = str_replace("/", "-", $this->input->post('noKK'));
-			$fileLocation = '//192.168.17.102/Data KK/'.$x.'.xlsx';
+			$fileLocation = '//192.168.17.102/Test/'.$x.'.xlsx';
 		if (file_exists($fileLocation)) {
 		    $data['NO_KK'] = null;
 		    $_SESSION['data_header']=$data;
@@ -1071,10 +1071,11 @@ class Ppc extends Controller {
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(1);
 	            ob_end_clean();
 	            $filename = str_replace("/","-",$header["NO_KK"]);
-	            $objWriter->save("//192.168.17.102/Data KK/".$filename.".xlsx");
-	            // $objWriter->save("E://Data KK/".$filename.".xlsx");
+	            // $objWriter->save("//192.168.17.102/Test/".$filename.".xlsx");
+	            // / $objWriter->save("..E://Test/".$filename.".xlsx");
+	            $objWriter->save("E://Test/".$filename.".xlsx");
 	            // $objWriter->save("V://Kartu Kerja Mesin/".$filename.".xlsx");
-	            // $objWriter->save("../../../../sisipro2/spool/Kartu Kerja Mesin/".$filename.".xlsx");
+	            // $objWriter->save("..//..//..//..//saveHere/".$filename.".xlsx");
             }//end if - else
         }
 
@@ -1626,6 +1627,15 @@ class Ppc extends Controller {
         	}
         }
 
+        function download($filename = NULL) {
+		    // load download helder
+		    $fileName = $this->input->post('fileName');
+		    $this->load->helper('download');
+		    // read file contents
+		    $data = file_get_contents("//192.168.17.102/Test/".$fileName.".pdf");
+		    force_download($filename, $data);
+		}
+
         function viewListKK(){
 		
 		$this->load->helper('directory');
@@ -1638,7 +1648,7 @@ class Ppc extends Controller {
 			$data["nim"]=$pecah[0];
 			$data["nama"]=$pecah[1];
 			$data["status"]=$pecah[2];
-			$map = directory_map('//192.168.17.102/Data KK/');
+			$map = directory_map('//192.168.17.102/Test/');
 			$max = sizeof($map);
 			$listFiles = array();
 			$index = 0;

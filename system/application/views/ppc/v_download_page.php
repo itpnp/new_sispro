@@ -21,15 +21,17 @@
        </div>
 
        <div class="panel-body">
-
         <div class = "row">
           <div class="col-lg-6">
             <div class="form-group">
               <div class="col-sm-8">
-              <p id="asas" name="asas">Downloading File...</p>
+              <input type ="hidden" class="form-control" name="fileName" id="fileName" value="<?php echo $header;?>">
+              <!-- <p id="asas" name="asas">Downloading File...</p> -->
+              <div class="form-group">
+                  <button class=" form-control btn btn-success" onclick="cetak()">Download</button>
+              </div>
             </div>
             </div>
-           
         </div>
       </div>
 
@@ -37,16 +39,15 @@
   </div><!-- end of panel-->
 </div>
 </div>
-
 <script type="text/javascript">
   function cetak(){
     var fileName = "<?php echo $header;?>";
-      fileName = fileName.replace(/\//g,"-");
-      window.location.href = "http://192.168.17.102:8083/barcode.webservice/convert/"+fileName;
+    fileName = fileName.replace(/\//g,"-");
+    window.location.href = "http://192.168.17.102:8080/barcode.webservice/convert/"+fileName;
   }
 
   window.onload = function() {
-    cetak();
+    // cetak();
   };
 
 </script>
