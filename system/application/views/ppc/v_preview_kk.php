@@ -8,7 +8,7 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-     <h1 class="page-header">Buat KK Baru</h1>
+     <h1 class="page-header">Buat Kartu Kerja Baru</h1>
    </div>
    <!-- /.col-lg-12 -->
  </div>
@@ -46,16 +46,24 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Macam:</label>
               <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['MACAM']; ?></p>
+              <p class="form-control" id="noKK" name="noKK"><?php if($header!="") echo $header['MACAM']." ".$header['tahun']; ?></p>
                 <!-- <input type="text" class="form-control" id="macam" value="<?php if($header!="") echo $header['MACAM']; ?>"  disabled> -->
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-4">Jumlah Pesanan</label>
+              <div class="col-sm-8">
+              <p class="form-control" id="noKK" name="noKK"><?php echo $header['JML_PESANAN']; ?> Meter</p>
+
+               <!--  <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled> -->
               </div>
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-              <label class="control-label col-sm-4">Jumlah Pesanan</label>
+              <label class="control-label col-sm-4">Jumlah Pesanan (Konversi)</label>
               <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['JML_PESANAN']); ?> Meter</p>
+              <p class="form-control" id="noKK" name="noKK"><?php echo $header['JML_PESANAN_KONVERSI']; ?> Meter</p>
 
                <!--  <input class="form-control" name="jmlPesanan" id="jmlPesanan" value="<?php echo $header['JML_PESANAN']; ?> Meter" disabled> -->
               </div>
@@ -70,8 +78,21 @@
             <div class="form-group">
               <label class="control-label col-sm-4">Panjang Bahan:</label>
               <div class="col-sm-8">
-              <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['bahan_konversi']); ?> Meter</p>
+              <p class="form-control" id="noKK" name="noKK"><?php echo $header['PANJANG_BAHAN']; ?> Meter</p>
+              <!-- <p class="form-control" id="noKK" name="noKK"><?php echo number_format($header['bahan_konversi']); ?> Meter</p> -->
                <!--  <input type="text" class="form-control" id="panjangBahan" value="<?php echo $header['panjangWasteBelah']; ?> Meter"  disabled> -->
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-4">Panjang Bahan (Konversi) :</label>
+              <div class="col-sm-8">
+              <p class="form-control" id="noKK" name="noKK">
+                <?php  
+                  if($header['bahan_konversi'] !== "-"){
+                    echo number_format($header['bahan_konversi']);
+                  }else{
+                    echo $header['bahan_konversi'];
+                   } ?> Meter</p>
               </div>
             </div>
             <div class="form-group">
@@ -98,7 +119,7 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"><?php if($emboss!="") echo $emboss['delivery_time_ind']; ?></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($emboss!="") echo $emboss['delivery_time']; ?></p>
         </div>
      </div>
       <div class = "row">
@@ -163,7 +184,7 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"><?php if($demet!="") echo $demet['delivery_time_ind']; ?></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($demet!="") echo $demet['delivery_time']; ?></p>
         </div>
      </div>
       <div class = "row">
@@ -222,7 +243,7 @@
       <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"><?php if($rewind!="") echo $rewind['delivery_time_ind']; ?></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($rewind!="") echo $rewind['delivery_time']; ?></p>
         </div>
      </div>
         <div class="col-lg-6">
@@ -280,7 +301,7 @@
         <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"><?php if($sensi!="") echo $sensi['delivery_time_ind']; ?></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($sensi!="") echo $sensi['delivery_time']; ?></p>
         </div>
      </div>
         <div class="col-lg-6">
@@ -342,7 +363,7 @@
         <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"><?php if($belah!="") echo $belah['delivery_time_ind']; ?></p>
+          <p id="deliveryTime" name="deliveryTime"><?php if($belah!="") echo $belah['delivery_time']; ?></p>
         </div>
      </div>
         <div class="col-lg-6">

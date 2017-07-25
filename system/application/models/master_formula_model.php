@@ -8,9 +8,13 @@ class Master_formula_model extends Model
 
 	public function getAllData()
 	{
-		$this->oracle_db=$this->load->database('oracle',true);
-		$t=$this->oracle_db->get('TBL_MASTER_FORMULA');
-		return $t->result();
+	  $this->oracle_db=$this->load->database('oracle',true);
+	  $this->oracle_db->select('*');    
+	  $this->oracle_db->from('TBL_MASTER_FORMULA');
+	  $this->oracle_db->join('TBL_MASTER_FORMULA_ANAK', 'TBL_MASTER_FORMULA.ID_FORMULA = TBL_MASTER_FORMULA_ANAK.ID_FORMULA');
+	  $this->oracle_db->join('TBL_MASTER_MESIN', 'TBL_MASTER_FORMULA.ID_MESIN = TBL_MASTER_MESIN.ID_MESIN');
+	  $t=$this->oracle_db->get();
+	  return $t->result();
 	}
 
 	public function saveData($data)

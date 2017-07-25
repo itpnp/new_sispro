@@ -44,12 +44,12 @@
 									echo "<tr>
 									<td class='warning'>".$nomor."</td>
 									<td class='warning'>".$t->ID_FORMULA."</td>
-									<td class='warning'>".$t->NAMA_FORMULA."</td>
-									<td class='warning'></td>
+									<td class='warning'>".$t->NAMA_FORMULA_ANAK."</td>
+									<td class='warning'>".$t->NAMA_MESIN."</td>
 									<td class='warning'>".$t->VISCOSITAS."</td>
 									<td class='warning'>".$t->SOLID_CONTAIN."</td>
 									<td class='warning'>".$t->GRAMATURE."</td>
-									<td class='warning'>".$t->BERAT."</td>
+									<td class='warning'>".$t->UKURAN."</td>
 									<td class='warning'>".$t->SUHU."</td>
 									
 									</tr>";
@@ -57,12 +57,12 @@
 									echo "<tr>
 									<td class='info'>".$nomor."</td>
 									<td class='info'>".$t->ID_FORMULA."</td>
-									<td class='info'>".$t->NAMA_FORMULA."</td>
-									<td class='info'></td>
+									<td class='info'>".$t->NAMA_FORMULA_ANAK."</td>
+									<td class='info'>".$t->NAMA_MESIN."</td>
 									<td class='info'>".$t->VISCOSITAS."</td>
 									<td class='info'>".$t->SOLID_CONTAIN."</td>
 									<td class='info'>".$t->GRAMATURE."</td>
-									<td class='info'>".$t->BERAT."</td>
+									<td class='info'>".$t->UKURAN."</td>
 									<td class='info'>".$t->SUHU."</td>
 									
 									</tr>";

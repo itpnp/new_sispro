@@ -26,10 +26,9 @@
                                 <th>No</th>
                                 <th>Id Mesin</th>
                                 <th>Nama Mesin</th>
-                                <th>Nama Proses</th>
                                 <th>Kecepatan Mesin</th>
-                                <th>Lama Persiapan</th>
-                                <th>Waste Stel</th>
+                                <th>Naik Mesin</th>
+                                <!-- <th>Waste Stel</th> -->
                                 <th>Waste Proses</th>
                             </tr>
                         </thead>
@@ -44,22 +43,18 @@
                                     <td class='warning'>".$nomor."</td>
                                     <td class='warning'>".$t->ID_MESIN."</td>
                                     <td class='warning'>".$t->NAMA_MESIN."</td>
-                                    <td class='warning'>".$t->ID_MASTER_PROSES."</td>
                                     <td class='warning'>".$t->KECEPATAN_MESIN."</td>
-                                    <td class='warning'>".$t->LAMA_PERSIAPAN."</td>
-                                    <td class='warning'>".$t->WASTE_STEL."</td>
-                                    <td class='warning'>".$t->WASTE_PROSES."</td>
+                                    <td class='warning'>".$t->WAKTU_NAIK_MESIN."</td>
+                                    <td class='warning'>".$t->WASTE_BAPOB."</td>
                                     </tr>";
                                 }else{
                                     echo "<tr>
                                     <td class='info'>".$nomor."</td>
                                     <td class='info'>".$t->ID_MESIN."</td>
                                     <td class='info'>".$t->NAMA_MESIN."</td>
-                                    <td class='info'>".$t->ID_MASTER_PROSES."</td>
                                     <td class='info'>".$t->KECEPATAN_MESIN."</td>
-                                    <td class='info'>".$t->LAMA_PERSIAPAN."</td>
-                                    <td class='info'>".$t->WASTE_STEL."</td>
-                                    <td class='info'>".$t->WASTE_PROSES."</td>
+                                    <td class='info'>".$t->WAKTU_NAIK_MESIN."</td>
+                                    <td class='info'>".$t->WASTE_BAPOB."</td>
                                     </tr>";
                                 }
                                 

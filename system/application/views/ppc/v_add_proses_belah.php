@@ -8,7 +8,7 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-     <h1 class="page-header">Buat KK Baru</h1>
+     <h1 class="page-header">Buat Kartu Kerja Baru</h1>
    </div>
    <!-- /.col-lg-12 -->
  </div>
@@ -24,12 +24,12 @@
 
      <div class="panel-body">
       <div class = "row">
-         <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"></p>
+          <input class="form-control" id="date" name="deliveryDate" value="<?php if($belah!="") echo $belah['delivery_time']; ?>" placeholder="DD/MM/YYYY" type="text" required/>
+          <!-- <p id="deliveryTime" name="deliveryTime"></p>
           <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
-          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value="">
+          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value=""> -->
         </div>
      </div>
         <div class="col-lg-6">
@@ -148,8 +148,8 @@
     zzz = waktuMendidih.replace(",",".");
     var waktuMendidih = parseFloat(zzz);
 
-
     stelBahan = (hasilProsesSensi/3500)*waktuNaik/24;
+
     lamaProses = hasilProsesSensi/targetProduksi/24;
 
     // stelBahan = Math.ceil(stelBahan * 100)/100;
@@ -171,9 +171,9 @@
 
     $('input[name="totalTime"]').val(times[0]+""+times[1]+""+times[2]).val();
 
-    var cb = document.getElementById('deliveryTime');
-    cb.innerHTML = times[3];
-    $('input[name="delTimeInd"]').val(times[3]).val();
+    // var cb = document.getElementById('deliveryTime');
+    // cb.innerHTML = times[3];
+    // $('input[name="delTimeInd"]').val(times[3]).val();
   }
 
   function convertToHour(time){

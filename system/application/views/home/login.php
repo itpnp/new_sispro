@@ -41,7 +41,11 @@
             <div class="col-lg-6 col-md-offset-3">
                 <div class="login-panel panel panel-green">
                     <div class="panel-heading">
-                        <h4 class="panel-title">The New SISPRO :D</h4>
+                       <!--  <div class="panel-body"> -->
+                            <img src="<?php echo base_url(); ?>assets/image/logo pnp small.PNG">
+                            <i class="panel-title">SISPRO 2017</i> 
+                        <!-- </div> -->
+                        <!-- <h4 class="panel-title">The New SISPRO :D</h4> -->
                     </div>
                     <div class="panel-body">
                         <form role="form" action="<?php echo "".base_url()."index.php/web/login" ?>" method="post">

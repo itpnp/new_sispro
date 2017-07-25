@@ -38,8 +38,21 @@ class Web extends Controller {
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/pengembangan'>";
 			}else if($tanda=="PPC"){
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc'>";
-			}
-			else {
+			}else if($tanda=="ADMINPROD"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksi'>";
+			}else if($tanda=="KALKULASI"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/StaffKalkulasi'>";
+			}else if($tanda=="ADMDEMET"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiDemet'>";
+			}else if($tanda=="ADMREWIND"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiRewind'>";
+			}else if($tanda=="ADMSENSI"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiSensitizing'>";
+			}else if($tanda=="ADMBELAH"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiBelah'>";
+			}else if($tanda=="ADMEMBOSS"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiEmboss'>";
+			}else {
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/kabag'>";
 			}
 		}

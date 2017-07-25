@@ -8,7 +8,7 @@ class Master_kk_model extends Model
 
 	function getLastNumber($tahun){
 		$this->oracle_db=$this->load->database('oracle',true);
-		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_KK where TAHUN = '$tahun' order by NOMOR_KK DESC");
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_KK where DESAIN = '$tahun' and TAHUN = '$tahun' order by NOMOR_KK DESC");
 		return $t->result();
 	}
 
@@ -20,7 +20,7 @@ class Master_kk_model extends Model
 			$errors = array();
 			$this->oracle_db=$this->load->database('oracle',true);
 			$this->oracle_db->trans_begin();
-			$success = $this->oracle_db->query("INSERT INTO TBL_MASTER_KK(NOMOR_KK,KODE_BAHAN,JML_PESANAN,DESAIN,TAHUN,NOMOR_BAPOB,TANGGAL_PROSES_MESIN, DELIVERY_TIME) VALUES (".$this->oracle_db->escape($data['NO_KK']).",".$this->oracle_db->escape($data['KODE_BAHAN']).",".$this->oracle_db->escape($data['JML_PESANAN']).",".$this->oracle_db->escape($data['tahun']).",".$this->oracle_db->escape($data['tahunKKdibuat']).",".$this->oracle_db->escape($data['ID_BAPOB']).",to_date(".$this->oracle_db->escape($x).",'DD/MM/YYYY'),".$this->oracle_db->escape($data['delivery_time']).")");
+			$success = $this->oracle_db->query("INSERT INTO TBL_MASTER_KK(NOMOR_KK,KODE_BAHAN,JML_PESANAN,DESAIN,TAHUN,NOMOR_BAPOB,TANGGAL_PROSES_MESIN, DELIVERY_TIME) VALUES (".$this->oracle_db->escape($data['NO_KK']).",".$this->oracle_db->escape($data['KODE_BAHAN']).",".$data['JML_PESANAN'].",".$this->oracle_db->escape($data['tahun']).",".$this->oracle_db->escape($data['tahunKKdibuat']).",".$this->oracle_db->escape($data['ID_BAPOB']).",to_date(".$this->oracle_db->escape($x).",'DD/MM/YYYY'),".$this->oracle_db->escape($data['delivery_time']).")");
 			$this->oracle_db->trans_commit();
 
 			if(!$success){
@@ -45,5 +45,22 @@ class Master_kk_model extends Model
 			return false;
 		}
 			return true;		
+	}
+
+	function getDataKK()
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$this->oracle_db->where("(TAHUN='2017')", NULL, FALSE);
+		$this->oracle_db->where("(AKTIF='1')", NULL, FALSE);
+		$t=$this->oracle_db->get('TBL_MASTER_KK');
+		return $t->result();
+	}
+
+	function findByNumber($nomorKK)
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$this->oracle_db->where('NOMOR_KK', $nomorKK);
+		$t=$this->oracle_db->get('TBL_MASTER_KK');
+		return $t->result();
 	}
 }

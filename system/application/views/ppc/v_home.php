@@ -16,7 +16,9 @@
                 <div class="col-lg-12">
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            Selamat Datang The New SISPRO :D
+                        	<img src="<?php echo base_url(); ?>assets/image/logo pnp small.PNG">
+                            <i class="panel-title">SISPRO 2017 - MODUL KARTU KERJA MESIN</i> 
+                            
                         </div>
                         <ul class="nav nav-tabs">
                                 <li class="active"><a href="#home" data-toggle="tab">Home</a>

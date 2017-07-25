@@ -8,7 +8,7 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-     <h1 class="page-header">Buat KK Baru</h1>
+     <h1 class="page-header">Buat Kartu Kerja Baru</h1>
    </div>
    <!-- /.col-lg-12 -->
  </div>
@@ -26,9 +26,10 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"></p>
+          <input class="form-control" id="date" name="deliveryDate" value="<?php if($demet!="") echo $demet['delivery_time']; ?>" placeholder="DD/MM/YYYY" type="text" required/>
+          <!-- <p id="deliveryTime" name="deliveryTime"></p>
           <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
-          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value="">
+          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value=""> -->
         </div>
      </div>
       <div class = "row">
@@ -127,9 +128,7 @@
 
     wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
     panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
-
     var hasilProsesEmboss = parseFloat(document.getElementById("hasilDiProsesEmboss").value);
-
     if(wasteProses != "" || wasteProses >0){
       hasil = hasilProsesEmboss-((wasteProses/100)*panjangBahan);
     }else{
@@ -169,9 +168,9 @@
 
     $('input[name="totalTime"]').val(times[0]+""+times[1]+""+times[2]).val();
 
-    var cb = document.getElementById('deliveryTime');
-    cb.innerHTML = times[3];
-    $('input[name="delTimeInd"]').val(times[3]).val();
+    // var cb = document.getElementById('deliveryTime');
+    // cb.innerHTML = times[3];
+    // $('input[name="delTimeInd"]').val(times[3]).val();
   }
 
   function convertToHour(time){
@@ -198,28 +197,28 @@
     }
     
     // Apply each element to the Date function
-    var date = new Date(<?php echo strtotime($emboss['delivery_time'])*1000;?>);
-    var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
+    // var date = new Date(<?php echo strtotime($emboss['delivery_time'])*1000;?>);
+    // var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    //   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    // ];
 
-    var monthEngNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "Nopember", "December"
-    ];
-    date.setDate(date.getDate() + d);
-    var days = date.getDate();
-    var month = monthNames[date.getMonth()];
-    var monthEng = monthEngNames[date.getMonth()];
-    var year = date.getFullYear();
-    var deliv = days+" "+month+" "+year;
-    var delivEng = days+" "+monthEng+" "+year;
+    // var monthEngNames = ["January", "February", "March", "April", "May", "June",
+    //   "July", "August", "September", "October", "Nopember", "December"
+    // ];
+    // date.setDate(date.getDate() + d);
+    // var days = date.getDate();
+    // var month = monthNames[date.getMonth()];
+    // var monthEng = monthEngNames[date.getMonth()];
+    // var year = date.getFullYear();
+    // var deliv = days+" "+month+" "+year;
+    // var delivEng = days+" "+monthEng+" "+year;
     // dat = dat.format("dd mmm yyyy")
 
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
-    result[3] = deliv;
-    $('input[name="delTimeEng"]').val(delivEng).val();
+    // result[3] = deliv;
+    // $('input[name="delTimeEng"]').val(delivEng).val();
     return result;
 
   }

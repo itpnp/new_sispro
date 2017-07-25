@@ -32,10 +32,10 @@ class Master_proses_model extends Model
 		    $query2=$this->oracle_db->query("SELECT * FROM TBL_MASTER_PROSES_KK where ID_MESIN = '$idMesin'");
 		    $this->oracle_db->trans_begin();
 		    if($query2->num_rows() > 0){
-		    	$success = $this->oracle_db->query("UPDATE TBL_MASTER_PROSES_KK set ID_BAPOB = ".$this->oracle_db->escape($data['ID_BAPOB']).", NAMA_PROSES = ".$this->oracle_db->escape($data['NAMA_PROSES']).", KECEPATAN_MESIN= ".$this->oracle_db->escape($data['KECEPATAN_MESIN']).", URUTAN_PRODUKSI = ".$this->oracle_db->escape($data['URUTAN_PRODUKSI']).", PANJANG_BAHAN = ".$this->oracle_db->escape($data['PANJANG_BAHAN']).", WASTE_PROSES = ".$this->oracle_db->escape($data['WASTE_PROSES']).", STEL_BAHAN = ".$this->oracle_db->escape($data['STEL_BAHAN']).", STEL_PCH = ".$this->oracle_db->escape($data['STEL_PCH']).", STEL_SILINDER = ".$this->oracle_db->escape($data['STEL_SILINDER'])." where ID_MESIN = ".$this->oracle_db->escape($data['ID_MESIN'])." ");
+		    	$success = $this->oracle_db->query("UPDATE TBL_MASTER_PROSES_KK set ID_BAPOB = ".$this->oracle_db->escape($data['ID_BAPOB']).", NAMA_PROSES = ".$this->oracle_db->escape($data['NAMA_PROSES']).", KECEPATAN_MESIN= ".$this->oracle_db->escape($data['KECEPATAN_MESIN']).", URUTAN_PRODUKSI = ".$this->oracle_db->escape($data['URUTAN_PRODUKSI']).", PANJANG_BAHAN = ".$data['PANJANG_BAHAN'].", WASTE_PROSES = ".$this->oracle_db->escape($data['WASTE_PROSES']).", STEL_BAHAN = ".$this->oracle_db->escape($data['STEL_BAHAN']).", STEL_PCH = ".$this->oracle_db->escape($data['STEL_PCH']).", STEL_SILINDER = ".$this->oracle_db->escape($data['STEL_SILINDER'])." where ID_MESIN = ".$this->oracle_db->escape($data['ID_MESIN'])." ");
 		    	
 		    }else{
-		    	$success = $this->oracle_db->query("INSERT INTO TBL_MASTER_PROSES_KK(ID_MESIN,ID_BAPOB,NAMA_PROSES,KECEPATAN_MESIN,URUTAN_PRODUKSI,PANJANG_BAHAN,WASTE_PROSES,STEL_BAHAN, STEL_PCH, STEL_SILINDER,ID_MASTER_PROSES_KK) VALUES (".$this->oracle_db->escape($data['ID_MESIN']).",".$this->oracle_db->escape($data['ID_BAPOB']).",".$this->oracle_db->escape($data['NAMA_PROSES']).",".$this->oracle_db->escape($data['KECEPATAN_MESIN']).",".$this->oracle_db->escape($data['URUTAN_PRODUKSI']).",".$this->oracle_db->escape($data['PANJANG_BAHAN']).",".$this->oracle_db->escape($data['WASTE_PROSES']).",".$this->oracle_db->escape($data['STEL_BAHAN']).",".$this->oracle_db->escape($data['STEL_PCH']).",".$this->oracle_db->escape($data['STEL_SILINDER']).",'$idMasterProses')");
+		    	$success = $this->oracle_db->query("INSERT INTO TBL_MASTER_PROSES_KK(ID_MESIN,ID_BAPOB,NAMA_PROSES,KECEPATAN_MESIN,URUTAN_PRODUKSI,PANJANG_BAHAN,WASTE_PROSES,STEL_BAHAN, STEL_PCH, STEL_SILINDER,ID_MASTER_PROSES_KK) VALUES (".$this->oracle_db->escape($data['ID_MESIN']).",".$this->oracle_db->escape($data['ID_BAPOB']).",".$this->oracle_db->escape($data['NAMA_PROSES']).",".$this->oracle_db->escape($data['KECEPATAN_MESIN']).",".$this->oracle_db->escape($data['URUTAN_PRODUKSI']).",".$data['PANJANG_BAHAN'].",".$this->oracle_db->escape($data['WASTE_PROSES']).",".$this->oracle_db->escape($data['STEL_BAHAN']).",".$this->oracle_db->escape($data['STEL_PCH']).",".$this->oracle_db->escape($data['STEL_SILINDER']).",'$idMasterProses')");
 		    }
 		    $this->oracle_db->trans_commit();
 		    $this->oracle_db->trans_complete();
@@ -48,6 +48,4 @@ class Master_proses_model extends Model
 
 			return $success;
 		}
-
-	
 }

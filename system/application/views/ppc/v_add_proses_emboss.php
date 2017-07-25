@@ -8,7 +8,7 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-     <h1 class="page-header">Buat KK Baru</h1>
+     <h1 class="page-header">Buat Kartu Kerja Baru</h1>
    </div>
    <!-- /.col-lg-12 -->
  </div>
@@ -20,15 +20,14 @@
      <div class="panel-heading">
        Proses Produksi EMBOSS
      </div>
-
      <div class="panel-body">
-     
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <p id="deliveryTime" name="deliveryTime"></p>
+          <!-- <p id="deliveryTime" name="deliveryTime"></p> -->
+          <input class="form-control" id="date" name="deliveryDate" value="<?php if($emboss!="") echo $emboss['delivery_time']; ?>" placeholder="DD/MM/YYYY" type="text" required/><!-- 
           <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
-          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value="">
+          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value=""> -->
         </div>
      </div>
       <div class = "row">
@@ -56,7 +55,6 @@
               }
 
               ?>
-
             </select>
           </div>
           <div class="form-group">
@@ -65,9 +63,8 @@
           </div>
           <div class="form-group">
             <label>Formula</label>
-            <input class="form-control" name="formula" value="<?php if($emboss!="") echo $emboss['FORMULA']; ?>" id="formula" required>
+            <input class="form-control" name="formula" value="<?php if($header!="") echo "PCH ".$header['MACAM']." ".$header['tahun']; ?>" id="formula" required readonly>
           </div>
-
         </div>
         <div class="col-lg-6">
           <div class="form-group">
@@ -93,7 +90,6 @@
           <button type="submit" class="btn btn-success">SIMPAN</button>
         </div>
       </div>
-
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
@@ -129,37 +125,42 @@
 
   function countSpeed(val,mesin,waktuNaik,waktuMendidih){
 
-
     var targetProduksi = val * 60;
     $('input[name="targetProduksi"]').val(targetProduksi + " Meter/Jam").val();
 
     wasteProses = "<?php if($prosesOnBapob!="") echo $prosesOnBapob->WASTE_PROSES; ?>";
-    panjangBahan = "<?php echo $header['panjangWastePita']; ?>";
+    panjangBahan = "<?php echo $header['panjangWasteBelah']; ?>";
     panjangBahanKonversi= "<?php echo $header['bahan_konversi']; ?>";
+    var seri = "<?php echo $header['seri']; ?>";
 
-    if(wasteProses != "" || wasteProses >0){
-      hasil = panjangBahanKonversi-((wasteProses/100)*panjangBahan);
+    if(seri == "Seri MMEA"){
+      if(wasteProses != "" || wasteProses >0){
+        hasil = panjangBahan-((wasteProses/100)*panjangBahan);
+      }else{
+        hasil = panjangBahan;
+      }
     }else{
-      hasil = panjangBahanKonversi;
+      if(wasteProses != "" || wasteProses >0){
+      hasil = panjangBahanKonversi-((wasteProses/100)*panjangBahanKonversi);
+      }else{
+        hasil = panjangBahanKonversi;
+      }
     }
+    // console.log(seri);
     hasil = Math.round(hasil);
     $('input[name="hasil"]').val(hasil+ " Meter").val();
 
-    stelPCH = panjangBahanKonversi/6000/24;
+    stelPCH = hasil/6000/24;
 
     var zzz = waktuNaik.replace(",", ".");
     var waktuNaik = parseFloat(zzz);
-    stelBahan = panjangBahanKonversi/6000/24*waktuNaik;
-    lamaProses = panjangBahanKonversi/targetProduksi/24;
+    stelBahan = hasil/6000/24*waktuNaik;
+    lamaProses = hasil/targetProduksi/24;
 
-    // stelPCH = Math.ceil(stelPCH * 100)/100;
-    // stelBahan = Math.ceil(stelBahan * 100)/100;
-    // lamaProses = Math.ceil(lamaProses * 100)/100;
     secondsPCH = (stelPCH*24)*3600;
     secondsBahan = (stelBahan*24)*3600;
     secondsProses = (lamaProses*24)*3600;
     totalTime = secondsPCH + secondsBahan + secondsProses;
-
 
     var pchTime = convertToHour(secondsPCH);
     $('input[name="stelPCH"]').val(pchTime[0]+""+pchTime[1]+""+pchTime[2]).val();
@@ -175,10 +176,6 @@
 
     $('input[name="totalTime"]').val(times[0]+""+times[1]+""+times[2]).val();
 
-    var cb = document.getElementById('deliveryTime');
-    cb.innerHTML = times[3];
-
-    $('input[name="delTimeInd"]').val(times[3]).val();
 
   }
 
@@ -206,28 +203,27 @@
     }
 
     // Apply each element to the Date function
-    var date = new Date(<?php echo strtotime($header['TGL_PROSES_MESIN'])*1000;?>);
-    var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
+    // var date = new Date(<?php echo strtotime($header['TGL_PROSES_MESIN'])*1000;?>);
+    // var monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    //   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    // ];
 
-    var monthEngNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "Nopember", "December"
-    ];
+    // var monthEngNames = ["January", "February", "March", "April", "May", "June",
+    //   "July", "August", "September", "October", "Nopember", "December"
+    // ];
     
-
-    date.setDate(date.getDate() + d);
-    var days = date.getDate();
-    var month = monthNames[date.getMonth()];
-    var monthEng = monthEngNames[date.getMonth()];
-    var year = date.getFullYear();
-    var deliv = days+" "+month+" "+year;
-    var delivEng = days+" "+monthEng+" "+year;
+    // date.setDate(date.getDate() + d);
+    // var days = date.getDate();
+    // var month = monthNames[date.getMonth()];
+    // var monthEng = monthEngNames[date.getMonth()];
+    // var year = date.getFullYear();
+    // var deliv = days+" "+month+" "+year;
+    // var delivEng = days+" "+monthEng+" "+year;
     result[0] = h+":";
     result[1] = m+":";
     result[2] = s;
-    result[3] = deliv;
-    $('input[name="delTimeEng"]').val(delivEng).val();
+    // result[3] = deliv;
+    // $('input[name="delTimeEng"]').val(delivEng).val();
     return result;
   }
   window.onload = function() {

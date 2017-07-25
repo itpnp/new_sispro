@@ -43,7 +43,7 @@ class Ppc extends Controller {
 					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 			}
 		}
 		else{
@@ -52,7 +52,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 	}
 	function showDataMesin(){
@@ -68,7 +68,7 @@ class Ppc extends Controller {
 			if($data["status"]=="PPC"){
 				$data['result'] = $this->Master_mesin_model->getAllData();
 				$this->load->view('ppc/v_header',$data);
-				$this->load->view('ppc/v_ide_menu',$data);
+				$this->load->view('ppc/v_side_menu',$data);
 				$this->load->view('ppc/v_master_mesin_home',$data);
 				$this->load->view('ppc/v_footer',$data);
 			}
@@ -78,7 +78,7 @@ class Ppc extends Controller {
 					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 			}
 		}
 		else{
@@ -87,7 +87,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 	}
 
@@ -115,7 +115,7 @@ class Ppc extends Controller {
 					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 			}
 		}
 		else{
@@ -124,7 +124,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 	}
 
@@ -151,15 +151,22 @@ class Ppc extends Controller {
 				$_SESSION['data_bapob']=$dataBapob[0];
 				$data["masterBahan"] = $this->Master_bahan_model->getAllData();
 				$getLastNumber = $this->Master_kk_model->getLastNumber(date("Y"));
-				$lastNumber = substr(($getLastNumber[0]->NOMOR_KK),0,3);
-				$currentNumber = intval($lastNumber)+1;
-				if($currentNumber <10){
-					$nomorBaru = "00".$currentNumber;
-				}else if($currentNumber >9 && $currentNumber <100){
-					$nomorBaru = "0".$currentNumber;
-				}
 				$bulan = $this->convertToRomawi(date("m"));
-				$nomorBaru = $nomorBaru."/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+				if(sizeof($getLastNumber) >0){
+					$lastNumber = substr(($getLastNumber[0]->NOMOR_KK),0,3);
+					$currentNumber = intval($lastNumber)+1;
+					if($currentNumber <10){
+						$nomorBaru = "00".$currentNumber;
+					}else if($currentNumber >9 && $currentNumber <100){
+						$nomorBaru = "0".$currentNumber;
+					}
+					$nomorBaru = $nomorBaru."/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+					// $nomorBaru = "013/PNP-HLG/PPC/KKM/III/2017";
+				}else{
+					$nomorBaru = "001/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+					// $nomorBaru = "001/PNP-HLG/PPC/KKM/XII/2016";
+				}
+				
 				$data["nomorKkBaru"] = $nomorBaru;
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -174,7 +181,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -182,70 +189,76 @@ class Ppc extends Controller {
 					alert("Login dulu donk...!!!");
 				</script>
 				<?php
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 			}
 		}
 	}
 
 	function saveHeaderKK(){
-			$x = $this->input->post('chooseBahan');
-			$bahanBaku = explode("@", $x);
+		$x = $this->input->post('chooseBahan');
+		$bahanBaku = explode("@", $x);
 
-			if($bahanBaku[4] === ""){
-				$bahanBaku[4] = 0; 
-			}
-			if($bahanBaku[3] === ""){
-				$bahanBaku[3] = 0;
-			}
-			if($bahanBaku[2] === ""){
-				$bahanBaku[2] = 0;
-			}
-			$tahun = $this->input->post('tahun');
-			$seri = $this->input->post('seri');
+		if($bahanBaku[4] === ""){
+			$bahanBaku[4] = 0; 
+		}
+		if($bahanBaku[3] === ""){
+			$bahanBaku[3] = 0;
+		}
+		if($bahanBaku[2] === ""){
+			$bahanBaku[2] = 0;
+		}
+		$tahun = $this->input->post('tahun');
+		$seri = $this->input->post('seri');
 
-			$data['NAMA_BAHAN_BAKU'] = $bahanBaku[1];
-			$data['KODE_BAHAN'] = $bahanBaku[0];
-			$data['LEBAR_BAHAN_BAKU'] = $bahanBaku[2];
-			$data['GSM_BAHAN_BAKU'] = $bahanBaku[3];
-			$data['PANJANG_BAHAN_BAKU'] = $bahanBaku[4];
+		$data['NAMA_BAHAN_BAKU'] = $bahanBaku[1];
+		$data['KODE_BAHAN'] = $bahanBaku[0];
+		$data['LEBAR_BAHAN_BAKU'] = $bahanBaku[2];
+		$data['GSM_BAHAN_BAKU'] = $bahanBaku[3];
+		$data['PANJANG_BAHAN_BAKU'] = $bahanBaku[4];
 
-			$data['ID_BAPOB'] = $this->input->post('noBapob');
-			$data['TGL_PROSES_MESIN'] = $this->input->post('tanggalProses');
-			$data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
-			$data['MACAM'] = $this->input->post('macam');
-			$data['tahun'] = $tahun;
-			$data['tahunKKdibuat'] = date("Y");
-			$data['delivery_time'] = date("M")."-".date("Y");
-			$data['seri'] = $seri;
-			$data['panjangWastePerekatan'] = $this->input->post('jumlahWastePerekatan');
-			$data['panjangWastePita'] = $this->input->post('jumlahWastePita');
-			$data['panjangWasteBelah'] = $this->input->post('jumlahWasteBelah');
-			$data['konversi_roll'] = $this->input->post('konversiRoll');
-			$data['bahan_konversi'] = $this->input->post('bahanKonversi');
-			$x = str_replace(",", ".", $this->input->post('percentWasteBelah'));
-			$percentWasteBelahKonversi = str_replace("%", "", $x);
-			$data['percent_belah_konversi'] = $percentWasteBelahKonversi;
+		$data['ID_BAPOB'] = $this->input->post('noBapob');
+		$data['TGL_PROSES_MESIN'] = $this->input->post('tanggalProses');
+		$jumlahPesanan = $this->input->post('jumlahPesanan');
+		if (stristr($jumlahPesanan, ',') !== FALSE) {
+		  $x = str_replace(",", ".", $jumlahPesanan);
+		  $data['JML_PESANAN'] = $x;
+		}else{
+		  $data['JML_PESANAN'] = $this->input->post('jumlahPesanan');
+		}
+		$data['MACAM'] = $this->input->post('macam');
+		$data['tahun'] = $tahun;
+		$data['tahunKKdibuat'] = date("Y");
+		$data['delivery_time'] = date("M")."-".date("Y");
+		$data['seri'] = $seri;
+		$data['panjangWastePerekatan'] = $this->replaceCommas($this->input->post('jumlahWastePerekatan'));
+		$data['panjangWastePita'] = $this->replaceCommas($this->input->post('jumlahWastePita'));
+		$data['panjangWasteBelah'] = $this->replaceCommas($this->input->post('jumlahWasteBelah'));
+		$data['konversi_roll'] = $this->input->post('konversiRoll');
+		$data['bahan_konversi'] = $this->replaceCommas($this->input->post('bahanKonversi'));
+		$x = str_replace(",", ".", $this->input->post('percentWasteBelah'));
+		$percentWasteBelahKonversi = str_replace("%", "", $x);
+		$data['percent_belah_konversi'] = $percentWasteBelahKonversi;
 
-			$jumlahPesanan = $this->input->post('jumlahPesanan');
-			$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
-			$wasteDalamPersen = $wasteProses/100;
-			$data['PANJANG_BAHAN'] = $this->input->post('panjangBahan');
-			$data['JML_PESANAN_KONVERSI'] = $this->input->post('jumlahPesananKonversi');
+		$jumlahPesanan = $this->replaceCommas($this->input->post('jumlahPesanan'));
+		$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
+		$wasteDalamPersen = $wasteProses/100;
+		$data['PANJANG_BAHAN'] = $this->replaceCommas($this->input->post('panjangBahan'));
+		$data['JML_PESANAN_KONVERSI'] = $this->replaceCommas($this->input->post('jumlahPesananKonversi'));
 
-			$_SESSION['data_header']=$data;
-			$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
-			$x = str_replace("/", "-", $this->input->post('noKK'));
-			$fileLocation = '//192.168.17.102/Test/'.$x.'.xlsx';
+		$_SESSION['data_header']=$data;
+		$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
+		$x = str_replace("/", "-", $this->input->post('noKK'));
+		$fileLocation = '//192.168.17.102/Test/'.$x.'.xlsx';
 		if (file_exists($fileLocation)) {
-		    $data['NO_KK'] = null;
-		    $_SESSION['data_header']=$data;
-		    $this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
+			$data['NO_KK'] = null;
+			$_SESSION['data_header']=$data;
+			$this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
 			redirect("ppc/createHeaderKK");
 		} else {
 			if($this->Master_kk_model->checkNumber($data['NO_KK'] )){
 				$data['NO_KK'] = null;
-			    $_SESSION['data_header']=$data;
-			    $this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
+				$_SESSION['data_header']=$data;
+				$this->session->set_flashdata('warning', 'Nomor KK Sudah Di Cetak');
 				redirect("ppc/createHeaderKK");
 			}else{
 				$data['NO_KK'] = $this->input->post('noKK');
@@ -253,9 +266,7 @@ class Ppc extends Controller {
 				$this->session->set_flashdata('success', 'Data KK Berhasil disimpan di session');
 				redirect("ppc/addProsesEmboss");
 			}
-		    
 		}
-		// echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/ppc/createHeaderKK'>";	
 	}
 
 	function saveEmbossOnSession(){
@@ -272,16 +283,14 @@ class Ppc extends Controller {
 		$data['WASTE_PROSES'] = $_SESSION['prosesEmbossOnBapob']->WASTE_PROSES;
 		$data['FORMULA'] = $this->input->post('formula');
 		$data['HASIL'] = $this->input->post('hasil');
-		$data['delivery_time'] = $this->input->post('delTimeEng');
-		$data['delivery_time_ind'] = $this->input->post('delTimeInd');
+		$data['delivery_time'] = $this->input->post('deliveryDate');
+		// $data['delivery_time_ind'] = $this->input->post('delTimeInd');
 		$_SESSION['proses_emboss']=$data;
-
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesDemet");
 	}
 
 	function addProsesEmboss(){
-		
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
 		$time = time();
 		$data = array();
@@ -323,7 +332,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -339,10 +348,8 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
-
-
 	}
 
 	function addProsesDemet(){
@@ -387,7 +394,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -403,10 +410,8 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
-
-
 	}
 
 	function saveDemetOnSession(){
@@ -421,8 +426,8 @@ class Ppc extends Controller {
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $_SESSION['prosesDemetOnBapob']->WASTE_PROSES;
 		$data['HASIL'] = $this->input->post('hasil');
-		$data['delivery_time'] = $this->input->post('delTimeEng');
-		$data['delivery_time_ind'] = $this->input->post('delTimeInd');
+		$data['delivery_time'] = $this->input->post('deliveryDate');
+		// $data['delivery_time_ind'] = $this->input->post('delTimeInd');
 		$_SESSION['proses_demet']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesRewind");
@@ -471,7 +476,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -487,7 +492,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 
 
@@ -505,8 +510,8 @@ class Ppc extends Controller {
 		$data['TOTAL_WAKTU'] = $this->input->post('totalTime');
 		$data['WASTE_PROSES'] = $_SESSION['prosesRewindOnBapob']->WASTE_PROSES;
 		$data['HASIL'] = $this->input->post('hasil');
-		$data['delivery_time'] = $this->input->post('delTimeEng');
-		$data['delivery_time_ind'] = $this->input->post('delTimeInd');
+		$data['delivery_time'] = $this->input->post('deliveryDate');
+		// $data['delivery_time_ind'] = $this->input->post('delTimeInd');
 		$_SESSION['proses_rewind']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesSensi");
@@ -554,7 +559,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -570,7 +575,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 
 
@@ -589,15 +594,14 @@ class Ppc extends Controller {
 		$data['WASTE_PROSES'] = $_SESSION['prosesSensiOnBapob']->WASTE_PROSES;
 		$data['HASIL'] = $this->input->post('hasil');
 		$data['STEL_SILINDER'] = $this->input->post('stelSilinder');
-		$data['delivery_time'] = $this->input->post('delTimeEng');
-		$data['delivery_time_ind'] = $this->input->post('delTimeInd');
+		$data['delivery_time'] = $this->input->post('deliveryDate');
+		// $data['delivery_time_ind'] = $this->input->post('delTimeInd');
 		$_SESSION['proses_sensi']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/addProsesBelah");
 	}
 
 	function addProsesBelah(){
-		
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
 		$time = time();
 		$data = array();
@@ -639,7 +643,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 			}else{
 				?>
@@ -655,12 +659,16 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 
 
 	}
 
+	function replaceCommas($char){
+		$x = str_replace(",", "", $char);
+		return $x;
+	}
 	function saveBelahOnSession(){
 		$input = ($this->input->post('chooseMesin'));
 		$mesin  = explode("-", $input);
@@ -675,8 +683,8 @@ class Ppc extends Controller {
 		$percentWasteBelah= str_replace("%", "", $x);
 		$data['WASTE_PROSES'] = floatval($percentWasteBelah);
 		$data['HASIL'] = $this->input->post('hasil');
-		$data['delivery_time'] = $this->input->post('delTimeEng');
-		$data['delivery_time_ind'] = $this->input->post('delTimeInd');
+		$data['delivery_time'] = $this->input->post('deliveryDate');
+		// $data['delivery_time_ind'] = $this->input->post('delTimeInd');
 		$_SESSION['proses_belah']=$data;
 		$this->session->set_flashdata('success', 'Proses Berhasil disimpan di session');
 		redirect("ppc/preview");
@@ -716,7 +724,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 		}else{
 			?>
@@ -724,7 +732,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}
 	}
 
@@ -737,7 +745,11 @@ class Ppc extends Controller {
 		$belah = $_SESSION['proses_belah'];
 		$bapob = $_SESSION['data_bapob'];
 		$emboss["STEL_SILINDER"] = 'test update';
-		$emboss["PANJANG_BAHAN"] = $header["bahan_konversi"];
+		if($header["bahan_konversi"] != "-"){
+			$emboss["PANJANG_BAHAN"] = $header["bahan_konversi"];
+		}else{
+			$emboss["PANJANG_BAHAN"] = $header["PANJANG_BAHAN"];
+		}
 		$emboss["ID_BAPOB"] = $bapob->ID_BAPOB;
 		if($this->Master_kk_model->saveData($header)){
 			if($this->Master_proses_model->saveData($emboss)){
@@ -800,7 +812,7 @@ class Ppc extends Controller {
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
 					</script>
 					<?php
-					echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 				}
 		}else{
 			?>
@@ -808,7 +820,7 @@ class Ppc extends Controller {
 				alert("Login dulu donk...!!!");
 			</script>
 			<?php
-			echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
 		}				
 
 	}
@@ -1065,7 +1077,11 @@ class Ppc extends Controller {
 
 				$objWorksheet = $objPHPExcel->getActiveSheet()->setShowGridlines(false);
 	            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_DEFAULT);
-				$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
+				$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LEGAL);
+				$objPHPExcel->getActiveSheet()->getPageMargins()->setTop(1);
+				$objPHPExcel->getActiveSheet()->getPageMargins()->setRight(0);
+				$objPHPExcel->getActiveSheet()->getPageMargins()->setLeft(0);
+				$objPHPExcel->getActiveSheet()->getPageMargins()->setBottom(1);
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(1);
@@ -1073,7 +1089,7 @@ class Ppc extends Controller {
 	            $filename = str_replace("/","-",$header["NO_KK"]);
 	            // $objWriter->save("//192.168.17.102/Test/".$filename.".xlsx");
 	            // / $objWriter->save("..E://Test/".$filename.".xlsx");
-	            $objWriter->save("E://Test/".$filename.".xlsx");
+	            $objWriter->save("D://Test/".$filename.".xlsx");
 	            // $objWriter->save("V://Kartu Kerja Mesin/".$filename.".xlsx");
 	            // $objWriter->save("..//..//..//..//saveHere/".$filename.".xlsx");
             }//end if - else
@@ -1147,7 +1163,7 @@ class Ppc extends Controller {
 
         	$row++;
         	$objSheet->mergeCells('I'.($row).':L'.($row));
-        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$emboss["delivery_time_ind"]);
+        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$emboss["delivery_time"]);
         	for($i = 0; $i<17; $i++){
         		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
         	}
@@ -1216,9 +1232,11 @@ class Ppc extends Controller {
 
 						if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}else if($header["GSM_BAHAN_BAKU"] == 0){
-							$message = "GSM Bahan Di Database == 0";
-						}else{
+						}
+						// else if($header["GSM_BAHAN_BAKU"] == 0){
+						// 	$message = "GSM Bahan Di Database == 0";
+						// }
+						else{
 
 							$generalWhite = (intval($emboss["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000;
     						$display = round($generalWhite, 2);
@@ -1243,11 +1261,11 @@ class Ppc extends Controller {
 						}
 						
 
-					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
-						$toluol = $demet["HASIL"]/400;
-						$toluol = round($toluol, 2);
+					}else if (stristr($namaFormula, 'solvent') !== FALSE) {
+						$solvent = $demet["HASIL"]/400;
+						$solvent = round($solvent, 2);
 						$objSheet->getStyle('E'.($row))->getNumberFormat()->setFormatCode('#,##0.00');
-						$objSheet->getCell('E'.($row+2))->setValue($toluol." Kg");
+						$objSheet->getCell('E'.($row+2))->setValue($solvent." Kg");
 					}
 
 					if($message !== ""){
@@ -1314,7 +1332,7 @@ class Ppc extends Controller {
 
         	$row++;
         	$objSheet->mergeCells('I'.($row).':L'.($row));
-        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$rewind["delivery_time_ind"]);
+        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$rewind["delivery_time"]);
         	for($i = 0; $i<17; $i++){
         		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
         	}
@@ -1394,20 +1412,22 @@ class Ppc extends Controller {
 							$message = " SOLID CONTAIN Di Database == 0";
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}else if($header["GSM_BAHAN_BAKU"] == 0){
-							$message = "GSM Bahan Di Database == 0";
-						}else{
+						}
+						// else if($header["GSM_BAHAN_BAKU"] == 0){
+						// 	$message = "GSM Bahan Di Database == 0";
+						// }
+						else{
 							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000;
     						$display = round($mediumPs, 2);
     						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
 							$objSheet->getCell('E'.($start))->setValue($display." Kg");
 							// $objSheet->getCell('E'.($start))->setValue($r->GRAMATURE);
 						}
-					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
-						$toluol = $sensi["HASIL"]/$r->UKURAN;
-						$toluol = round($toluol, 2);
+					}else if (stristr($namaFormula, 'solvent') !== FALSE) {
+						$solvent = $sensi["HASIL"]/$r->UKURAN;
+						$solvent = round($solvent, 2);
 						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
-						$objSheet->getCell('E'.($start))->setValue(($toluol)." Kg");
+						$objSheet->getCell('E'.($start))->setValue(($solvent)." Kg");
 
 					}else if(stristr($namaFormula, 'pigment') !== FALSE){
 						
@@ -1445,9 +1465,11 @@ class Ppc extends Controller {
 							$message = " SOLID CONTAIN Di Database == 0";
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}else if($header["GSM_BAHAN_BAKU"] == 0){
-							$message = "GSM Bahan Di Database == 0";
-						}else{
+						}
+						// else if($header["GSM_BAHAN_BAKU"] == 0){
+						// 	$message = "GSM Bahan Di Database == 0";
+						// }
+						else{
 							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*($r->GRAMATURE))/$r->SOLID_CONTAIN/1000 ;
     						$display = round($mediumPs, 2);
     						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
@@ -1490,9 +1512,11 @@ class Ppc extends Controller {
 							$message = " SOLID CONTAIN Di Database == 0";
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}else if($header["GSM_BAHAN_BAKU"] == 0){
-							$message = "GSM Bahan Di Database == 0";
-						}else{
+						}
+						// else if($header["GSM_BAHAN_BAKU"] == 0){
+						// 	$message = "GSM Bahan Di Database == 0";
+						// }
+						else{
 						$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000 ;
     						$display = round($mediumPs, 2);
     						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
@@ -1526,7 +1550,7 @@ class Ppc extends Controller {
 
         	$endLineOfSensi++;
         	$objSheet->mergeCells('I'.($endLineOfSensi).':L'.($endLineOfSensi));
-        	$objSheet->getCell('I'.$endLineOfSensi)->setValue('DelTime : '.$sensi["delivery_time_ind"]);
+        	$objSheet->getCell('I'.$endLineOfSensi)->setValue('DelTime : '.$sensi["delivery_time"]);
 
         	for($i = 0; $i<17; $i++){
 
@@ -1592,7 +1616,7 @@ class Ppc extends Controller {
 
         	$row++;
         	$objSheet->mergeCells('I'.($row).':L'.($row));
-        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$belah["delivery_time_ind"]);
+        	$objSheet->getCell('I'.$row)->setValue('DelTime : '.$belah["delivery_time"]);
 
         	for($i = 0; $i<17; $i++){
         		$objSheet->getStyle(''.$kolom[$i].$row)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
