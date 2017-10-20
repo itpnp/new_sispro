@@ -9,7 +9,7 @@ class Master_mesin_model extends Model
 	public function getAllData()
 	{
 		$this->oracle_db=$this->load->database('oracle',true);
-		 $this->oracle_db->select('a.*, b.WASTE_PROSES as waste_bapob');    
+		$this->oracle_db->select('a.*, b.WASTE_PROSES as waste_bapob');    
 	  	$this->oracle_db->from('TBL_MASTER_MESIN a');
 	  	$this->oracle_db->join('TBL_MASTER_PROSES_BAPOB b', 'a.ID_MESIN= b.ID_MESIN');
 		$t=$this->oracle_db->get();

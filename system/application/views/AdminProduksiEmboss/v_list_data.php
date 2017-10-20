@@ -8,20 +8,16 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Hasil Produksi</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-12">
-      <div class="panel panel-success">
-        <div class="panel-heading">
-          List File
-        </div>
         <div class="panel-body">
           <div class = "row">
             <form role="form">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             Laporan Emboss
                         </div>
@@ -38,7 +34,8 @@
                                         <th>Baik Emboss</th>
                                         <th>Rusak Emboss</th>
                                         <th>Reject</th>
-                                        <th>Kurang Bahan</th>
+                                        <th>Selisih Bahan</th>
+                                        <th>#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -46,7 +43,11 @@
                                     $nomor=1;
                                     for($i = 0; $i<sizeof($listEmboss); $i++)
                                     {
+                                      if($listEmboss[$i]->SELISIH_BAHAN == null){
+                                        $listEmboss[$i]->SELISIH_BAHAN = 0;
+                                      }
                                     if($nomor%2){
+
                                       echo "<tr>
                                         <td class='warning'>".$listEmboss[$i]->NO_URUT_EMBOSS."</td>
                                         <td class='warning'>".$listEmboss[$i]->TGL_PRODUKSI."</td>
@@ -56,8 +57,9 @@
                                         <td class='warning'>".$listEmboss[$i]->BAIK_METER."</td>
                                         <td class='warning'>".$listEmboss[$i]->RETUR_METER."</td>
                                         <td class='warning'>".$listEmboss[$i]->REJECT_METER."</td>
-                                        <td class='warning'></td>
-                                      </tr>";
+                                        <td class='warning'>".$listEmboss[$i]->SELISIH_BAHAN."</td>
+                                        <td class='warning'><a href = 'editLaporan/".$listEmboss[$i]->NO_URUT_EMBOSS."'>EDIT</a></td>
+                                        </tr>";
                                     }else{
                                       echo "<tr>
                                         <td class='info'>".$listEmboss[$i]->NO_URUT_EMBOSS."</td>
@@ -68,7 +70,8 @@
                                         <td class='info'>".$listEmboss[$i]->BAIK_METER."</td>
                                         <td class='info'>".$listEmboss[$i]->RETUR_METER."</td>
                                         <td class='info'>".$listEmboss[$i]->REJECT_METER."</td>
-                                        <td class='info'></td>
+                                        <td class='info'>".$listEmboss[$i]->SELISIH_BAHAN."</td>
+                                        <td class='info'><a href = 'editLaporan/".$listEmboss[$i]->NO_URUT_EMBOSS."'>EDIT</a></td>
                                       </tr>";
                                     }
                                       $nomor++;
@@ -85,7 +88,6 @@
             </form>
           </div>
         </div>
-			</div>
 		</div>
   </div>
 </div>

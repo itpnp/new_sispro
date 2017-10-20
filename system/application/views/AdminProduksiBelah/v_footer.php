@@ -38,6 +38,7 @@ echo" || Anda berkunjung dengan IP Address $ip";
             responsive: true
         });
     });
+    
     $(document).ready(function(){
       var date_input=$('input[name="tanggalProduksi"]'); //our date input has the name "date"
       var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";

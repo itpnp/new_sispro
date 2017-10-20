@@ -8,18 +8,17 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Daftar Kode Roll</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-12">
       <div class="panel panel-success">
         <div class="panel-heading">
-          List File
+          Roll Hasil Produksi
         </div>
         <div class="panel-body">
           <div class = "row">
-            <form role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/formMutasi" method="post">
               <?php if($this->session->flashdata('warning')): ?>
                 <div class="alert alert-danger alert-dismissible" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -38,6 +37,20 @@
                 <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('success'); ?>
                         </div>
             <?php endif; ?>
+                <form class="form" role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/findByRollBeforeMutation" method="post">
+                <div class="col-lg-12">
+                  <div class="col-lg-6">
+                    <div class="form-group input-group">
+                        <input type="text" placeholder="Kode Roll" name="kodeRoll" class="form-control">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
+                             </button>
+                          </span>
+                    </div>
+                  </div>
+                </div>
+                </form>
+            <form role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/formMutasi" method="post">
                 <div class="col-lg-12">
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover">
@@ -87,8 +100,9 @@
                       </tbody>
                     </table>
                   </div>
-                </div>
               <button type="submit" class=" form-control btn btn-success ">MUTASI</button>
+
+                </div>
             </form>
           </div>
         </div>
@@ -97,14 +111,14 @@
   </div>
 </div>
 
-<script type="text/Javascript">
+<!-- <script type="text/Javascript">
 
   function cetak(fileName){
        fileName = fileName.replace(".","@");
        // console.log(fileName);
        window.location.href = "http://192.168.17.102:8080/barcode.webservice/downloadFile/"+fileName;
   }
-</script> 
+</script> --> 
 
 
 

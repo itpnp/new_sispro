@@ -50,10 +50,12 @@ class Web extends Controller {
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiSensitizing'>";
 			}else if($tanda=="ADMBELAH"){
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiBelah'>";
+			}else if($tanda=="ADMKW"){
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiNeraca'>";
 			}else if($tanda=="ADMEMBOSS"){
 				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiEmboss'>";
 			}else {
-				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/kabag'>";
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php'>";
 			}
 		}
 		else{

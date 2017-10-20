@@ -15,17 +15,42 @@
     <div class="col-lg-12">
       <div class="panel panel-success">
         <div class="panel-heading">
-          List File
+          Roll Dari Mutasi Sensi
         </div>
         <div class="panel-body">
           <div class = "row">
+                <form class="form" role="form" action="<?php echo base_url()?>index.php/AdminProduksiBelah/findByRollBeforeMutation" method="post">
                 <div class="col-lg-12">
+                  <div class="col-lg-6">
+                    <div class="form-group input-group">
+                        <input type="text" placeholder="Kode Roll" class="form-control">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
+                             </button>
+                          </span>
+                    </div>
+                  </div>
+                </div>
+                </form>
+                <div class="col-lg-12">
+                  <?php if($this->session->flashdata('error')): ?>
+                  <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('error'); ?>
+                              </div>
+                  <?php endif; ?>
+                  <?php if($this->session->flashdata('success')): ?>
+                  <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('success'); ?>
+                              </div>
+                  <?php endif; ?>
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                       <thead>
                         <tr>
                           <th>NO</th>
-                          <th>NO MUTASI DEMET</th>
+                          <th>NO MUTASI SENSI</th>
                           <th>KODE ROLL</th>
                           <th>TOTAL BAHAN</th>
                           <th>ACTION</th>
@@ -34,11 +59,13 @@
                       <tbody>
                         <?php
                         $nomor=1;
+                        
                         foreach($masterBahan as $row)
                         {
                         // $newCode = str_replace("/", "_",$row->KODE_ROLL);
                         // $totalBahan = $row->BAIK_METER;
                         // $noUrutDemet = $row->NO_URUT_DEMET;
+                          if($row->TOTAL_BAHAN > 0){
                         if($nomor%2){
                           echo "<tr>
                             <td class='warning'>".$nomor."</td>
@@ -57,6 +84,7 @@
                           </tr>";
                         }
                           $nomor++;
+                        }
                         }
                       ?>
                       </tbody>

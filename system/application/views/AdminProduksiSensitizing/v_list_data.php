@@ -8,20 +8,15 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Hasil Produksi</h1>
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-12">
-      <div class="panel panel-success">
-        <div class="panel-heading">
-          List File
-        </div>
         <div class="panel-body">
           <div class = "row">
             <form role="form">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             Laporan Sensitizing
                         </div>
@@ -37,6 +32,7 @@
                                       <th>Hasil Baik</th>
                                       <th>Reject</th>
                                       <th>Tanggal Produksi</th>
+                                      <th>#</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -53,6 +49,7 @@
                                         <td class='warning'>".$listSensi[$i]->BAIK_METER."</td>
                                         <td class='warning'>".$listSensi[$i]->REJECT_METER."</td>
                                         <td class='warning'>".$listSensi[$i]->TGL_PRODUKSI."</td>
+                                        <td class='warning'><a href = 'editLaporan/".$listSensi[$i]->NO_URUT_SENSI."'>EDIT</a></td>
                                       </tr>";
                                     }else{
                                       echo "<tr>
@@ -63,6 +60,7 @@
                                         <td class='info'>".$listSensi[$i]->BAIK_METER."</td>
                                         <td class='info'>".$listSensi[$i]->REJECT_METER."</td>
                                         <td class='info'>".$listSensi[$i]->TGL_PRODUKSI."</td>
+                                        <td class='info'><a href = 'editLaporan/".$listSensi[$i]->NO_URUT_SENSI."'>EDIT</a></td>
                                       </tr>";
                                     }
                                       $nomor++;
@@ -80,7 +78,6 @@
           </div>
         </div>
 			</div>
-		</div>
   </div>
 </div>
 

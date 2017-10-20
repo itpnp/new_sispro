@@ -8,14 +8,14 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Daftar Roll</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-12">
       <div class="panel panel-success">
         <div class="panel-heading">
-          List File
+          Pilih Kode Roll
         </div>
         <div class="panel-body">
           <div class = "row">
@@ -50,7 +50,7 @@
                      ?>
                    </select>
                   </div>
-            <button type="submit" class=" form-control btn btn-success ">PILIH</button>
+                  <button type="submit" class=" form-control btn btn-success ">PILIH</button>
 
                 </div>
             </form>

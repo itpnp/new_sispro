@@ -73,6 +73,48 @@ class AdminProduksiDemet extends Controller {
 			$data["nama"]=$pecah[1];
 			$data["status"]=$pecah[2];
 			$data["roll"] = $this->Master_detail_demet_model->chooseKodeRoll();
+
+			//====== Remove Yang sudah habis bahannya =====//
+			// for($i=0;$i<sizeof($data['roll']);$i++){
+			//  $bahanSudahDigunakan = 0;
+			//  $checkExistingData = $this->Master_detail_demet_model->findByRoll($data['roll'][$i]->KODE_ROLL,$data["roll"][$i]->NO_MUTASI);
+			//  if(sizeof($checkExistingData)>0){
+			// 	$bahanSudahDigunakan = 0;
+			// 	foreach ($checkExistingData as $row1) {
+			// 		$bahanSudahDigunakan = $bahanSudahDigunakan + $row1->BAIK_METER +$row1->WASTE_METER + $row1->REJECT_METER;
+			// 	}
+				
+			// 	if($bahanSudahDigunakan == $data['roll'][$i]->TOTAL_BAHAN){
+			// 		unset($data['roll'][$i]);
+			// 	}
+			//  }
+			// }
+
+			//====== Hitung ulang data bahannya =====//
+			for($i=0;$i<sizeof($data['roll']);$i++){
+			 $bahanSudahDigunakan = 0;
+			 $checkExistingData = $this->Master_detail_demet_model->findByRoll($data['roll'][$i]->KODE_ROLL,$data["roll"][$i]->ID_MUTASI);
+			 if(sizeof($checkExistingData)>0){
+				$bahanSudahDigunakan = 0;
+				foreach ($checkExistingData as $row1) {
+					$bahanSudahDigunakan = $bahanSudahDigunakan + $row1->BAIK_METER +$row1->WASTE_METER + $row1->REJECT_METER;
+				}
+				
+				if($bahanSudahDigunakan == $data['roll'][$i]->TOTAL_BAHAN){
+					// unset($data['roll'][$i]);
+					$data['roll'][$i]->TOTAL_BAHAN = 0;
+				}else if($bahanSudahDigunakan < $data['roll'][$i]->TOTAL_BAHAN){
+					$data['roll'][$i]->TOTAL_BAHAN = $data['roll'][$i]->TOTAL_BAHAN- $bahanSudahDigunakan;
+				}
+			 }
+			 	
+			 // ECHO $data['roll'][$i]->KODE_ROLL.": ".$data["roll"][$i]->NO_MUTASI;
+			 // echo "<br>";
+			}
+
+
+
+			// exit();
 			if($data["status"]=="ADMDEMET"){
 				$data["tanggal"] = mdate($datestring, $time);
 				$this->load->view('AdminProduksiDemet/v_header',$data);
@@ -111,25 +153,24 @@ class AdminProduksiDemet extends Controller {
 			$data["nama"]=$pecah[1];
 			$data["status"]=$pecah[2];
 			$param1 = str_replace("_", "/",$param);
-
 			$pecahParam = explode("@",$param1);
 			$data["kodeRoll"] =  $pecahParam[0];
 			$data["noMutasi"] =  $pecahParam[1];
 			$data["totalBahan"] = $pecahParam[2];
-			$checkExistingData = $this->Master_detail_demet_model->findByRoll($data["kodeRoll"],$data["noMutasi"]);
-			$bahanSudahDigunakan = 0;
-			if(sizeof($checkExistingData)>0){
-				foreach ($checkExistingData as $row) {
-					$bahanSudahDigunakan = $bahanSudahDigunakan + $row->BAIK_METER + $row->WASTE_METER + $row->REJECT_METER;
-				}
-				$data["totalBahan"] = $data["totalBahan"]- $bahanSudahDigunakan;
-			}else{
-				$data["totalBahan"] = $pecahParam[2];
-			}
+			// $checkExistingData = $this->Master_detail_demet_model->findByRoll($data["kodeRoll"],$data["noMutasi"]);
+			// $bahanSudahDigunakan = 0;
+			// if(sizeof($checkExistingData)>0){
+			// 	foreach ($checkExistingData as $row) {
+			// 		$bahanSudahDigunakan = $bahanSudahDigunakan + $row->BAIK_METER + $row->WASTE_METER + $row->REJECT_METER;
+			// 	}
+			// 	$data["totalBahan"] = $data["totalBahan"]- $bahanSudahDigunakan;
+			// }else{
+			// 	$data["totalBahan"] = $pecahParam[2];
+			// }
 			$data["mutasiEmboss"] = $this->Master_mutasi_emboss->findByRollAndMutasi($data["kodeRoll"], $data["noMutasi"]);
 			$this->session->set_userdata('mutasiEmboss', $data["mutasiEmboss"]);
 			$this->session->set_flashdata('bahanSebelum', $data["totalBahan"]);
-			$this->session->set_flashdata('bahanSudahDigunakan', $bahanSudahDigunakan);
+			$this->session->set_flashdata('bahanSudahDigunakan', $data["totalBahan"] );
 			$this->session->set_flashdata('totalBahanDariDemet', $pecahParam[2]);
 
 			$data["master_kk"] = $this->Master_kk_model->getDataKK();
@@ -202,7 +243,7 @@ class AdminProduksiDemet extends Controller {
 			$data['NOMOR_KK'] = $nomorKK[0];
 			$emboss =  $this->session->userdata('mutasiEmboss');
 			// $emboss =  $this->input->post('mutasiEmboss');
-			$data['NO_MUTASI_EMBOSS'] = $emboss[0]->NO_MUTASI;
+			$data['NO_MUTASI_EMBOSS'] = $emboss[0]->ID_MUTASI;
 			$data['STATUS_MUTASI'] = 'BELUM DIMUTASI';
 			
 			$data['TGL_PRODUKSI'] = $this->input->post('tanggalProduksi');
@@ -210,16 +251,41 @@ class AdminProduksiDemet extends Controller {
 			$data['NO_MUTASI_DEMET'] = 0;
 
 		$data['START_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeProduksi')));
-		$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		
+		if(strtotime($this->input->post('endTimeProduksi'))<strtotime($this->input->post('startTimeProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		}
 
 		$data['START_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimePersiapan')));
-		$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		if(strtotime($this->input->post('endTimePersiapan'))<strtotime($this->input->post('startTimePersiapan'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PERSIAPAN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		}
 
 		$data['START_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleProduksi')));
-		$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		if(strtotime($this->input->post('endTimeTroubleProduksi'))<strtotime($this->input->post('startTimeTroubleProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		}
 
 		$data['START_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleMesin')));
-		$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		if(strtotime($this->input->post('endTimeTroubleMesin'))<strtotime($this->input->post('startTimeTroubleMesin'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_MESIN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		}
 
 		$data['START_JAM_TUNGGU_BAHAN'] =  date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguBahan')));
 		$data['FINISH_JAM_TUNGGU_BAHAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguBahan')));
@@ -268,18 +334,18 @@ class AdminProduksiDemet extends Controller {
 				$Sebelum = $this->session->flashdata('bahanSebelum');
 				$totalBahanDariDemet = $this->session->flashdata('totalBahanDariDemet');
 				$dataUpdate = array();
-				if($bahanSudahDigunakan>0){
-					$hitungTotalBahan = $bahanSudahDigunakan + $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
-					if($hitungTotalBahan==$totalBahanDariDemet){
-						$dataUpdate = array(
-						'STATUS_DEMET' => "finish"
-						);
-					}else{
-						$dataUpdate = array(
-						'STATUS_DEMET' => "progress"
-						);
-					}
-				}else{
+				// if($bahanSudahDigunakan>0){
+				// 	$hitungTotalBahan = $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
+				// 	if($hitungTotalBahan==$totalBahanDariDemet){
+				// 		$dataUpdate = array(
+				// 		'STATUS_DEMET' => "finish"
+				// 		);
+				// 	}else{
+				// 		$dataUpdate = array(
+				// 		'STATUS_DEMET' => "progress"
+				// 		);
+				// 	}
+				// // }else{
 					$hitungTotalBahan = $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
 					if($hitungTotalBahan==$totalBahanDariDemet){
 						$dataUpdate = array(
@@ -290,9 +356,10 @@ class AdminProduksiDemet extends Controller {
 						'STATUS_DEMET' => "progress"
 						);
 					}
-				}
+				// }
 				// $idMutasi =  $this->session->flashdata('idMutasiEmboss');
-				if($this->Master_mutasi_emboss->updateMutasi($data['NO_MUTASI_EMBOSS'] ,$dataUpdate)){
+					$data['KODE_ROLL'] = $emboss[0]->KODE_ROLL;
+				if($this->Master_mutasi_emboss->updateMutasi($data['NO_MUTASI_EMBOSS'],$data['KODE_ROLL'],$dataUpdate)){
 					$this->session->set_flashdata('success', 'Proses Berhasil Disimpan');
 					redirect("AdminProduksiDemet/chooseRoll");
 				}else{
@@ -323,6 +390,108 @@ class AdminProduksiDemet extends Controller {
 				$this->load->view('AdminProduksiDemet/v_header',$data);
 				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
 				$this->load->view('AdminProduksiDemet/v_list_data', $data);
+				$this->load->view('AdminProduksiDemet/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+	}
+
+	function checkSaldo(){
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$data["listRoll"] = $this->Master_detail_demet_model->checkSaldo();
+			if($data["status"]=="ADMDEMET"){
+				$this->load->view('AdminProduksiDemet/v_header',$data);
+				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
+				$this->load->view('AdminProduksiDemet/v_list_roll', $data);
+				$this->load->view('AdminProduksiDemet/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+	}
+	function dataMutasi(){
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$data["listRoll"] = $this->Master_detail_demet_model->dataMutasi();
+			if($data["status"]=="ADMDEMET"){
+				$this->load->view('AdminProduksiDemet/v_header',$data);
+				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
+				$this->load->view('AdminProduksiDemet/v_data_mutasi', $data);
+				$this->load->view('AdminProduksiDemet/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+	}
+	function findByRollBeforeMutation(){
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		$kodeRoll = $this->input->post('kodeRoll');
+		if($session!=""){
+			$kodeRoll = $this->input->post('kodeRoll');
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$data["listDemet"] = $this->Master_detail_demet_model->findByRollBeforeMutation($kodeRoll);
+			if($data["status"]=="ADMDEMET"){
+				$this->load->view('AdminProduksiDemet/v_header',$data);
+				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
+				$this->load->view('AdminProduksiDemet/v_daftar_mutasi', $data);
 				$this->load->view('AdminProduksiDemet/v_footer',$data);
 			}else{
 				?>
@@ -387,78 +556,127 @@ class AdminProduksiDemet extends Controller {
 			$data["nim"]=$pecah[0];
 			$data["nama"]=$pecah[1];
 			$data["status"]=$pecah[2];
-			// $data["noUrutDemet"] = $param;
-			// $pecahParam=explode("@",$param);
-			// $data["kodeRoll"] = $pecahParam[0];
-			// $data["nomorKK"] = $pecahParam[1];
-			// $data["nomorKK"] = str_replace("_", "/",$data["nomorKK"]);
-			// $data["totalBahan"] = $pecahParam[2];
-
+			
 			$input = array();
 			//Menampilkan data laporan emboss yang siap di mutasi ke demet
 			$dataMutasi = $this->Master_detail_demet_model->getDataForMutation();
 
 			//Mengambil no urut yang dipilih oleh pengguna
+			// foreach ($dataMutasi as $row) {
+			// 	$x = $this->input->post($row->NO_URUT_DEMET);
+			// 	if($x != ""){
+			// 		$input[] = $x."@".$row->KODE_ROLL."@".$row->BAIK_METER."@".$row->KODE_DEMET;
+			// 		$data["nomorKK"] =  $row->NOMOR_KK;
+
+			// 	}
+				
+			// }
+
+			//Checking how many data user chooses
+			$index = 0;
 			foreach ($dataMutasi as $row) {
 				$x = $this->input->post($row->NO_URUT_DEMET);
-				// $input[] = $x."@".$row->KODE_ROLL_ASAL;
 				if($x != ""){
-					$input[] = $x."@".$row->KODE_ROLL."@".$row->BAIK_METER."@".$row->KODE_DEMET;
-					$data["nomorKK"] =  $row->NOMOR_KK;
-
+					$input[$index][0] = $row->KODE_ROLL;
+					$input[$index][1] = $row->BAIK_METER;
+					$input[$index][2] = $row->KODE_DEMET;
+					$input[$index][3] = $row->ID_ROLL;
+					$input[$index][4] = $x;
+					$index++;
 				}
-				
 			}
+			$index = 0;
 			//Checking how many data user chooses
+			$showInput = array();
 			$countData = count($input);
-			$this->session->set_flashdata('kodeDemet', $input);
-
+			$rollExist = false;
+		
 			if($countData == 1){
+				$showInput[$index][0] = $input[0][0];
+				$showInput[$index][1] = $input[0][1];
+			}else if($countData > 1){
+				for($i=0; $i<$countData; $i++) {
+					if(count($showInput)>0){
+						for($j=0; $j<count($showInput); $j++) {
+							if($showInput[$j][0]==$input[$i][0]){
+								$rollExist = true;
+								$showInput[$j][1] = $showInput[$j][1]+$input[$i][1];
+							}
+						}
 
-				//if user only selects one data then
-				//Use kode_roll column in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
-				$getKodeRoll=explode("@",$input[0]);
-				foreach ($dataMutasi as $key) {
-					if($key->NO_URUT_DEMET == $getKodeRoll[0]){
-						$kodeRollBaru = $key->KODE_ROLL;
-						$data["kodeRoll"] = $kodeRollBaru;
-						$data["hasilBaik"] = $key->BAIK_METER;
-						$data["idRoll"] =  $key->ID_ROLL;
+						if(!$rollExist){
+							$showInput[$index][0] = $input[$i][0];
+							$showInput[$index][1] = $input[$i][1];
+							$showInput[$index][2] = $input[$i][2];
+							$showInput[$index][3] = $input[$i][3];
+							$showInput[$index][4] = $input[$i][4];
+							$index++;
+						}
+						$rollExist = false;
+					}else if(count($showInput)==0){
+						$showInput[$index][0] = $input[$i][0];
+						$showInput[$index][1] = $input[$i][1];
+						$showInput[$index][2] = $input[$i][2];
+						$showInput[$index][3] = $input[$i][3];
+						$showInput[$index][4] = $input[$i][4];
+						$index++;
 					}
-				}
-				
-			}else if($countData>1){
-			
-				$data["hasilBaik"] = 0;
-				//if user selects more than one data then
-				//System checking whether the data selected by user has same kode_roll or not
-				$getKodeRoll=explode("@",$input[0]);
-				$compareKodeRoll = $getKodeRoll[1] ;
-				$validation = false;
-				foreach ($input as $row) {
-					$getKodeRoll=explode("@",$row);
-					if($compareKodeRoll != $getKodeRoll[1] ){
-						$validation = false;
-						break;
-					}else{
-						$data["hasilBaik"] = $data["hasilBaik"] + $getKodeRoll[2];
-
-						$validation = true;
-					}
-									}
-				if($validation){
-					$data["kodeRoll"] = $compareKodeRoll;					
-					for($i=0; $i<count($dataMutasi); $i++){
-						$data["idRoll"] =  $dataMutasi[$i]->ID_ROLL;
-					}
-					
-				}else{
-					//If validation false then
-					//User redirected to v_mutasi.php
-				   $this->session->set_flashdata('warning', 'Kode Roll Berbeda');
-				   echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiDemet/mutasiBarang'>";
 				}
 			}
+			// $countData = count($input);
+			// $this->session->set_flashdata('kodeDemet', $input);
+
+			// if($countData == 1){
+
+			// 	//if user only selects one data then
+			// 	//Use kode_roll column in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
+			// 	$getKodeRoll=explode("@",$input[0]);
+			// 	foreach ($dataMutasi as $key) {
+			// 		if($key->NO_URUT_DEMET == $getKodeRoll[0]){
+			// 			$kodeRollBaru = $key->KODE_ROLL;
+			// 			$data["kodeRoll"] = $kodeRollBaru;
+			// 			$data["hasilBaik"] = $key->BAIK_METER;
+			// 			$data["idRoll"] =  $key->ID_ROLL;
+			// 		}
+			// 	}
+				
+			// }else if($countData>1){
+			
+			// 	$data["hasilBaik"] = 0;
+			// 	//if user selects more than one data then
+			// 	//System checking whether the data selected by user has same kode_roll or not
+			// 	$getKodeRoll=explode("@",$input[0]);
+			// 	$compareKodeRoll = $getKodeRoll[1] ;
+			// 	$validation = false;
+			// 	foreach ($input as $row) {
+			// 		$getKodeRoll=explode("@",$row);
+			// 		if($compareKodeRoll != $getKodeRoll[1] ){
+			// 			$validation = false;
+			// 			break;
+			// 		}else{
+			// 			$data["hasilBaik"] = $data["hasilBaik"] + $getKodeRoll[2];
+
+			// 			$validation = true;
+			// 		}
+			// 						}
+			// 	if($validation){
+			// 		$data["kodeRoll"] = $compareKodeRoll;					
+			// 		for($i=0; $i<count($dataMutasi); $i++){
+			// 			$data["idRoll"] =  $dataMutasi[$i]->ID_ROLL;
+			// 		}
+					
+			// 	}else{
+			// 		//If validation false then
+			// 		//User redirected to v_mutasi.php
+			// 	   $this->session->set_flashdata('warning', 'Kode Roll Berbeda');
+			// 	   echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiDemet/mutasiBarang'>";
+			// 	}
+			// }
+			$temp = array();
+			$temp['dataInsert'] = $showInput;
+			$temp['dataUpdate'] = $input;
+			$data['dataInput'] = $showInput;
+			$this->session->set_flashdata('data', $temp);
 			if($data["status"]=="ADMDEMET"){
 				$this->load->view('AdminProduksiDemet/v_header',$data);
 				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
@@ -483,29 +701,47 @@ class AdminProduksiDemet extends Controller {
 	}
 
 	function saveMutasi(){
-		if($this->Master_mutasi_demet->checkNumber($this->input->post('noMutasi'))){
-			$data = array(
-			'NO_MUTASI' => $this->input->post('noMutasi'),
-			'TGL_MUTASI' => $this->input->post('tanggalMutasi'),
-			'STATUS_REWIND' => 'progress',
-			'KODE_ROLL' => $this->input->post('kodeRoll'),
-			'TOTAL_BAHAN' => $this->input->post('totalBahan'),
-			'ID_ROLL' => $this->input->post('idRoll')
-			);
+		// if($this->Master_mutasi_demet->checkNumber($this->input->post('noMutasi'))){
+			$dataMutasi = array();
+			$temp = $this->session->flashdata('data');
+			$mutasi = $temp['dataInsert'];
+			$update = $temp['dataUpdate'];
 
-			$kodeDemet = $this->session->flashdata('kodeDemet');
+			// $data = array(
+			// 'NO_MUTASI' => $this->input->post('noMutasi'),
+			// 'TGL_MUTASI' => $this->input->post('tanggalMutasi'),
+			// 'STATUS_REWIND' => 'progress',
+			// 'KODE_ROLL' => $this->input->post('kodeRoll'),
+			// 'TOTAL_BAHAN' => $this->input->post('totalBahan'),
+			// 'ID_ROLL' => $this->input->post('idRoll')
+			// );
+			for($i=0;$i<count($mutasi);$i++){
+				$data = array(
+				'NO_MUTASI' => $this->input->post('noMutasi'),
+				'TGL_MUTASI' => $this->input->post('tanggalMutasi'),
+				'KODE_ROLL' => $mutasi[$i][0],
+				'KODE_DEMET' => $mutasi[$i][2],
+				'TOTAL_BAHAN' => $mutasi[$i][1],
+				'ID_ROLL' => $mutasi[$i][3],
+				'STATUS_REWIND' => 'progress'
+				);
+				$dataMutasi[$i] = $data;
+			}
 
-			if($this->Master_mutasi_demet->saveMutasi($data,$kodeDemet)){
+			// $kodeDemet = $this->session->flashdata('kodeDemet');
+
+			if($this->Master_mutasi_demet->saveMutasi($dataMutasi,$update)){
+			// if($this->Master_mutasi_demet->saveMutasi($data,$kodeDemet)){
 				$this->session->set_flashdata('success', 'Proses Berhasil Disimpan');
 				redirect("AdminProduksiDemet/mutasiBarang/");
 			}else{
 				$this->session->set_flashdata('error', 'Proses Gagal Disimpan');
 				redirect("AdminProduksiDemet/mutasiBarang/");
 			}
-		}else{
-			$this->session->set_flashdata('error', 'number already exist !');
-			redirect("AdminProduksiDemet/mutasiBarang/");
-		}
+		// }else{
+		// 	$this->session->set_flashdata('error', 'number already exist !');
+		// 	redirect("AdminProduksiDemet/mutasiBarang/");
+		// }
 
 	}
 	function reportPage(){
@@ -848,4 +1084,217 @@ class AdminProduksiDemet extends Controller {
 				redirect("AdminProduksiDemet/reportPage/");
 	        }
         }
+
+function tanggal_indo($tanggal)
+	{
+		$bulan = array (1 =>   'Januari',
+					'Februari',
+					'Maret',
+					'April',
+					'Mei',
+					'Juni',
+					'Juli',
+					'Agustus',
+					'September',
+					'Oktober',
+					'November',
+					'Desember'
+				);
+		$split = explode('-', $tanggal);
+		return $split[0] . ' ' . $bulan[ (int)$split[1] ] . ' ' . $split[2];
+	}
+function editLaporan($param){
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			if($data["status"]=="ADMDEMET"){
+				$this->session->set_flashdata('paramEdit', $param);
+				$data["laporanDemet"] = $this->Master_detail_demet_model->findById($param);
+				if($data["laporanDemet"]->TGL_PRODUKSI != null){
+					$data["laporanDemet"]->TGL_PRODUKSI = $this->tanggal_indo($data["laporanDemet"]->TGL_PRODUKSI);
+				}
+
+				$data["master_kk"] = $this->Master_kk_model->getDataKK();
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_PERSIAPAN)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_PERSIAPAN))){
+					$data["laporanDemet"]->START_JAM_PERSIAPAN = "0";
+					$data["laporanDemet"]->FINISH_JAM_PERSIAPAN = "0";
+				}
+
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_PRODUKSI)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_PRODUKSI))){
+					$data["laporanDemet"]->START_JAM_PRODUKSI = "0";
+					$data["laporanDemet"]->FINISH_JAM_PRODUKSI = "0";
+				}
+
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_TROUBLE_MESIN)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_TROUBLE_MESIN))){
+					$data["laporanDemet"]->START_JAM_TROUBLE_MESIN = "0";
+					$data["laporanDemet"]->FINISH_JAM_TROUBLE_MESIN = "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_TUNGGU_BAHAN)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_TUNGGU_BAHAN))){
+					$data["laporanDemet"]->START_JAM_TUNGGU_BAHAN= "0";
+					$data["laporanDemet"]->FINISH_JAM_TUNGGU_BAHAN= "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_TUNGGU_CORE)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_TUNGGU_CORE))){
+					$data["laporanDemet"]->START_JAM_TUNGGU_CORE = "0";
+					$data["laporanDemet"]->FINISH_JAM_TUNGGU_CORE = "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_FORCE_MAJOR)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_FORCE_MAJOR))){
+					$data["laporanDemet"]->START_JAM_FORCE_MAJOR = "0";
+					$data["laporanDemet"]->FINISH_JAM_FORCE_MAJOR = "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_GANTI_SILINDER_SERI)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_GANTI_SILINDER_SERI))){
+					$data["laporanDemet"]->START_JAM_GANTI_SILINDER_SERI = "0";
+					$data["laporanDemet"]->FINISH_JAM_GANTI_SILINDER_SERI = "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_LAIN_LAIN)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_LAIN_LAIN))){
+					$data["laporanDemet"]->START_JAM_LAIN_LAIN = "0";
+					$data["laporanDemet"]->FINISH_JAM_LAIN_LAIN = "0";
+				}
+				if(date("H:i",strtotime($data["laporanDemet"] ->START_JAM_TROUBLE_PRODUKSI)) == date("H:i",strtotime($data["laporanDemet"] ->FINISH_JAM_TROUBLE_PRODUKSI))){
+					$data["laporanDemet"]->START_JAM_TROUBLE_PRODUKSI = "0";
+					$data["laporanDemet"]->FINISH_JAM_TROUBLE_PRODUKSI = "0";
+				}
+				$this->load->view('AdminProduksiDemet/v_header',$data);
+				$this->load->view('AdminProduksiDemet/v_sidebar',$data);
+				$this->load->view('AdminProduksiDemet/v_edit_laporan',$data);
+				$this->load->view('AdminProduksiDemet/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+				<?php
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+    }
+
+function saveEdit(){
+	//=========== Get Input Post =============//
+	$kodeRoll 		= $this->input->post('kodeRoll');
+	$mesin 			= $this->input->post('mesinDemet');
+	$shift 			= $this->input->post('shift');
+	$nomorKK 		= $this->input->post('nomorKK');
+	$tglProduksi 	= $this->input->post('tanggalProduksi');
+	$baikMeter 		= str_replace(".", "",$this->input->post('hasilBaik'));
+	$wasteMeter 	= str_replace(".", "",$this->input->post('hasilRusak'));
+	$rejectMeter 	= str_replace(".", "",$this->input->post('hasilReject'));
+	$noUrut			= $this->input->post('idData');
+	$nomorMutasi 	= $this->input->post('nomorMutasiEmboss');
+
+	//======= End Get Input Post ========//
+
+	//======== Count Total Used Foil On Same Roll =====//
+	$checkExistingData = $this->Master_detail_demet_model->findByRoll($kodeRoll,$nomorMutasi);
+	$usedFoil = 0;
+	if(sizeof($checkExistingData)>0){
+		foreach ($checkExistingData as $row) {
+			if($row->NO_URUT_DEMET != $noUrut){
+				$usedFoil = $usedFoil + $row->BAIK_METER +$row->WASTE_METER + $row->REJECT_METER;
+			}
+		}
+	}
+	//======= End Count Total Used Foil On Same Roll =====//
+
+	//get length from EMBOSS AND make parameter from it
+	$lengthFromEmboss 	= 0;
+	$dataFromEmboss 	= $this->Master_mutasi_emboss->countTotalLength($kodeRoll,$nomorMutasi);
+	$lengthFromEmboss 	= $dataFromEmboss->TOTAL_BAHAN;
+
+
+	//====== check if total data no more than its parameter ====//
+	$newTotalLength = $baikMeter+$wasteMeter+$rejectMeter+$usedFoil;
+
+
+	if($lengthFromEmboss<$newTotalLength){
+		$this->session->set_flashdata('error',$lengthFromEmboss.' Total Bahan Tidak Sesuai '.$newTotalLength);
+		$temp = $this->session->flashdata('paramEdit');
+		redirect("AdminProduksiDemet/editLaporan/".$temp);
+	}
+
+	//====== Get Production Variable Time =========//
+	$nomorKK = explode("@", $nomorKK);
+	$data['KODE_ROLL'] 		= $kodeRoll;
+	$data['SHIFT_DEMET'] 	= $shift;
+	$data['BAIK_METER'] 	= $baikMeter;
+	$data['REJECT_METER'] 	= $rejectMeter;
+	$data['WASTE_METER'] 	= $wasteMeter;
+	$data['NOMOR_KK'] 		= $nomorKK[0];
+	$data['MESIN_DEMET'] 	= $mesin;
+	$data['TGL_PRODUKSI'] 	= $tglProduksi;
+	$data['KODE_BAHAN'] = $nomorKK[2];
+	$data['START_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeProduksi')));
+		
+		if(strtotime($this->input->post('endTimeProduksi'))<strtotime($this->input->post('startTimeProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		}
+
+		$data['START_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimePersiapan')));
+		if(strtotime($this->input->post('endTimePersiapan'))<strtotime($this->input->post('startTimePersiapan'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PERSIAPAN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		}
+
+		$data['START_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleProduksi')));
+		if(strtotime($this->input->post('endTimeTroubleProduksi'))<strtotime($this->input->post('startTimeTroubleProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		}
+
+		$data['START_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleMesin')));
+		if(strtotime($this->input->post('endTimeTroubleMesin'))<strtotime($this->input->post('startTimeTroubleMesin'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_MESIN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		}
+	$data['START_JAM_TUNGGU_BAHAN'] =  date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguBahan')));
+	$data['FINISH_JAM_TUNGGU_BAHAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguBahan')));
+	$data['START_JAM_TUNGGU_CORE'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguCore')));
+	$data['FINISH_JAM_TUNGGU_CORE'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguCore')));
+	$data['START_JAM_FORCE_MAJOR'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeForceMajor')));
+	$data['FINISH_JAM_FORCE_MAJOR'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeForceMajor')));
+	$data['START_JAM_GANTI_SILINDER_SERI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeGantiSilinder')));
+	$data['FINISH_JAM_GANTI_SILINDER_SERI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeGantiSilinder')));
+	$data['START_JAM_LAIN_LAIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimelain')));
+	$data['FINISH_JAM_LAIN_LAIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimelain')));
+
+	$dataMutasi = array();
+	if($newTotalLength<$lengthFromEmboss){
+		$dataMutasi['NO_MUTASI'] = $nomorMutasi;
+		$dataMutasi['STATUS_DEMET'] = 'progress';
+	}else{
+		$dataMutasi['NO_MUTASI'] = $nomorMutasi;
+		$dataMutasi['STATUS_DEMET'] = 'finish';
+	}
+
+	if($this->Master_detail_demet_model->updateData($noUrut, $data, $dataMutasi)){
+	// if($this->Master_detail_demet_model->updateData($noUrut, $data)){
+		redirect("AdminProduksiDemet/listData/");
+	}else{
+		$this->session->set_flashdata('error',' Total Bahan Tidak Sesuai '.$newTotalLength);
+		$temp = $this->session->flashdata('paramEdit');
+		redirect("AdminProduksiDemet/editLaporan/".$temp);
+	}
+}
 }

@@ -64,6 +64,26 @@ class AdminProduksiSensitizing extends Controller {
 			$data["nama"]=$pecah[1];
 			$data["status"]=$pecah[2];
 			$data["masterBahan"] = $this->Master_detail_sensi_model->chooseKodeRoll();
+
+			for($i=0;$i<sizeof($data['masterBahan']);$i++){
+			 $bahanSudahDigunakan = 0;
+			 $checkExistingData = $this->Master_detail_sensi_model->findByRollAndMutasi($data["masterBahan"][$i]->KODE_ROLL,$data["masterBahan"][$i]->ID_MUTASI);
+			 if(sizeof($checkExistingData)>0){
+				$bahanSudahDigunakan = 0;
+				foreach ($checkExistingData as $row1) {
+					$bahanSudahDigunakan = $bahanSudahDigunakan + $row1->BAIK_METER +$row1->WASTE_METER + $row1->REJECT_METER;
+				}
+				
+				if($bahanSudahDigunakan == $data['masterBahan'][$i]->TOTAL_BAHAN){
+					// unset($data['masterBahan'][$i]);
+					$data['masterBahan'][$i]->TOTAL_BAHAN = 0;
+				}else if($bahanSudahDigunakan < $data['masterBahan'][$i]->TOTAL_BAHAN){
+					$data['masterBahan'][$i]->TOTAL_BAHAN = $data['masterBahan'][$i]->TOTAL_BAHAN- $bahanSudahDigunakan;
+				}
+			 }
+
+
+			}
 			if($data["status"]=="ADMSENSI"){
 				$data["tanggal"] = mdate($datestring, $time);
 				$this->load->view('AdminProduksiSensitizing/v_header',$data);
@@ -105,23 +125,23 @@ class AdminProduksiSensitizing extends Controller {
 			$data["kodeRoll"] = $separateParam[0];
 			$data["noMutasi"] = $separateParam[1];
 			$data["totalBahan"] = $separateParam[2];
-			$bahanSudahDigunakan = 0;
+			// $bahanSudahDigunakan = 0;
 
-			$checkExistingData = $this->Master_detail_sensi_model->findByRollAndMutasi($data["kodeRoll"],$data["noMutasi"]);
-			if(sizeof($checkExistingData)>0){
-				$bahanSudahDigunakan = 0;
-				foreach ($checkExistingData as $row) {
-					$bahanSudahDigunakan = $bahanSudahDigunakan + $row->BAIK_METER + $row->WASTE_METER + $row->REJECT_METER;
-				}
-				$data["totalBahan"] = $data["totalBahan"] - $bahanSudahDigunakan;
-			}else{
-				$data["totalBahan"] = $separateParam[2];
-			}
+			// $checkExistingData = $this->Master_detail_sensi_model->findByRollAndMutasi($data["kodeRoll"],$data["noMutasi"]);
+			// if(sizeof($checkExistingData)>0){
+			// 	$bahanSudahDigunakan = 0;
+			// 	foreach ($checkExistingData as $row) {
+			// 		$bahanSudahDigunakan = $bahanSudahDigunakan + $row->BAIK_METER + $row->WASTE_METER + $row->REJECT_METER;
+			// 	}
+			// 	$data["totalBahan"] = $data["totalBahan"] - $bahanSudahDigunakan;
+			// }else{
+			// 	$data["totalBahan"] = $separateParam[2];
+			// }
 
 			$temp = array();
-			$temp["mutasiRewind"] = $data["noMutasi"];
+			$temp["mutasiRewind"] = $this->Master_mutasi_rewind->findByRollAndMutasi($data["kodeRoll"], $data["noMutasi"]);
 			$temp["bahanSebelum"] = $data["totalBahan"];
-			$temp["bahanSudahDigunakan"] = $bahanSudahDigunakan;
+			$temp["bahanSudahDigunakan"] = $data["totalBahan"];
 			$temp["totalBahanDariRewind"] = $separateParam[2];
 			$temp["param"] = $param;
 
@@ -188,10 +208,14 @@ class AdminProduksiSensitizing extends Controller {
 			$data['KODE_ROLL'] = $this->input->post('kodeRoll');
 			$data['SHIFT_SENSI'] = $this->input->post('shift');
 			$data['BAIK_METER'] = $hasilBaik;
+			$data['TOTAL_BAHAN'] = $bahanDariRewind;
+			$data['SISA_BAIK'] = $bahanDariRewind - $totalHitung;
 			$data['REJECT_METER'] = $reject;
 			$data['WASTE_METER'] = $hasilRusak;
 			$data['STATUS_MUTASI'] = 'BELUM MUTASI';
-			$data['NO_MUTASI_REWIND'] = $temp['mutasiRewind'];
+			$data['NO_MUTASI_REWIND'] = $temp['mutasiRewind'][0]->ID_MUTASI;
+			
+			$data['MESIN_SENSI'] = $this->input->post('mesinSensi');
 
 			$data['NOMOR_KK'] = $nomorKK[0];
 			$data['TGL_PRODUKSI'] = $this->input->post('tanggalProduksi');
@@ -201,16 +225,41 @@ class AdminProduksiSensitizing extends Controller {
 			$data['NO_MUTASI_SENSI'] = '0';
 
 		$data['START_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeProduksi')));
-		$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		
+		if(strtotime($this->input->post('endTimeProduksi'))<strtotime($this->input->post('startTimeProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		}
 
 		$data['START_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimePersiapan')));
-		$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		if(strtotime($this->input->post('endTimePersiapan'))<strtotime($this->input->post('startTimePersiapan'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PERSIAPAN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		}
 
 		$data['START_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleProduksi')));
-		$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		if(strtotime($this->input->post('endTimeTroubleProduksi'))<strtotime($this->input->post('startTimeTroubleProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		}
 
 		$data['START_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleMesin')));
-		$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		if(strtotime($this->input->post('endTimeTroubleMesin'))<strtotime($this->input->post('startTimeTroubleMesin'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_MESIN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		}
 
 		$data['START_JAM_TUNGGU_BAHAN'] =  date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguBahan')));
 		$data['FINISH_JAM_TUNGGU_BAHAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguBahan')));
@@ -232,18 +281,18 @@ class AdminProduksiSensitizing extends Controller {
 				$Sebelum = $temp['bahanSebelum'];
 				$totalBahanDariRewind = $temp['totalBahanDariRewind'];
 
-				if($bahanSudahDigunakan>0){
-					$hitungTotalBahan = $bahanSudahDigunakan + $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
-					if($hitungTotalBahan==$totalBahanDariRewind){
-						$dataUpdate = array(
-						'STATUS_SENSI' => "finish"
-						);
-					}else{
-						$dataUpdate = array(
-						'STATUS_SENSI' => "progress"
-						);
-					}
-				}else{
+				// if($bahanSudahDigunakan>0){
+				// 	$hitungTotalBahan = $bahanSudahDigunakan + $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
+				// 	if($hitungTotalBahan==$totalBahanDariRewind){
+				// 		$dataUpdate = array(
+				// 		'STATUS_SENSI' => "finish"
+				// 		);
+				// 	}else{
+				// 		$dataUpdate = array(
+				// 		'STATUS_SENSI' => "progress"
+				// 		);
+				// 	}
+				// }else{
 					$hitungTotalBahan = $data['BAIK_METER'] + $data['REJECT_METER'] + $data['WASTE_METER'];
 					if($hitungTotalBahan==$totalBahanDariRewind){
 						$dataUpdate = array(
@@ -254,11 +303,11 @@ class AdminProduksiSensitizing extends Controller {
 						'STATUS_SENSI' => "progress"
 						);
 					}
-				}
+				// }
 				
 				// $idMutasi =  $this->session->flashdata('idMutasi');
-
-				if($this->Master_mutasi_rewind->updateMutasi($temp['mutasiRewind'],$dataUpdate)){
+				$data['KODE_ROLL'] = $temp['mutasiRewind'][0]->KODE_ROLL;
+				if($this->Master_mutasi_rewind->updateMutasi($temp['mutasiRewind'][0]->ID_MUTASI,$data['KODE_ROLL'],$dataUpdate)){
 					$this->session->set_flashdata('success', 'Proses Berhasil Disimpan');
 					redirect("AdminProduksiSensitizing/chooseData");
 				}else{
@@ -307,6 +356,43 @@ class AdminProduksiSensitizing extends Controller {
 		}
 	}
 
+	function findByRollBeforeMutation(){
+
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$kodeRoll = $this->input->post('kodeRoll');
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$data["listSensi"] = $this->Master_detail_sensi_model->findByRollBeforeMutation($kodeRoll);
+
+			if($data["status"]=="ADMSENSI"){
+				$this->load->view('AdminProduksiSensitizing/v_header',$data);
+				$this->load->view('AdminProduksiSensitizing/v_sidebar',$data);
+				$this->load->view('AdminProduksiSensitizing/v_pilih_mutasi', $data);
+				$this->load->view('AdminProduksiSensitizing/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}		
+	}
+
 	function formMutasi(){
 		
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
@@ -327,65 +413,117 @@ class AdminProduksiSensitizing extends Controller {
 			$dataMutasi = $this->Master_detail_sensi_model->getDataForMutation();
 
 			//Mengambil no urut yang dipilih oleh pengguna
+			// foreach ($dataMutasi as $row) {
+			// 	$x = $this->input->post($row->NO_URUT_SENSI);
+			// 	// $input[] = $x."@".$row->KODE_ROLL_ASAL;
+			// 	if($x != ""){
+			// 		$input[] = $x."@".$row->KODE_ROLL."@".$row->BAIK_METER."@".$row->KODE_SENSI;
+			// 		$data["nomorKK"] =  $row->NOMOR_KK;
+
+			// 	}
+			// }
+			//Checking how many data user chooses
+			$index = 0;
 			foreach ($dataMutasi as $row) {
 				$x = $this->input->post($row->NO_URUT_SENSI);
-				// $input[] = $x."@".$row->KODE_ROLL_ASAL;
 				if($x != ""){
-					$input[] = $x."@".$row->KODE_ROLL."@".$row->BAIK_METER."@".$row->KODE_SENSI;
-					$data["nomorKK"] =  $row->NOMOR_KK;
-
+					$input[$index][0] = $row->KODE_ROLL;
+					$input[$index][1] = $row->BAIK_METER;
+					$input[$index][2] = $row->KODE_SENSI;
+					$input[$index][3] = "";
+					$input[$index][4] = $x;
+					$index++;
 				}
 			}
+			$index = 0;
 			//Checking how many data user chooses
+			$showInput = array();
 			$countData = count($input);
-			$this->session->set_flashdata('kodeSensi', $input);
-
+			$rollExist = false;
+		
 			if($countData == 1){
+				$showInput[$index][0] = $input[0][0];
+				$showInput[$index][1] = $input[0][1];
+			}else if($countData > 1){
+				for($i=0; $i<$countData; $i++) {
+					if(count($showInput)>0){
+						for($j=0; $j<count($showInput); $j++) {
+							if($showInput[$j][0]==$input[$i][0]){
+								$rollExist = true;
+								$showInput[$j][1] = $showInput[$j][1]+$input[$i][1];
+							}
+						}
 
-				//if user only selects one data then
-				//Use kode_roll column in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
-				$getKodeRoll=explode("@",$input[0]);
-				foreach ($dataMutasi as $key) {
-					if($key->NO_URUT_SENSI == $getKodeRoll[0]){
-						$kodeRollBaru = $key->KODE_ROLL;
-						$data["kodeRoll"] = $kodeRollBaru;
-						$data["hasilBaik"] = $key->BAIK_METER;
-						// $data["idRoll"] =  $key->ID_ROLL;
+						if(!$rollExist){
+							$showInput[$index][0] = $input[$i][0];
+							$showInput[$index][1] = $input[$i][1];
+							$showInput[$index][2] = $input[$i][2];
+							$showInput[$index][3] = $input[$i][3];
+							$showInput[$index][4] = $input[$i][4];
+							$index++;
+						}
+						$rollExist = false;
+					}else if(count($showInput)==0){
+						$showInput[$index][0] = $input[$i][0];
+						$showInput[$index][1] = $input[$i][1];
+						$showInput[$index][2] = $input[$i][2];
+						$showInput[$index][3] = $input[$i][3];
+						$showInput[$index][4] = $input[$i][4];
+						$index++;
 					}
-				}
-				
-			}else if($countData>1){
-				$data["hasilBaik"] = 0;
-
-				//if user selects more than one data then
-				//System checking whether the data selected by user has same kode_roll or not
-				$getKodeRoll=explode("@",$input[0]);
-				$compareKodeRoll = $getKodeRoll[1] ;
-				$validation = false;
-				foreach ($input as $row) {
-					$getKodeRoll=explode("@",$row);
-					if($compareKodeRoll != $getKodeRoll[1] ){
-						$validation = false;
-						break;
-					}else{
-						$data["hasilBaik"] = $data["hasilBaik"] + $getKodeRoll[2];
-
-						$validation = true;
-					}
-									}
-				if($validation){
-					$data["kodeRoll"] = $compareKodeRoll;					
-					// for($i=0; $i<count($dataMutasi); $i++){
-						// $data["idRoll"] =  $dataMutasi[$i]->ID_ROLL;
-					// }
-					
-				}else{
-					//If validation false then
-					//User redirected to v_mutasi.php
-				   $this->session->set_flashdata('warning', 'Kode Roll Berbeda');
-				   echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiSensitizing/mutasiBarang'>";
 				}
 			}
+			// $countData = count($input);
+			// $this->session->set_flashdata('kodeSensi', $input);
+
+			// if($countData == 1){
+
+			// 	//if user only selects one data then
+			// 	//Use kode_roll column in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
+			// 	$getKodeRoll=explode("@",$input[0]);
+			// 	foreach ($dataMutasi as $key) {
+			// 		if($key->NO_URUT_SENSI == $getKodeRoll[0]){
+			// 			$kodeRollBaru = $key->KODE_ROLL;
+			// 			$data["kodeRoll"] = $kodeRollBaru;
+			// 			$data["hasilBaik"] = $key->BAIK_METER;
+			// 			// $data["idRoll"] =  $key->ID_ROLL;
+			// 		}
+			// 	}
+				
+			// }else if($countData>1){
+			// 	$data["hasilBaik"] = 0;
+
+			// 	//if user selects more than one data then
+			// 	//System checking whether the data selected by user has same kode_roll or not
+			// 	$getKodeRoll=explode("@",$input[0]);
+			// 	$compareKodeRoll = $getKodeRoll[1] ;
+			// 	$validation = false;
+			// 	foreach ($input as $row) {
+			// 		$getKodeRoll=explode("@",$row);
+			// 		if($compareKodeRoll != $getKodeRoll[1] ){
+			// 			$validation = false;
+			// 			break;
+			// 		}else{
+			// 			$data["hasilBaik"] = $data["hasilBaik"] + $getKodeRoll[2];
+
+			// 			$validation = true;
+			// 		}
+			// 						}
+			// 	if($validation){
+			// 		$data["kodeRoll"] = $compareKodeRoll;
+					
+			// 	}else{
+			// 		//If validation false then
+			// 		//User redirected to v_mutasi.php
+			// 	   $this->session->set_flashdata('warning', 'Kode Roll Berbeda');
+			// 	   echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiSensitizing/mutasiBarang'>";
+			// 	}
+			// }
+			$temp = array();
+			$temp['dataInsert'] = $showInput;
+			$temp['dataUpdate'] = $input;
+			$data['dataInput'] = $showInput;
+			$this->session->set_flashdata('data', $temp);
 			if($data["status"]=="ADMSENSI"){
 				$this->load->view('AdminProduksiSensitizing/v_header',$data);
 				$this->load->view('AdminProduksiSensitizing/v_sidebar',$data);
@@ -411,28 +549,77 @@ class AdminProduksiSensitizing extends Controller {
 
 
 	function saveMutasi(){
-		if($this->Master_mutasi_sensi->checkNumber($this->input->post('noMutasi'))){
-			$data = array(
+		// if($this->Master_mutasi_sensi->checkNumber($this->input->post('noMutasi'))){
+			$dataMutasi = array();
+			$temp = $this->session->flashdata('data');
+			$mutasi = $temp['dataInsert'];
+			$update = $temp['dataUpdate'];
+			// $data = array(
+			// 	'NO_MUTASI' => $this->input->post('noMutasi'),
+			// 	'TGL_MUTASI' => $this->input->post('tanggalMutasi'),
+			// 	'TOTAL_BAHAN' => $this->input->post('totalBahan'),
+			// 	'KODE_ROLL' => $this->input->post('kodeRoll'),
+			// 	'STATUS_BELAH' => "progress"
+			// );
+			for($i=0;$i<count($mutasi);$i++){
+				$data = array(
 				'NO_MUTASI' => $this->input->post('noMutasi'),
 				'TGL_MUTASI' => $this->input->post('tanggalMutasi'),
-				'TOTAL_BAHAN' => $this->input->post('totalBahan'),
-				'KODE_ROLL' => $this->input->post('kodeRoll'),
-				'STATUS_BELAH' => "progress"
-			);
-
-			$kodeSensi = $this->session->flashdata('kodeSensi');
-			if($this->Master_mutasi_sensi->saveMutasi($data, $kodeSensi)){
+				'KODE_ROLL' => $mutasi[$i][0],
+				'KODE_SENSI' => $mutasi[$i][2],
+				'TOTAL_BAHAN' => $mutasi[$i][1],
+				// 'ID_ROLL' => $mutasi[$i][3],
+				'STATUS_BELAH' => 'progress'
+				);
+				$dataMutasi[$i] = $data;
+			}
+			// $kodeSensi = $this->session->flashdata('kodeSensi');
+			// if($this->Master_mutasi_sensi->saveMutasi($data, $kodeSensi)){
+			if($this->Master_mutasi_sensi->saveMutasi($dataMutasi,$update)){
 				$this->session->set_flashdata('success', 'Proses Berhasil Disimpan');
 				redirect("AdminProduksiSensitizing/mutasiBarang/");
 			}else{
 				$this->session->set_flashdata('error', 'Proses Gagal Disimpan');
 				redirect("AdminProduksiSensitizing/mutasiBarang/");
 			}
-		}else{
-			$this->session->set_flashdata('error', 'Number Already Exist !');
-			redirect("AdminProduksiSensitizing/mutasiBarang/");
-		}
+		// }else{
+		// 	$this->session->set_flashdata('error', 'Number Already Exist !');
+		// 	redirect("AdminProduksiSensitizing/mutasiBarang/");
+		// }
 
+	}
+	function dataMutasi(){
+		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
+		$time = time();
+		$data = array();
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			$data["listRoll"] = $this->Master_detail_sensi_model->dataMutasi();
+			if($data["status"]=="ADMSENSI"){
+				$this->load->view('AdminProduksiSensitizing/v_header',$data);
+				$this->load->view('AdminProduksiSensitizing/v_sidebar',$data);
+				$this->load->view('AdminProduksiSensitizing/v_data_mutasi', $data);
+				$this->load->view('AdminProduksiSensitizing/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+					<?php
+					echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
 	}
 	function listData(){
 		$datestring = "Login : %d-%m-%Y pukul %h:%i %a";
@@ -810,5 +997,214 @@ class AdminProduksiSensitizing extends Controller {
 	        }
 
         }
+
+    function tanggal_indo($tanggal)
+	{
+		$bulan = array (1 =>   'Januari',
+					'Februari',
+					'Maret',
+					'April',
+					'Mei',
+					'Juni',
+					'Juli',
+					'Agustus',
+					'September',
+					'Oktober',
+					'November',
+					'Desember'
+				);
+		$split = explode('-', $tanggal);
+		return $split[0] . ' ' . $bulan[ (int)$split[1] ] . ' ' . $split[2];
+	}
+
+    function editLaporan($param){
+		$session=isset($_SESSION['username_belajar']) ? $_SESSION['username_belajar']:'';
+		if($session!=""){
+			$pecah=explode("|",$session);
+			$data["nim"]=$pecah[0];
+			$data["nama"]=$pecah[1];
+			$data["status"]=$pecah[2];
+			if($data["status"]=="ADMSENSI"){
+				$this->session->set_flashdata('paramEdit', $param);
+				$data["laporanSensi"] = $this->Master_detail_sensi_model->findById($param);
+				if($data["laporanSensi"]->TGL_PRODUKSI != null){
+					$data["laporanSensi"]->TGL_PRODUKSI = $this->tanggal_indo($data["laporanSensi"]->TGL_PRODUKSI );
+				}
+				$data["master_kk"] = $this->Master_kk_model->getDataKK();
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_PERSIAPAN)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_PERSIAPAN))){
+					$data["laporanSensi"]->START_JAM_PERSIAPAN = "0";
+					$data["laporanSensi"]->FINISH_JAM_PERSIAPAN = "0";
+				}
+
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_PRODUKSI)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_PRODUKSI))){
+					$data["laporanSensi"]->START_JAM_PRODUKSI = "0";
+					$data["laporanSensi"]->FINISH_JAM_PRODUKSI = "0";
+				}
+
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_TROUBLE_MESIN)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_TROUBLE_MESIN))){
+					$data["laporanSensi"]->START_JAM_TROUBLE_MESIN = "0";
+					$data["laporanSensi"]->FINISH_JAM_TROUBLE_MESIN = "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_TUNGGU_BAHAN)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_TUNGGU_BAHAN))){
+					$data["laporanSensi"]->START_JAM_TUNGGU_BAHAN= "0";
+					$data["laporanSensi"]->FINISH_JAM_TUNGGU_BAHAN= "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_TUNGGU_CORE)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_TUNGGU_CORE))){
+					$data["laporanSensi"]->START_JAM_TUNGGU_CORE = "0";
+					$data["laporanSensi"]->FINISH_JAM_TUNGGU_CORE = "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_FORCE_MAJOR)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_FORCE_MAJOR))){
+					$data["laporanSensi"]->START_JAM_FORCE_MAJOR = "0";
+					$data["laporanSensi"]->FINISH_JAM_FORCE_MAJOR = "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_GANTI_SILINDER_SERI)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_GANTI_SILINDER_SERI))){
+					$data["laporanSensi"]->START_JAM_GANTI_SILINDER_SERI = "0";
+					$data["laporanSensi"]->FINISH_JAM_GANTI_SILINDER_SERI = "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_LAIN_LAIN)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_LAIN_LAIN))){
+					$data["laporanSensi"]->START_JAM_LAIN_LAIN = "0";
+					$data["laporanSensi"]->FINISH_JAM_LAIN_LAIN = "0";
+				}
+				if(date("H:i",strtotime($data["laporanSensi"] ->START_JAM_TROUBLE_PRODUKSI)) == date("H:i",strtotime($data["laporanSensi"] ->FINISH_JAM_TROUBLE_PRODUKSI))){
+					$data["laporanSensi"]->START_JAM_TROUBLE_PRODUKSI = "0";
+					$data["laporanSensi"]->FINISH_JAM_TROUBLE_PRODUKSI = "0";
+				}
+				$this->load->view('AdminProduksiSensitizing/v_header',$data);
+				$this->load->view('AdminProduksiSensitizing/v_sidebar',$data);
+				$this->load->view('AdminProduksiSensitizing/v_edit_laporan',$data);
+				$this->load->view('AdminProduksiSensitizing/v_footer',$data);
+			}else{
+				?>
+				<script type="text/javascript" language="javascript">
+					alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
+				</script>
+				<?php
+				echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+			}
+		}else{
+			?>
+			<script type="text/javascript" language="javascript">
+				alert("Login dulu donk...!!!");
+			</script>
+			<?php
+			echo "<meta http-equiv='refresh' content='0; url=".base_url()."'>";
+		}
+    }
+
+    function saveEdit(){
+	//=========== Get Input Post =============//
+	$kodeRoll 		= $this->input->post('kodeRoll');
+	$mesin 			= $this->input->post('mesinSensi');
+	$shift 			= $this->input->post('shift');
+	$nomorKK 		= $this->input->post('nomorKK');
+	$tglProduksi 	= $this->input->post('tanggalProduksi');
+	$baikMeter 		= str_replace(".", "",$this->input->post('hasilBaik'));
+	// $wasteMeter 	= str_replace(".", "",$this->input->post('hasilRusak'));
+	$rejectMeter 	= str_replace(".", "",$this->input->post('hasilReject'));
+	$noUrut			= $this->input->post('idData');
+	$nomorMutasi 	= $this->input->post('nomorMutasiRewind');
+
+	//======= End Get Input Post ========//
+
+	//======== Count Total Used Foil On Same Roll =====//
+	$checkExistingData = $this->Master_detail_sensi_model->findByRollAndMutasi($kodeRoll,$nomorMutasi);
+	$usedFoil = 0;
+	if(sizeof($checkExistingData)>0){
+		foreach ($checkExistingData as $row) {
+			if($row->NO_URUT_SENSI!= $noUrut){
+				$usedFoil = $usedFoil + $row->BAIK_METER +$row->WASTE_METER + $row->REJECT_METER;
+			}
+		}
+	}
+	//======= End Count Total Used Foil On Same Roll =====//
+
+	//get length from EMBOSS AND make parameter from it
+	$lengthFromRewind 	= 0;
+	$dataFromRewind	= $this->Master_mutasi_rewind->countTotalLength($kodeRoll,$nomorMutasi);
+	$lengthFromRewind 	= $dataFromRewind->TOTAL_BAHAN;
+
+	//====== check if total data no more than its parameter ====//
+	$newTotalLength = $baikMeter+$rejectMeter+$usedFoil;
+	if($lengthFromRewind<$newTotalLength){
+		$this->session->set_flashdata('error',' Total Bahan Tidak Sesuai '.$newTotalLength);
+		$temp = $this->session->flashdata('paramEdit');
+		redirect("AdminProduksiSensitizing/editLaporan/".$temp);
+	}
+
+	//====== Get Production Variable Time =========//
+	$nomorKK = explode("@", $nomorKK);
+	$data['KODE_ROLL'] 		= $kodeRoll;
+	$data['SHIFT_SENSI'] 	= $shift;
+	$data['BAIK_METER'] 	= $baikMeter;
+	$data['REJECT_METER'] 	= $rejectMeter;
+	// $data['WASTE_METER'] 	= $wasteMeter;
+	$data['NOMOR_KK'] 		= $nomorKK[0];
+	$data['MESIN_SENSI'] 	= $mesin;
+	$data['TGL_PRODUKSI'] 	= $tglProduksi;
+	$data['KODE_BAHAN'] = $nomorKK[2];
+	$data['START_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeProduksi')));
+		
+		if(strtotime($this->input->post('endTimeProduksi'))<strtotime($this->input->post('startTimeProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeProduksi')));
+		}
+
+		$data['START_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimePersiapan')));
+		if(strtotime($this->input->post('endTimePersiapan'))<strtotime($this->input->post('startTimePersiapan'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_PERSIAPAN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_PERSIAPAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimePersiapan')));
+		}
+
+		$data['START_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleProduksi')));
+		if(strtotime($this->input->post('endTimeTroubleProduksi'))<strtotime($this->input->post('startTimeTroubleProduksi'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_PRODUKSI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleProduksi')));
+		}
+
+		$data['START_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTroubleMesin')));
+		if(strtotime($this->input->post('endTimeTroubleMesin'))<strtotime($this->input->post('startTimeTroubleMesin'))){
+			$finishDate = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+			$finishDate = date('Y-m-d H:i', strtotime($finishDate.' +1 day'));
+			$data['FINISH_JAM_TROUBLE_MESIN'] = $finishDate;
+		}else{
+			$data['FINISH_JAM_TROUBLE_MESIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTroubleMesin')));
+		}
+	$data['START_JAM_TUNGGU_BAHAN'] =  date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguBahan')));
+	$data['FINISH_JAM_TUNGGU_BAHAN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguBahan')));
+	$data['START_JAM_TUNGGU_CORE'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeTungguCore')));
+	$data['FINISH_JAM_TUNGGU_CORE'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeTungguCore')));
+	$data['START_JAM_FORCE_MAJOR'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeForceMajor')));
+	$data['FINISH_JAM_FORCE_MAJOR'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeForceMajor')));
+	$data['START_JAM_GANTI_SILINDER_SERI'] = date('Y-m-d H:i',strtotime($this->input->post('startTimeGantiSilinder')));
+	$data['FINISH_JAM_GANTI_SILINDER_SERI'] = date('Y-m-d H:i',strtotime($this->input->post('endTimeGantiSilinder')));
+	$data['START_JAM_LAIN_LAIN'] = date('Y-m-d H:i',strtotime($this->input->post('startTimelain')));
+	$data['FINISH_JAM_LAIN_LAIN'] = date('Y-m-d H:i',strtotime($this->input->post('endTimelain')));
+
+	$dataMutasi = array();
+	if($newTotalLength<$lengthFromRewind){
+		$dataMutasi['NO_MUTASI'] = $nomorMutasi;
+		$dataMutasi['STATUS_SENSI'] = 'progress';
+	}else{
+		$dataMutasi['NO_MUTASI'] = $nomorMutasi;
+		$dataMutasi['STATUS_SENSI'] = 'finish';
+	}
+
+	if($this->Master_detail_sensi_model->updateDataAndMutasi($noUrut, $data, $dataMutasi)){
+		redirect("AdminProduksiSensitizing/listData/");
+	}else{
+		$this->session->set_flashdata('error',' Total Bahan Tidak Sesuai '.$newTotalLength);
+		$temp = $this->session->flashdata('paramEdit');
+		redirect("AdminProduksiSensitizing/editLaporan/".$temp);
+	}
+}
 
 }

@@ -69,7 +69,8 @@
   function cetak(fileName){
        fileName = fileName.replace(".","@");
        // console.log(fileName);
-       window.location.href = "http://192.168.17.102:8080/barcode.webservice/downloadFile/"+fileName;
+       window.location.href = "http://192.168.17.42:8080/barcode.webservice/downloadFile/"+fileName;
+       // window.location.href = "http://192.168.17.102:8080/barcode.webservice/downloadFile/"+fileName;
   }
 </script> 
 

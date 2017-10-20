@@ -55,6 +55,21 @@
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                    <li>
+                        <a href="#">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Laporan Produksi <span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="<?php echo base_url()?>index.php/ppc/laporanPerKK">Laporan Produksi Per KK</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo base_url()?>index.php/ppc/LaporanHarian">Laporan Produksi Harian</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo base_url()?>index.php/ppc/laporanBulanan">laporan Produksi Bulanan</a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
             <!-- /.sidebar-collapse -->

@@ -39,6 +39,13 @@
             <?php endif; ?>
             <!-- <input type="hidden" name="idRoll" value="<?php if($idRoll!="") echo $idRoll; ?>" /> -->
             <div class="form-group">
+              <label>Mesin Rewind:</label>
+              <select class="form-control" name="mesinRewind">
+                <option value="Mesin 1">Mesin 1</option>
+                <option value="Mesin 2">Mesin 2</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>Shift:</label>
               <select class="form-control" name="shift">
                 <option value="A">Shift A</option>
@@ -60,13 +67,7 @@
                ?>
                </select>
             </div>
-            <div class="form-group">
-              <label>Mesin Rewind:</label>
-              <select class="form-control" name="mesinRewind">
-                <option value="Mesin 1">Mesin 1</option>
-                <option value="Mesin 2">Mesin 2</option>
-              </select>
-            </div>
+            
             <div class="form-group">
               <label>Tanggal Produksi</label>
               <input class="form-control" id="date" name="tanggalProduksi" placeholder="DD/MM/YYYY" type="text" required/>
@@ -106,7 +107,7 @@
 </div>
 </div>
 <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Produksi</h5>
@@ -130,7 +131,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Persiapan</h5>
@@ -153,7 +154,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Produksi</h5>
@@ -176,7 +177,9 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+</div>
+  <div class="row">
+    <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Mesin</h5>
@@ -199,9 +202,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-</div>
-  <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Bahan - Medium</h5>
@@ -224,7 +225,7 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div>
-<div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Core</h5>
@@ -247,7 +248,9 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div> 
-  <div class="col-lg-3">
+</div>
+<div class="row">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Ganti Silinder - Seri</h5>
@@ -270,7 +273,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Force Major</h5>
@@ -293,7 +296,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Lain - Lain</h5>

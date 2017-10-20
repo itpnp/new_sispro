@@ -24,23 +24,47 @@
           <form role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/saveMutasi" method="post">
           <div class="col-lg-6">
             <div class="form-group">
-              <div class="form-group">
+              <?php
+                for($i=0;$i<count($dataInput);$i++){
+                  ?>
+                  <div class="col-lg-12">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label>Kode Roll</label>
+                      <input class="form-control" name="kodeRollBaru" value = "<?php if($dataInput!="") echo $dataInput[$i][0]; ?>" readonly>
+                    </div> 
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                        <label>Panjang Bahan</label>
+                        <input class="form-control" name="hasilBaik" value = "<?php if($dataInput!="") echo $dataInput[$i][1]; ?>" readonly>
+                    </div>
+                  </div>
+                  </div>
+                  <?php
+                }
+              ?>
+              <!-- <div class="form-group">
                   <label>Kode Roll</label>
                   <input class="form-control" name="kodeRollBaru" value = "<?php if($kodeRollBaru!="") echo $kodeRollBaru; ?>" readonly>
               </div> 
               <div class="form-group">
                   <label>Total Bahan Dimutasi</label>
                   <input class="form-control" name="hasilBaik" value = "<?php if($hasilBaik!="") echo $hasilBaik; ?>" readonly>
+              </div>  -->
+              <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Nomor Mutasi</label>
+                    <input class="form-control" value="<?php if($nomorMutasi!="") echo $nomorMutasi; ?>" name="noMutasi" id="noMutasi">
+                </div>
               </div> 
-              <div class="form-group">
-                  <label>Nomor Mutasi</label>
-                  <input class="form-control" name="noMutasi" id="noMutasi">
-              </div>              
-              <div class="form-group">
-                <label>Tanggal Mutasi</label>
-                <input class="form-control" id="date" name="tanggalMutasi" placeholder="DD/MM/YYYY" type="text" required/>
+              <div class="col-lg-12">        
+                <div class="form-group">
+                  <label>Tanggal Mutasi</label>
+                  <input class="form-control" id="date" name="tanggalMutasi" placeholder="DD/MM/YYYY" type="text" required/>
+                </div>
               </div>
-              <input type="hidden" name="idRoll" value="<?php if($idRoll!="") echo $idRoll; ?>" />
+              <input type="hidden" name="input" value="<?php if($dataInput!="") echo $dataInput; ?>" />
             </div>
             <button type="submit" class=" form-control btn btn-success ">SIMPAN</button>
         </div>

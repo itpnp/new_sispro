@@ -43,7 +43,7 @@
   function cetak(){
     var fileName = "<?php echo $header;?>";
     fileName = fileName.replace(/\//g,"-");
-    window.location.href = "http://192.168.17.102:8080/barcode.webservice/convert/"+fileName;
+    window.location.href = "http://192.168.17.42:8080/barcode.webservice/convert/"+fileName;
   }
 
   window.onload = function() {

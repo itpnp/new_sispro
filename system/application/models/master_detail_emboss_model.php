@@ -14,8 +14,15 @@ class Master_detail_emboss_model extends Model
 		return $t->result();
 	}
 
-	function getKodeEmboss($noEmboss){
+	// function getKodeEmboss($noEmboss){
 
+	// 	$this->oracle_db=$this->load->database('oracle',true);
+	// 	$this->oracle_db->where("(NO_URUT_EMBOSS = '$noEmboss')", NULL, FALSE);
+	// 	$t=$this->oracle_db->get('TBL_DETAIL_EMBOSS');
+	// 	return $t->result();
+	// }
+
+	function getKodeEmboss($noEmboss){
 		$this->oracle_db=$this->load->database('oracle',true);
 		$this->oracle_db->where("(NO_URUT_EMBOSS = '$noEmboss')", NULL, FALSE);
 		$t=$this->oracle_db->get('TBL_DETAIL_EMBOSS');
@@ -38,7 +45,7 @@ class Master_detail_emboss_model extends Model
 		return $success;
 	}
 
-	function countTimeProses($nomorKK, $bulan){
+	function countTimeProses($nomorKK){
 		$this->oracle_db=$this->load->database('oracle',true);
 		$success = $this->oracle_db->query("
 		SELECT  SUM (
@@ -93,59 +100,6 @@ class Master_detail_emboss_model extends Model
 		return $success->result();
 
 	}
-	// function saveLaporanEmboss($data){
-		// $this->oracle_db=$this->load->database('oracle',true);
-		// $this->oracle_db->trans_begin();
-		// $this->oracle_db->set('NO_URUT_EMBOSS',$data['NO_URUT_EMBOSS']);
-		// $this->oracle_db->set('KODE_EMBOSS',$data['KODE_EMBOSS']);
-		// $this->oracle_db->set('NO_BON_EMBOSS',$data['NO_BON_EMBOSS']);
-		// $this->oracle_db->set('KODE_ROLL',$data['KODE_ROLL']);
-		// $this->oracle_db->set('TGL_BON_EMBOSS',$data['TGL_BON_EMBOSS']);
-		// $this->oracle_db->set('SHIFT_EMBOSS',$data['SHIFT_EMBOSS']);
-		// $this->oracle_db->set('BAIK_METER',$data['BAIK_METER']);
-		// $this->oracle_db->set('REJECT_METER',$data['REJECT_METER']);
-		// $this->oracle_db->set('RETUR_METER',$data['RETUR_METER']);
-		// $this->oracle_db->set('NOMOR_KK',$data['NOMOR_KK']);
-		// $this->oracle_db->set('TOTAL_BAHAN',$data['TOTAL_BAHAN'] );
-		// $this->oracle_db->set('SISA_BAIK',$data['SISA_BAIK']);
-		// $this->oracle_db->set('MESIN_EMBOSS',$data['MESIN_EMBOSS']);
-		// $this->oracle_db->set('STATUS_MUTASI',$data['STATUS_MUTASI']);
-		// $this->oracle_db->set('ID_ROLL',$data['ID_ROLL']);
-		// $this->oracle_db->set('TGL_PRODUKSI',$data['TGL_PRODUKSI']);
-		// $this->oracle_db->set('KODE_BAHAN_BARU',$data['KODE_BAHAN_BARU']);
-		// $this->oracle_db->set('START_JAM_PRODUKSI',"to_date('".$data['START_JAM_PRODUKSI']."','DD-MM-YYYY HH24:MI:SS')",FALSE);
-		// $this->oracle_db->set('FINISH_JAM_PRODUKSI',"to_date('".$data['FINISH_JAM_PRODUKSI']."','DD-MM-YYYY HH24:MI:SS')",FALSE);
-		// $data['START_JAM_PERSIAPAN'] = $this->input->post('startTimePersiapan');
-		// $data['FINISH_JAM_PERSIAPAN'] = $this->input->post('endTimePersiapan');
-		// $data['START_JAM_TROUBLE_PRODUKSI'] = $this->input->post('startTimeTroubleProduksi');
-		// $data['FINISH_JAM_TROUBLE_PRODUKSI'] = $this->input->post('endTimeTroubleProduksi');
-		// $data['START_JAM_TROUBLE_MESIN'] = $this->input->post('startTimeTroubleMesin');
-		// $data['FINISH_JAM_TROUBLE_MESIN'] = $this->input->post('endTimeTroubleMesin');
-		// $data['START_JAM_TUNGGU_BAHAN'] = $this->input->post('startTimeTungguBahan');
-		// $data['FINISH_JAM_TUNGGU_BAHAN'] = $this->input->post('endTimeTungguBahan');
-		// $data['START_JAM_TUNGGU_CORE'] = $this->input->post('startTimeTungguCore');
-		// $data['FINISH_JAM_TUNGGU_CORE'] = $this->input->post('endTimeTungguCore');
-		// $data['START_JAM_FORCE_MAJOR'] = $this->input->post('startTimeForceMajor');
-		// $data['FINISH_JAM_FORCE_MAJOR'] = $this->input->post('endTimeForceMajor');
-		// $data['START_JAM_GANTI_SILINDER_SERI'] = $this->input->post('startTimeGantiSilinder');
-		// $data['FINISH_JAM_GANTI_SILINDER_SERI'] = $this->input->post('endTimeGantiSilinder');
-		// $data['START_JAM_LAIN_LAIN'] = $this->input->post('startTimelain');
-		// $data['FINISH_JAM_LAIN_LAIN'] = $this->input->post('endTimelain');
-		
-		// $success = $this->oracle_db->insert('TBL_DETAIL_EMBOSS', $data);
-	// 	$success = $this->oracle_db->insert('TBL_DETAIL_EMBOSS');
-	// 	$this->oracle_db->trans_commit();
-	// 	$this->oracle_db->trans_complete();
-	// 		if(!$success){
-	// 			$success = false;
-	// 			$errNo   = $this->oracle_db->_error_number();
-	// 			$errMess = $this->oracle_db->_error_message();
-	// 			array_push($errors, array($errNo, $errMess));
-	// 		}
-
-	// 	return $success;
-	// }
-
 	function getAllData(){
 		$this->oracle_db=$this->load->database('oracle',true);
 		$this->oracle_db->order_by('NO_URUT_EMBOSS','asc');
@@ -183,6 +137,16 @@ class Master_detail_emboss_model extends Model
 	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
 		$this->oracle_db->where("(KODE_ROLL like '%$kodeRoll%')", NULL, FALSE);
 	   	$this->oracle_db->order_by('NO_URUT_EMBOSS','desc');
+		$t=$this->oracle_db->get();
+		return $t->result();
+	}
+
+	function findByRollBeforeMutation($kodeRoll){
+	   	$this->oracle_db=$this->load->database('oracle',true);
+	   	$this->oracle_db->select('*');
+	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
+		$this->oracle_db->where('KODE_ROLL', $kodeRoll);
+	   	$this->oracle_db->where("(STATUS_MUTASI ='BELUM MUTASI')", NULL, FALSE);
 		$t=$this->oracle_db->get();
 		return $t->result();
 	}
@@ -269,7 +233,7 @@ class Master_detail_emboss_model extends Model
           - TO_DATE(START_JAM_LAIN_LAIN, 'YYYY-MM-DD HH24:MI')
         ) * (24 * 60)*60
         AS H
-		FROM TBL_DETAIL_EMBOSS WHERE NOMOR_KK = '".$nomorKK."'"
+		FROM TBL_DETAIL_EMBOSS WHERE NOMOR_KK = '".$nomorKK."' order by tgl_produksi"
 		);
 		return $success->result();
 	}
@@ -279,6 +243,128 @@ class Master_detail_emboss_model extends Model
 	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
 		$this->oracle_db->where('NOMOR_KK', $nomorKK);
 	   	$this->oracle_db->group_by('KODE_ROLL');
+		$t=$this->oracle_db->get();
+		return $t->result();
+	}
+
+	function findByMonth($bulan,$tahun,$mesin){
+		$this->oracle_db=$this->load->database('oracle',true);
+	   	$this->oracle_db->select('*');
+	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
+		$this->oracle_db->where("to_char(tgl_produksi,'MM')",$bulan);
+    	$this->oracle_db->where("to_char(tgl_produksi,'YYYY')",$tahun);
+    	$this->oracle_db->where('MESIN_EMBOSS', $mesin);
+		$t=$this->oracle_db->get();
+		return $t->result();
+	}
+
+	function groupByProductionDate($bulan,$tahun,$mesin)
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$success = $this->oracle_db->query("
+		SELECT  tgl_produksi, SUM (
+            TO_DATE(FINISH_JAM_PRODUKSI, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_PRODUKSI, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_PROSES,
+		SUM (
+            TO_DATE(FINISH_JAM_PERSIAPAN, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_PERSIAPAN, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_PERSIAPAN,
+		SUM (
+            TO_DATE(FINISH_JAM_TROUBLE_PRODUKSI, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_TROUBLE_PRODUKSI, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_TROUBLE_PROSES_PROD,
+		SUM (
+            TO_DATE(FINISH_JAM_TROUBLE_MESIN, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_TROUBLE_MESIN, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_TROUBLE_MESIN,
+		SUM (
+            TO_DATE(FINISH_JAM_TUNGGU_BAHAN, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_TUNGGU_BAHAN, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_TUNGGU_BAHAN,
+		SUM (
+            TO_DATE(FINISH_JAM_TUNGGU_CORE, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_TUNGGU_CORE, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_TUNGGU_CORE,
+		SUM (
+            TO_DATE(FINISH_JAM_GANTI_SILINDER_SERI, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_GANTI_SILINDER_SERI, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_GANTI_SILINDER,
+		SUM (
+            TO_DATE(FINISH_JAM_FORCE_MAJOR, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_FORCE_MAJOR, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_FORCE_MAJOR,
+		SUM (
+            TO_DATE(FINISH_JAM_LAIN_LAIN, 'YYYY-MM-DD HH24:MI')
+            - TO_DATE(START_JAM_LAIN_LAIN, 'YYYY-MM-DD HH24:MI')
+        ) * (24 * 60)*60
+        AS JAM_LAIN_LAIN
+		
+		FROM   TBL_DETAIL_EMBOSS
+		WHERE to_char(tgl_produksi,'MM') = '".$bulan."' AND to_char(tgl_produksi,'YYYY') = '".$tahun."'
+		AND MESIN_EMBOSS = '".$mesin."' 
+		group by tgl_produksi");
+		return $success->result();
+	}
+
+	function countResultBySeriAndDate($tanggal,$seri,$mesin)
+	{
+
+		$this->oracle_db=$this->load->database('oracle',true);
+
+		if($seri == "MMEA"){
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_PRODUKSI, SUM(baik_meter) as hasil, b.seri from tbl_detail_emboss a join tbl_master_bahan b on a.kode_bahan_baru = b.kode_bahan
+			WHERE a.TGL_PRODUKSI = '".$tanggal."' AND b.SERI is null AND a.MESIN_EMBOSS = '".$mesin."' 
+			group by a.tgl_produksi, b.seri");
+		}else{
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_PRODUKSI, SUM(baik_meter) as hasil, b.seri from tbl_detail_emboss a join tbl_master_bahan b on a.kode_bahan_baru = b.kode_bahan
+			WHERE a.TGL_PRODUKSI = '".$tanggal."' AND b.SERI = '".$seri."' AND a.MESIN_EMBOSS = '".$mesin."' 
+			group by a.tgl_produksi, b.seri");
+			
+		}
+		return $success->row();
+		
+	}
+
+	function findById($id){
+		$this->oracle_db=$this->load->database('oracle',true);
+		$this->oracle_db->where("NO_URUT_EMBOSS", $id);
+		$t=$this->oracle_db->get('TBL_DETAIL_EMBOSS');
+		return $t->row();
+	}
+
+	function updateData($noUrut, $data){
+		$this->oracle_db=$this->load->database('oracle',true);
+		$this->oracle_db->trans_begin();
+		$this->oracle_db->where('NO_URUT_EMBOSS',$noUrut);
+		$success = $this->oracle_db->update('TBL_DETAIL_EMBOSS', $data);
+		$this->oracle_db->trans_commit();
+		$this->oracle_db->trans_complete();
+			if(!$success){
+				$success = false;
+				$errNo   = $this->oracle_db->_error_number();
+				$errMess = $this->oracle_db->_error_message();
+				array_push($errors, array($errNo, $errMess));
+			}
+
+		return $success;
+	}
+	function dataMutasi(){
+	   	$this->oracle_db=$this->load->database('oracle',true);
+	   	$this->oracle_db->select('kode_roll, no_mutasi, sum(total_bahan) as total_bahan');
+	   	$this->oracle_db->from('TBL_MUTASI_EMBOSS');
+	   	$this->oracle_db->group_by('kode_roll');
+		$this->oracle_db->group_by('no_mutasi'); 
 		$t=$this->oracle_db->get();
 		return $t->result();
 	}

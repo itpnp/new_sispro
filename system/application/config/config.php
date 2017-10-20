@@ -12,6 +12,7 @@
 |
 */
 $config['base_url']	= "http://192.168.17.102/new_sispro/";
+// $config['base_url']	= "http://192.168.17.42/new_sispro/";
 /*$config['base_url']	= "http://216.172.166.91/bappeda/";
 
 /*

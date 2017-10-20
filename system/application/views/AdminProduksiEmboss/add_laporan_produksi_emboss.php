@@ -41,10 +41,14 @@
               <label>Tanggal Bon Emboss:</label>
               <input class="form-control" id="date" name="tanggalProses"  onChange="bulanAngka()" placeholder="DD/MM/YYYY" type="text" required/>
             </div>
-            <!-- <div class="form-group">
-              <label>Bulan:</label>
-              <input class="form-control" name="bulan" id="bulan" placeholder="Bulan" readonly="">
-            </div> -->
+            <div class="form-group">
+              <label>Nomor Bon Emboss</label>
+              <input class="form-control" name="nomorBon" id="nomorBon">
+            </div>
+            <div class="form-group">
+              <label>Kode Roll</label>
+              <input class="form-control" name="kodeRoll" id="kodeRoll" value="<?php echo $kode_roll; ?>" readonly>
+            </div>
             <div class="form-group">
               <label>Mesin Emboss:</label>
               <select class="form-control" name="mesinEmboss">
@@ -60,10 +64,6 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Kode Roll</label>
-              <input class="form-control" name="kodeRoll" id="kodeRoll" value="<?php echo $kode_roll; ?>" readonly>
-            </div>
-            <div class="form-group">
               <label>Kartu Kerja</label>
               <select class="form-control" name="chooseKK" id="nomorKK" required>
                 <option value="0-0">-- Pilih KK --</option>
@@ -73,12 +73,7 @@
                 }
                ?>
                </select>
-            </div>
-            <div class="form-group">
-              <label>Nomor Bon Emboss</label>
-              <input class="form-control" name="nomorBon" id="nomorBon">
-            </div>
-            
+            </div>            
         </div>
         <div class="col-lg-6">
         <br>
@@ -91,14 +86,7 @@
               <label>Total Bahan:</label>
               <input class="form-control" name="totalBahan" value="<?php echo $totalBahan; ?>" id="totalBahan" onBlur = "numberWithCommas('totalBahan')" readonly>
             </div>
-            <!-- <div class="form-group">
-              <label>Nomor Mutasi</label>
-              <input class="form-control" name="nomorMutasi" id="nomorMutasi">
-            </div> -->
-            <!-- <div class="form-group">
-              <label>Total Bahan:</label>
-              <input class="form-control" name="totalBahan" id="totalBahan" placeholder="Total Bahan" onBlur = "numberWithCommas('totalBahan')" required>
-            </div> -->
+       
             <div class="form-group">
               <label>Baik Emboss:</label>
               <input class="form-control" name="hasilBaik" id="hasilBaik" placeholder="Hasil Baik" onBlur = "numberWithCommas('hasilBaik')" required>
@@ -107,22 +95,22 @@
               <label>Rusak Emboss:</label>
               <input class="form-control" name="hasilRusak" id="hasilRusak" placeholder="Hasil Rusak" onBlur = "numberWithCommas('hasilRusak')" required>
             </div>
-            <!-- <div class="form-group">
-              <label>Retur:</label>
-              <input class="form-control" name="returMeter" id="returMeter" placeholder="Retur" onBlur = "numberWithCommas('returMeter')" required>
-            </div> -->
             <div class="form-group">
               <label>Reject:</label>
               <input class="form-control" name="hasilReject" id="hasilReject" placeholder="Reject" onBlur = "numberWithCommas('hasilReject')" required>
             </div>
-            <!-- <div class="form-group">
-              <label>Kurang Bahan:</label>
-              <input class="form-control" name="kurangBahan" id="kurangBahan" placeholder="kurangBahan" onBlur = "numberWithCommas('kurangBahan')" required>
-            </div> -->
-            <!-- <div class="form-group">
-              <label>Sisa Baik:</label>
-              <input class="form-control" name="sisaBaik" id="sisaBaik" placeholder="Sisa Baik" onBlur = "numberWithCommas('sisaBaik')" required>
-            </div> -->
+            <div class="form-group">
+              <label>Selisih Bahan:</label>
+              <?php
+                if($selisihBahan == 0){
+                  echo " <input class='form-control' name='selisihBahan' id='selisihBahan' placeholder='Selisih Bahan' onBlur = 'numberWithCommas('selisihBahan')' required>";
+                }else{
+                  echo " <input class='form-control' value=".$selisihBahan." name='selisihBahan' id='selisihBahan' placeholder='Selisih Bahan' onBlur = 'numberWithCommas('selisihBahan')' disabled>";
+                }
+                
+              ?>
+             
+            </div>
         </div>
       </div>
 
@@ -131,7 +119,7 @@
 </div>
 </div>
 <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Produksi</h5>
@@ -155,7 +143,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Persiapan</h5>
@@ -178,7 +166,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Produksi</h5>
@@ -201,7 +189,9 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+</div>
+  <div class="row">
+    <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Mesin</h5>
@@ -224,9 +214,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-</div>
-  <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Bahan - Medium</h5>
@@ -249,7 +237,7 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div>
-<div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Core</h5>
@@ -272,7 +260,9 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div> 
-  <div class="col-lg-3">
+</div>
+<div class="row">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Ganti Silinder - Seri</h5>
@@ -295,7 +285,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Force Major</h5>
@@ -318,7 +308,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Lain - Lain</h5>

@@ -8,20 +8,16 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Data Hasil Produksi</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-12">
-      <div class="panel panel-success">
-        <div class="panel-heading">
-          List File
-        </div>
         <div class="panel-body">
           <div class = "row">
             <form role="form">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             Laporan Demet
                         </div>
@@ -35,7 +31,9 @@
                                     <th>Kode Roll</th>
                                     <th>KK</th>
                                     <th>Baik Demet</th>
+                                    <th>Waste</th>
                                     <th>Reject</th>
+                                    <th>#</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -43,6 +41,9 @@
                                   $nomor=1;
                                   for($i = 0; $i<sizeof($listDemet); $i++)
                                   {
+                                  if($listDemet[$i]->REJECT_METER == null){
+                                    $listDemet[$i]->REJECT_METER = 0;
+                                  }
                                   if($nomor%2){
                                     echo "<tr>
                                       <td class='warning'>".$listDemet[$i]->NO_URUT_DEMET."</td>
@@ -50,7 +51,9 @@
                                       <td class='warning'>".$listDemet[$i]->KODE_ROLL."</td>
                                       <td class='warning'>".$listDemet[$i]->NOMOR_KK."</td>
                                       <td class='warning'>".$listDemet[$i]->BAIK_METER."</td>
+                                      <td class='warning'>".$listDemet[$i]->WASTE_METER."</td>
                                       <td class='warning'>".$listDemet[$i]->REJECT_METER."</td>
+                                      <td class='warning'><a href = 'editLaporan/".$listDemet[$i]->NO_URUT_DEMET."'>EDIT</a></td>
                                     </tr>";
                                   }else{
                                     echo "<tr>
@@ -59,7 +62,9 @@
                                       <td class='info'>".$listDemet[$i]->KODE_ROLL."</td>
                                       <td class='info'>".$listDemet[$i]->NOMOR_KK."</td>
                                       <td class='info'>".$listDemet[$i]->BAIK_METER."</td>
+                                      <td class='info'>".$listDemet[$i]->WASTE_METER."</td>
                                       <td class='info'>".$listDemet[$i]->REJECT_METER."</td>
+                                      <td class='info'><a href = 'editLaporan/".$listDemet[$i]->NO_URUT_DEMET."'>EDIT</a></td>
                                     </tr>";
                                   }
                                     $nomor++;
@@ -76,7 +81,6 @@
             </form>
           </div>
         </div>
-			</div>
 		</div>
   </div>
 </div>

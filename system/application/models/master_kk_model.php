@@ -52,6 +52,7 @@ class Master_kk_model extends Model
 		$this->oracle_db=$this->load->database('oracle',true);
 		$this->oracle_db->where("(TAHUN='2017')", NULL, FALSE);
 		$this->oracle_db->where("(AKTIF='1')", NULL, FALSE);
+		$this->oracle_db->order_by('NOMOR_KK', 'asc');
 		$t=$this->oracle_db->get('TBL_MASTER_KK');
 		return $t->result();
 	}

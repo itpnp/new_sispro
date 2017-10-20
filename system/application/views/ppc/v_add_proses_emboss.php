@@ -24,10 +24,7 @@
      <div class = "row">
         <div class="col-lg-6 form-group">
           <label class="control-label col-sm-4">Delivery Time :</label>
-          <!-- <p id="deliveryTime" name="deliveryTime"></p> -->
-          <input class="form-control" id="date" name="deliveryDate" value="<?php if($emboss!="") echo $emboss['delivery_time']; ?>" placeholder="DD/MM/YYYY" type="text" required/><!-- 
-          <input type ="hidden" class="form-control" name="delTimeEng" id="delTimeEng" value="">
-          <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value=""> -->
+          <input class="form-control" id="date" name="deliveryDate" value="<?php if($emboss!="") echo $emboss['delivery_time']; ?>" placeholder="DD/MM/YYYY" type="text" required/>
         </div>
      </div>
       <div class = "row">

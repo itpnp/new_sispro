@@ -39,15 +39,22 @@
             <?php endif; ?>
             <input type="hidden" name="mutasiEmboss[]" value="<?php if($mutasiEmboss!="") echo $mutasiEmboss; ?>" />
             <div class="form-group">
+              <label>Kode Roll</label>
+              <input class="form-control" name="kodeRoll" id="kodeRoll" value="<?php echo $kodeRoll; ?>" readonly>
+            </div>
+            <div class="form-group">
+              <label>Mesin Demet:</label>
+              <select class="form-control" name="mesinDemet">
+                <option value="Mesin 1">Mesin 1</option>
+                <option value="Mesin 2">Mesin 2</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>Shift:</label>
               <select class="form-control" name="shift">
                 <option value="A">Shift A</option>
                 <option value="B">Shift B</option>
               </select>
-            </div>
-            <div class="form-group">
-              <label>Kode Roll</label>
-              <input class="form-control" name="kodeRoll" id="kodeRoll" value="<?php echo $kodeRoll; ?>" readonly>
             </div>
             <div class="form-group">
               <label>Kartu Kerja</label>
@@ -59,13 +66,6 @@
                 }
                ?>
                </select>
-            </div>
-            <div class="form-group">
-              <label>Mesin Demet:</label>
-              <select class="form-control" name="mesinDemet">
-                <option value="Mesin 1">Mesin 1</option>
-                <option value="Mesin 2">Mesin 2</option>
-              </select>
             </div>
             <div class="form-group">
               <label>Tanggal Produksi</label>
@@ -93,11 +93,6 @@
               <label>Reject:</label>
               <input class="form-control" name="hasilReject" id="hasilReject" placeholder="Reject" onBlur = "numberWithCommas('hasilReject')" required>
             </div>
-        <!--     
-            <div class="form-group">
-              <label>Sisa Baik:</label>
-              <input class="form-control" name="sisaBaik" id="sisaBaik" placeholder="Sisa Baik" onBlur = "numberWithCommas('sisaBaik')" readonly>
-            </div> -->
         </div>
       </div>
 
@@ -106,7 +101,7 @@
 </div>
 </div>
 <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Produksi</h5>
@@ -130,7 +125,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Persiapan</h5>
@@ -153,7 +148,7 @@
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Produksi</h5>
@@ -176,7 +171,9 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+</div>
+  <div class="row">
+    <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Trouble Mesin</h5>
@@ -199,9 +196,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-</div>
-  <div class="row">
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Bahan - Medium</h5>
@@ -224,7 +219,7 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div>
-<div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Tunggu Core</h5>
@@ -247,7 +242,9 @@
     </div><!-- end of Panel Body -->
   </div><!-- end of panel -->
 </div> 
-  <div class="col-lg-3">
+</div>
+<div class="row">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Jam Ganti Silinder - Seri</h5>
@@ -270,7 +267,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Force Major</h5>
@@ -293,7 +290,7 @@
     </div><!-- end of Panel Body -->
   </div> <!-- end of panel -->
 </div>
-  <div class="col-lg-3">
+<div class="col-lg-4">
     <div class="panel panel-primary">
      <div class="panel-heading">
        <h5>Lain - Lain</h5>

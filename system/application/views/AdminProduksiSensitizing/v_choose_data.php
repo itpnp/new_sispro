@@ -8,20 +8,32 @@
 <div id="page-wrapper">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Daftar Kartu Kerja Mesin</h1>
+      <h1 class="page-header">Data Bahan</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-12">
       <div class="panel panel-success">
         <div class="panel-heading">
-          List File
+          Roll Dari Mutasi Rewind
         </div>
         <div class="panel-body">
           <div class = "row">
                 <div class="col-lg-12">
+                <?php if($this->session->flashdata('error')): ?>
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+               <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('error'); ?>
+                            </div>
+                <?php endif; ?>
+                <?php if($this->session->flashdata('success')): ?>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+               <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('success'); ?>
+                            </div>
+                <?php endif; ?>
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                       <thead>
                         <tr>
                           <th>NO</th>
@@ -39,6 +51,7 @@
                         // $newCode = str_replace("/", "_",$row->KODE_ROLL);
                         // $totalBahan = $row->BAIK_METER;
                         // $noUrutDemet = $row->NO_URUT_DEMET;
+                        if($row->TOTAL_BAHAN > 0){
                         if($nomor%2){
                           echo "<tr>
                             <td class='warning'>".$nomor."</td>
@@ -57,6 +70,7 @@
                           </tr>";
                         }
                           $nomor++;
+                        }
                         }
                       ?>
                       </tbody>
