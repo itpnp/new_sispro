@@ -1382,51 +1382,46 @@ class AdminProduksiNeraca extends Controller {
 		$rowTitle1[] = 'S';
 
 		$rowTitle2 = array();
-		$rowTitle2[] = 'C';
-		$rowTitle2[] = 'D';
-		$rowTitle2[] = 'E';
-		$rowTitle2[] = 'F';
-		$rowTitle2[] = 'G';
-		$rowTitle2[] = 'H';
-		$rowTitle2[] = 'I';
-		$rowTitle2[] = 'J';
-		$rowTitle2[] = 'K';
-		$rowTitle2[] = 'L';
-		$rowTitle2[] = 'M';
-		$rowTitle2[] = 'N';
-		$rowTitle2[] = 'O';
-		$rowTitle2[] = 'P';
-		$rowTitle2[] = 'Q';
-		$rowTitle2[] = 'R';
-		$rowTitle2[] = 'S';
-		$rowTitle2[] = 'T';
-		$rowTitle2[] = 'U';
-		$rowTitle2[] = 'V';
+		$rowTitle2[0] = 'C';
+		$rowTitle2[1] = 'D';
+		$rowTitle2[2] = 'E';
+		$rowTitle2[3] = 'F';
+		$rowTitle2[4] = 'G';
+		$rowTitle2[5] = 'H';
+		$rowTitle2[6] = 'I';
+		$rowTitle2[7] = 'J';
+		$rowTitle2[8] = 'K';
+		$rowTitle2[9] = 'L';
+		$rowTitle2[10] = 'M';
+		$rowTitle2[11] = 'N';
+		$rowTitle2[12] = 'O';
+		$rowTitle2[13] = 'P';
+		$rowTitle2[14] = 'Q';
+		$rowTitle2[15] = 'R';
+		$rowTitle2[16] = 'S';
+		$rowTitle2[17] = 'T';
+		$rowTitle2[18] = 'U';
 
-		$rowHeader = 7;
+		//Define start index 
+		$rowKK = 1;
+		$rowHeader = 5;
 		// write header
-		$objSheet->getCell('C'.$rowHeader)->setValue('TGL');
-		$objSheet->mergeCells('C7:C9');
+		$objSheet->getCell('C'.$rowHeader)->setValue('Tanggal');
+		$objSheet->mergeCells('C5:C10');
 		$objSheet->getCell('D'.$rowHeader)->setValue('Saldo Awal');
-		$objSheet->mergeCells('D7:E7');
-		$objSheet->getCell('F'.$rowHeader)->setValue('Penerimaan');
-		$objSheet->mergeCells('F7:G7');
-		$objSheet->getCell('H'.$rowHeader)->setValue('Nomor');
-		$objSheet->getCell('I'.$rowHeader)->setValue('Mutasi Belah ke Gudang WIP');
-		$objSheet->mergeCells('I7:L7');
-		$objSheet->getCell('M'.$rowHeader)->setValue('WASTE SERI I');
-		$objSheet->mergeCells('M7:N8');
-		$objSheet->getCell('O'.$rowHeader)->setValue('WASTE SERI III');
-		$objSheet->mergeCells('O7:Q8');
-		$objSheet->getCell('R'.$rowHeader)->setValue('BA Pemusnahan');
-		$objSheet->mergeCells('R7:T8');
-		$objSheet->getCell('U'.$rowHeader)->setValue('Saldo Akhir');
-		$objSheet->mergeCells('U7:V8');
+		$objSheet->mergeCells('D5:F7');
+		$objSheet->getCell('G'.$rowHeader)->setValue('Penerimaan (DEBIT)');
+		$objSheet->mergeCells('G5:I7');
+		$objSheet->getCell('J'.$rowHeader)->setValue('Hasil Belah (KREDIT)');
+		$objSheet->mergeCells('J5:R6');
+		$objSheet->getCell('S'.$rowHeader)->setValue('Saldo Akhir');
+		$objSheet->mergeCells('S5:U7');
 
 		$borders = array(
 	      'borders' => array(
 	        'inside'     => array(
 	          'style' => PHPExcel_Style_Border::BORDER_THIN,
+
 	          'color' => array(
 	            'argb' => '00000000'
 	          )
@@ -1439,47 +1434,308 @@ class AdminProduksiNeraca extends Controller {
 	        )
 	      )
 	    );
+		for($i = 0; $i < count($rowTitle2); $i++){
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+		}
+
+		$rowHeader++;
+		for($i = 0; $i < count($rowTitle2); $i++){
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+		}
+
+		$rowHeader++;
+		$objSheet->getCell('J'.$rowHeader)->setValue('Hasil Baik');
+		$objSheet->mergeCells('J7:L7');
+		$objSheet->getCell('M'.$rowHeader)->setValue('Reject');
+		$objSheet->mergeCells('M7:O7');
+		$objSheet->getCell('P'.$rowHeader)->setValue('Waste');
+		$objSheet->mergeCells('P7:R7');		
 
 		for($i = 0; $i < count($rowTitle2); $i++){
 			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
 			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
 		}
+
+		$rowHeader++;		
+		for($i = 0; $i < count($rowTitle2); $i++){
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+		}
+
+
 		$rowHeader++;
-		$objSheet->getCell('D'.$rowHeader)->setValue('I');
-		$objSheet->getCell('E'.$rowHeader)->setValue('III');
-		$objSheet->getCell('F'.$rowHeader)->setValue('Seri I');
-		$objSheet->getCell('G'.$rowHeader)->setValue('Seri III');
-		$objSheet->getCell('H'.$rowHeader)->setValue('Mutasi');
-		$objSheet->getCell('I'.$rowHeader)->setValue('Nomor');
-		$objSheet->getCell('J'.$rowHeader)->setValue('Seri I');
-		$objSheet->mergeCells('J8:J9');
-		$objSheet->getCell('K'.$rowHeader)->setValue('Nomor');
-		$objSheet->getCell('L'.$rowHeader)->setValue('Seri III');
-		$objSheet->mergeCells('L8:L9');
+		$objSheet->getCell('D'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('E'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('F'.$rowHeader)->setValue('MMEA');
+		$objSheet->getCell('G'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('H'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('I'.$rowHeader)->setValue('MMEA');
+		$objSheet->getCell('J'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('K'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('L'.$rowHeader)->setValue('MMEA');
+		$objSheet->getCell('M'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('N'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('O'.$rowHeader)->setValue('MMEA');
+		$objSheet->getCell('P'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('Q'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('R'.$rowHeader)->setValue('MMEA');
+		$objSheet->getCell('S'.$rowHeader)->setValue('Seri 1');
+		$objSheet->getCell('T'.$rowHeader)->setValue('Seri 2/3');
+		$objSheet->getCell('U'.$rowHeader)->setValue('MMEA');
+
+		for($i = 0; $i < count($rowTitle2); $i++){
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+		}
+
+		$rowHeader++;
+		$objSheet->getCell('D'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('E'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('F'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('G'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('H'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('I'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('J'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('K'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('L'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('M'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('N'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('O'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('P'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('Q'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('G'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('R'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('S'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('T'.$rowHeader)->setValue('(Meter)');
+		$objSheet->getCell('U'.$rowHeader)->setValue('(Meter)');
+
+		for($i = 0; $i < count($rowTitle2); $i++){
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+		}
+		//end of header file
+		$rowHeader++;
+		//get data
+		$bulan = $this->input->post('bulan');
+		$tahun = $this->input->post('tahun');
+		$d=cal_days_in_month(CAL_GREGORIAN,$bulan,$tahun);
+
+		$kkCompare = null;
+		$kkCompare2 = null;
+		$kkCompareMMEA = null;
+		$batasAtas = "1-".$bulan."-".$tahun;
+
+		$countDebit1 = $this->Master_neraca->countTotalDebitBelah($batasAtas,'2017','1');
+		$countKredit1 = $this->Master_neraca->countTotalKreditBelah($batasAtas,'2017','1');
+		if($countDebit1 == null || $countKredit1==null){
+			$saldoAwal1 = 0;
+		}else{
+			$saldoAwal1 = $countDebit1-$countKredit1;
+		}
+
+		$countDebit2 = $this->Master_neraca->countTotalDebitBelah($batasAtas,'2017','3');
+		$countKredit2 = $this->Master_neraca->countTotalKreditBelah($batasAtas,'2017','3');
+		if($countDebit2 == null || $countKredit2==null){
+			$saldoAwal2 = 0;
+		}else{
+			$saldoAwal2 = $countDebit2-$countKredit2;
+		}
+
+		$countDebitMMEA = $this->Master_neraca->countTotalDebitBelah($batasAtas,'2017',null);
+		$countKreditMMEA = $this->Master_neraca->countTotalKreditBelah($batasAtas,'2017',null);
+		if($countDebitMMEA == null || $countKreditMMEA==null){
+			$saldoAwalMMEA = 0;
+		}else{
+			$saldoAwalMMEA = $countDebitMMEA-$countKreditMMEA;
+		}
 		
+		for($i=0;$i<$d;$i++) {
+			$tanggal = ($i+1)."-".$bulan."-".$tahun;
+			$objSheet->getCell($rowTitle2[0].$rowHeader)->setValue($tanggal);
 
-		for($i = 0; $i < count($rowTitle2); $i++){
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
+			$bonSensiMMEA = $this->Master_neraca->sensiCountResultBySeriAndDate($tanggal,"MMEA");
+			$bonSensi1 = $this->Master_neraca->sensiCountResultBySeriAndDate($tanggal,"1");
+			$bonSensi2 = $this->Master_neraca->sensiCountResultBySeriAndDate($tanggal,"3");
+
+			$seri1 = $this->Master_neraca->belahCountResultBySeriAndDate($tanggal,"1");
+			$seri2 = $this->Master_neraca->belahCountResultBySeriAndDate($tanggal,"3");
+			$seriMMEA = $this->Master_neraca->belahCountResultBySeriAndDate($tanggal,"MMEA");
+
+			$waste1 = $this->Master_neraca->belahCountWasteBySeriAndDate($tanggal,"1");
+			$waste2 = $this->Master_neraca->belahCountWasteBySeriAndDate($tanggal,"3");
+			$wasteMMEA = $this->Master_neraca->belahCountWasteBySeriAndDate($tanggal,"MMEA");
+
+			$objSheet->getCell($rowTitle2[1].$rowHeader)->setValue($saldoAwal1);
+			$objSheet->getCell($rowTitle2[2].$rowHeader)->setValue($saldoAwal2);
+			$objSheet->getCell($rowTitle2[3].$rowHeader)->setValue($saldoAwalMMEA);
+
+			if($bonSensi1 != null){
+				$objSheet->getCell($rowTitle2[4].$rowHeader)->setValue($bonSensi1->TOTAL_BAHAN);
+				$sensi1 = $bonSensi1->TOTAL_BAHAN;
+			}else{
+				$objSheet->getCell($rowTitle2[4].$rowHeader)->setValue("0");
+				$sensi1 = 0;
+			}
+
+			if($bonSensi2 != null){
+				$objSheet->getCell($rowTitle2[5].$rowHeader)->setValue($bonSensi2->TOTAL_BAHAN);
+				$sensi2 = $bonSensi2->TOTAL_BAHAN;
+			}else{
+				$objSheet->getCell($rowTitle2[5].$rowHeader)->setValue("0");
+				$sensi2 = 0;
+			}
+
+			if($bonSensiMMEA != null){
+				$objSheet->getCell($rowTitle2[6].$rowHeader)->setValue($bonSensiMMEA->TOTAL_BAHAN);
+				$sensiMMEA = $bonSensiMMEA->TOTAL_BAHAN;
+			}else{
+				$objSheet->getCell($rowTitle2[6].$rowHeader)->setValue("0");
+				$sensiMMEA = 0;
+			}
+
+			if($seri1 != null){
+				$objSheet->getCell($rowTitle2[7].$rowHeader)->setValue($seri1->TOTAL_BAHAN);
+			}else{
+				$objSheet->getCell($rowTitle2[7].$rowHeader)->setValue("0");
+			}
+
+			if($seri2 != null){
+				$objSheet->getCell($rowTitle2[8].$rowHeader)->setValue($seri2->TOTAL_BAHAN);
+			}else{
+				$objSheet->getCell($rowTitle2[8].$rowHeader)->setValue("0");
+			}
+
+			if($seriMMEA != null){
+				$objSheet->getCell($rowTitle2[9].$rowHeader)->setValue($seriMMEA->TOTAL_BAHAN);
+			}else{
+				$objSheet->getCell($rowTitle2[9].$rowHeader)->setValue("0");
+			}
+
+			//waste dan kk
+			if($waste1 != null){
+				if($kkCompare != null){
+					if($kkCompare != $waste1->NOMOR_KK){
+						$objSheet->getCell("C".$rowKK)->setValue($waste1->NOMOR_KK." Seri : 1");
+						$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+						$kkCompare = $waste1->NOMOR_KK;
+						$rowKK++;
+					}
+				}else{
+					$kkCompare = $waste1->NOMOR_KK;
+					$objSheet->getCell("C".$rowKK)->setValue($waste1->NOMOR_KK." Seri : 1");
+					$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+					$rowKK++;
+				}
+				$objSheet->getCell($rowTitle2[10].$rowHeader)->setValue($waste1->WASTE);
+				$objSheet->getCell($rowTitle2[13].$rowHeader)->setValue($waste1->REJECT);
+
+				if($seri1 != null){
+					$saldoAwal1 = ($saldoAwal1+$sensi1)-(($seri1->TOTAL_BAHAN)+($waste1->WASTE)+($waste1->REJECT));
+				}else{
+					$saldoAwal1 = ($saldoAwal1+$sensi1)-((0)+($waste1->WASTE)+($waste1->REJECT));
+				}
+			}else{
+				$objSheet->getCell($rowTitle2[10].$rowHeader)->setValue("0");
+				$objSheet->getCell($rowTitle2[13].$rowHeader)->setValue("0");
+				if($seri1 != null){
+					$saldoAwal1 = ($saldoAwal1+$sensi1)-(($seri1->TOTAL_BAHAN)+(0)+(0));
+				}else{
+					$saldoAwal1 = ($saldoAwal1+$sensi1)-((0)+(0)+(0));
+				}
+			}
+
+			if($waste2 != null){
+				if($kkCompare2 != null){
+					if($kkCompare2 != $waste2->NOMOR_KK){
+						$objSheet->getCell("C".$rowKK)->setValue($waste2->NOMOR_KK." Seri : 2");
+						$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+						$kkCompare2 = $waste2->NOMOR_KK;
+						$rowKK++;
+					}
+				}else{
+					$kkCompare2 = $waste2->NOMOR_KK;
+					$objSheet->getCell("C".$rowKK)->setValue($waste2->NOMOR_KK." Seri : 2");
+					$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+					$rowKK++;
+				}
+				$objSheet->getCell($rowTitle2[11].$rowHeader)->setValue($waste2->WASTE);
+				$objSheet->getCell($rowTitle2[14].$rowHeader)->setValue($waste2->REJECT);
+
+				if($seri2 != null){
+					$saldoAwal2 = ($saldoAwal2+$sensi2)-(($seri2->TOTAL_BAHAN)+($waste2->WASTE)+($waste2->REJECT));
+				}else{
+					$saldoAwal2 = ($saldoAwal2+$sensi2)-((0)+($waste2->WASTE)+($waste2->REJECT));
+				}
+			}else{
+				$objSheet->getCell($rowTitle2[11].$rowHeader)->setValue("0");
+				$objSheet->getCell($rowTitle2[14].$rowHeader)->setValue("0");
+				if($seri2 != null){
+					$saldoAwal2 = ($saldoAwal2+$sensi2)-(($seri2->TOTAL_BAHAN)+(0)+(0));
+				}else{
+					$saldoAwal2 = ($saldoAwal2+$sensi2)-((0)+(0)+(0));
+				}
+			}
+
+			if($wasteMMEA != null){
+				if($kkCompareMMEA != null){
+					if($kkCompareMMEA != $wasteMMEA->NOMOR_KK){
+						$objSheet->getCell("C".$rowKK)->setValue($wasteMMEA->NOMOR_KK." Seri : MMEA");
+						$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+						$kkCompareMMEA = $wasteMMEA->NOMOR_KK;
+						$rowKK++;
+					}
+				}else{
+					$kkCompareMMEA = $wasteMMEA->NOMOR_KK;
+					$objSheet->getCell("C".$rowKK)->setValue($wasteMMEA->NOMOR_KK." Seri : MMEA");
+					$objSheet->mergeCells('C'.$rowKK.':F'.$rowKK);
+					$rowKK++;
+				}
+				$objSheet->getCell($rowTitle2[12].$rowHeader)->setValue($wasteMMEA->WASTE);
+				$objSheet->getCell($rowTitle2[15].$rowHeader)->setValue($wasteMMEA->REJECT);
+				if($seriMMEA != null){
+					$saldoAwalMMEA = ($saldoAwalMMEA+$sensiMMEA)-(($seriMMEA->TOTAL_BAHAN)+($wasteMMEA->WASTE)+($wasteMMEA->REJECT));
+				}else{
+					$saldoAwalMMEA = ($saldoAwalMMEA+$sensiMMEA)-((0)+($wasteMMEA->WASTE)+($wasteMMEA->REJECT));
+				}
+			}else{
+				$objSheet->getCell($rowTitle2[12].$rowHeader)->setValue("0");
+				$objSheet->getCell($rowTitle2[15].$rowHeader)->setValue("0");
+				if($seriMMEA != null){
+					$saldoAwalMMEA = ($saldoAwalMMEA+$sensiMMEA)-(($seriMMEA->TOTAL_BAHAN)+(0)+(0));
+				}else{
+					$saldoAwalMMEA = ($saldoAwalMMEA+$sensiMMEA)-((0)+(0)+(0));
+				}
+			}
+
+			$objSheet->getCell($rowTitle2[16].$rowHeader)->setValue('=('.$rowTitle2[1].$rowHeader.'+'.$rowTitle2[4].$rowHeader.')-('.$rowTitle2[7].$rowHeader.'+'.$rowTitle2[10].$rowHeader.'+'.$rowTitle2[13].$rowHeader.')');
+			$objSheet->getCell($rowTitle2[17].$rowHeader)->setValue('=('.$rowTitle2[2].$rowHeader.'+'.$rowTitle2[5].$rowHeader.')-('.$rowTitle2[8].$rowHeader.'+'.$rowTitle2[11].$rowHeader.'+'.$rowTitle2[14].$rowHeader.')');
+			$objSheet->getCell($rowTitle2[18].$rowHeader)->setValue('=('.$rowTitle2[3].$rowHeader.'+'.$rowTitle2[6].$rowHeader.')-('.$rowTitle2[9].$rowHeader.'+'.$rowTitle2[12].$rowHeader.'+'.$rowTitle2[15].$rowHeader.')');
+
+			//Add Border
+			for($j = 0; $j < count($rowTitle2); $j++){
+				$objSheet->getStyle($rowTitle2[$j].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
+				$objSheet->getStyle($rowTitle2[$j].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				$objSheet->getStyle($rowTitle2[$j].''.$rowHeader)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objSheet->getStyle($rowTitle2[$j].''.$rowHeader)->applyFromArray($borders);
+			}
+			//End Of Add Border
+			$rowHeader++;
+
 		}
-
-		$rowHeader++;
-		$objSheet->getCell('I'.$rowHeader)->setValue('Mutasi');
-		$objSheet->getCell('K'.$rowHeader)->setValue('Mutasi');
-		$objSheet->getCell('R'.$rowHeader)->setValue('No');
-		$objSheet->getCell('S'.$rowHeader)->setValue('Seri I');
-		$objSheet->getCell('T'.$rowHeader)->setValue('Seri III');
-		$objSheet->getCell('U'.$rowHeader)->setValue('Seri I');
-		$objSheet->getCell('V'.$rowHeader)->setValue('Seri III');
-		for($i = 0; $i < count($rowTitle2); $i++){
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getFont()->setBold(true)->setSize(11);
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$objSheet->getStyle($rowTitle2[$i].''.$rowHeader)->applyFromArray($borders);
-		}
-
-
 		$filename = "NERACA BELAH";
 			// We'll be outputting an excel file
 		header('Content-type: application/vnd.ms-excel');
@@ -1755,7 +2011,7 @@ class AdminProduksiNeraca extends Controller {
 				$rewind1 = $bonRewind1->TOTAL_BAHAN;
 			}else{
 				$objSheet->getCell($rowTitle2[4].$rowHeader)->setValue("0");
-				$demet1 = 0;
+				$rewind1 = 0;
 			}
 
 			if($bonRewind2 != null){
@@ -1911,4 +2167,5 @@ class AdminProduksiNeraca extends Controller {
 			// Write file to the browser
 		$objWriter->save('php://output');
 			// $objWriter->save("D://Test/".$filename.".xlsx");
+	}
 }
