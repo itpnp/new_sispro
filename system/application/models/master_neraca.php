@@ -118,6 +118,21 @@ class Master_neraca extends Model
 		return $success->row();
 	}
 
+	function belahCountResultBySeriAndDate($tanggal,$seri)
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+
+		if($seri == "MMEA"){
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_MUTASI, SUM(a.TOTAL_BAHAN) as TOTAL_BAHAN, c.SERI from TBL_MUTASI_BELAH a JOIN ( SELECT KODE_ROLL,KODE_BAHAN FROM TBL_DETAIL_SENSI GROUP BY KODE_ROLL, KODE_BAHAN ) b on a.KODE_ROLL = b.KODE_ROLL JOIN TBL_MASTER_BAHAN c on c.KODE_BAHAN = b.KODE_BAHAN	WHERE a.TGL_MUTASI = '".$tanggal."' AND c.SERI is null GROUP BY  a.tgl_mutasi, c.seri");
+		}else{
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_MUTASI, SUM(a.TOTAL_BAHAN) as TOTAL_BAHAN, c.SERI from TBL_MUTASI_BELAH a JOIN ( SELECT KODE_ROLL,KODE_BAHAN FROM TBL_DETAIL_SENSI GROUP BY KODE_ROLL, KODE_BAHAN ) b on a.KODE_ROLL = b.KODE_ROLL JOIN TBL_MASTER_BAHAN c on c.KODE_BAHAN = b.KODE_BAHAN	WHERE a.TGL_MUTASI = '".$tanggal."' AND c.SERI = '".$seri."' GROUP BY  a.tgl_mutasi, c.seri");
+			
+		}
+		return $success->row();
+	}
+
 	function countTotalDebit($batasAtas,$desain,$seri){
 		$this->oracle_db=$this->load->database('oracle',true);
 		$query = $this->oracle_db->query("SELECT (SUM(a.baik_meter) + SUM(a.reject_meter) + SUM(a.selisih_bahan)) meter_bon,a.tgl_bon_emboss,a.kode_bahan_baru FROM TBL_DETAIL_EMBOSS a join TBL_MASTER_BAHAN b on a.kode_bahan_baru = b.kode_bahan WHERE b.SERI = '".$seri."' AND a.tgl_bon_emboss < '".$batasAtas."' AND b.AKTIF = '1' AND b.DESAIN = '".$desain."' GROUP BY a.kode_bahan_baru,a.tgl_bon_emboss");
@@ -250,6 +265,26 @@ class Master_neraca extends Model
 		}else{
 			$success = $this->oracle_db->query("
 			SELECT a.TGL_PRODUKSI, a.NOMOR_KK, SUM(waste_meter) as waste, SUM(reject_meter) as reject, b.seri from tbl_detail_sensi a join tbl_master_bahan b on a.kode_bahan = b.kode_bahan
+			WHERE a.TGL_PRODUKSI = '".$tanggal."' AND b.SERI = '".$seri."'
+			group by a.tgl_produksi, a.NOMOR_KK, b.seri");
+			
+		}
+		return $success->row();
+	}
+
+	function belahCountWasteBySeriAndDate($tanggal,$seri)
+	{
+
+		$this->oracle_db=$this->load->database('oracle',true);
+
+		if($seri == "MMEA"){
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_PRODUKSI, a.NOMOR_KK, SUM(waste_meter) as waste, SUM(reject_meter) as reject,b.seri from tbl_detail_belah a join tbl_master_bahan b on a.kode_bahan = b.kode_bahan
+			WHERE a.TGL_PRODUKSI = '".$tanggal."' AND b.SERI is null
+			group by a.tgl_produksi, a.NOMOR_KK, b.seri");
+		}else{
+			$success = $this->oracle_db->query("
+			SELECT a.TGL_PRODUKSI, a.NOMOR_KK, SUM(waste_meter) as waste, SUM(reject_meter) as reject, b.seri from tbl_detail_belah a join tbl_master_bahan b on a.kode_bahan = b.kode_bahan
 			WHERE a.TGL_PRODUKSI = '".$tanggal."' AND b.SERI = '".$seri."'
 			group by a.tgl_produksi, a.NOMOR_KK, b.seri");
 			
