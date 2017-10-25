@@ -37,23 +37,10 @@
                 <div class="fa fa-info-circle"></div>&nbsp;<?php echo $this->session->flashdata('success'); ?>
                         </div>
             <?php endif; ?>
-                <form class="form" role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/findByRollBeforeMutation" method="post">
-                <div class="col-lg-12">
-                  <div class="col-lg-6">
-                    <div class="form-group input-group">
-                        <input type="text" placeholder="Kode Roll" name="kodeRoll" class="form-control">
-                          <span class="input-group-btn">
-                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
-                             </button>
-                          </span>
-                    </div>
-                  </div>
-                </div>
-                </form>
             <form role="form" action="<?php echo base_url()?>index.php/AdminProduksiEmboss/formMutasi" method="post">
                 <div class="col-lg-12">
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                       <thead>
                         <tr>
                           <th></th>

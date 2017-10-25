@@ -74,22 +74,6 @@ class AdminProduksiDemet extends Controller {
 			$data["status"]=$pecah[2];
 			$data["roll"] = $this->Master_detail_demet_model->chooseKodeRoll();
 
-			//====== Remove Yang sudah habis bahannya =====//
-			// for($i=0;$i<sizeof($data['roll']);$i++){
-			//  $bahanSudahDigunakan = 0;
-			//  $checkExistingData = $this->Master_detail_demet_model->findByRoll($data['roll'][$i]->KODE_ROLL,$data["roll"][$i]->NO_MUTASI);
-			//  if(sizeof($checkExistingData)>0){
-			// 	$bahanSudahDigunakan = 0;
-			// 	foreach ($checkExistingData as $row1) {
-			// 		$bahanSudahDigunakan = $bahanSudahDigunakan + $row1->BAIK_METER +$row1->WASTE_METER + $row1->REJECT_METER;
-			// 	}
-				
-			// 	if($bahanSudahDigunakan == $data['roll'][$i]->TOTAL_BAHAN){
-			// 		unset($data['roll'][$i]);
-			// 	}
-			//  }
-			// }
-
 			//====== Hitung ulang data bahannya =====//
 			for($i=0;$i<sizeof($data['roll']);$i++){
 			 $bahanSudahDigunakan = 0;

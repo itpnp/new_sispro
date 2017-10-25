@@ -478,15 +478,6 @@ class AdminProduksiEmboss extends Controller {
 			//Menampilkan data laporan emboss yang siap di mutasi ke demet
 			$dataMutasi = $this->Master_detail_emboss_model->getDataBeforeMutation();
 
-			//Mengambil no urut yang dipilih oleh pengguna
-			// foreach ($dataMutasi as $row) {
-			// 	$x = $this->input->post($row->NO_URUT_EMBOSS);
-			// 	// $input[] = $x."@".$row->KODE_ROLL_ASAL;
-			// 	if($x != ""){
-			// 		$input[] = $x."@".$row->KODE_ROLL."@".$row->BAIK_METER."@".$row->KODE_EMBOSS;
-			// 	}
-				
-			// }
 			$index = 0;
 			foreach ($dataMutasi as $row) {
 				$x = $this->input->post($row->NO_URUT_EMBOSS);
@@ -537,69 +528,11 @@ class AdminProduksiEmboss extends Controller {
 					}
 				}
 			}
-
-			// for($i=0; $i<count($showInput); $i++) {
-			// 	echo "Roll show : ".$showInput[$i][0];
-			// 	echo "<br>";
-			// 	echo "Panjang : ".$showInput[$i][1];
-			// 	echo "<br>";
-			// 	echo "<br>";
-			// }
-			// exit();
 			$temp = array();
 			$temp['dataInsert'] = $showInput;
 			$temp['dataUpdate'] = $input;
 			$this->session->set_flashdata('data', $temp);
 			$data['nomorMutasi'] = $this->Master_mutasi_emboss->generateNewNumber();
-			// if($countData == 1){
-			// 	//if user only selects one data then
-			// 	//Use kode_roll column in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
-			// 	$getKodeRoll=explode("@",$input[0]);
-			// 	foreach ($dataMutasi as $key) {
-			// 		if($key->NO_URUT_EMBOSS == $getKodeRoll[0]){
-			// 			$kodeRollBaru = $key->KODE_ROLL;
-			// 			$data["kodeRollBaru"] = $kodeRollBaru;
-			// 			$data["hasilBaik"] = $key->BAIK_METER;
-			// 			$data["idRoll"] =  $key->ID_ROLL;
-			// 		}
-			// 	}
-				
-			// }else if($countData>1){
-			// 	$data["hasilBaik"] = 0;
-			// 	//if user selects more than one data then
-			// 	//System checking whether the data selected by user has same kode_roll or not
-			// 	$getKodeRoll=explode("@",$input[0]);
-			// 	// $compareKodeRoll = explode("/",$getKodeRoll[1]);
-			// 	$compareKodeRoll = $getKodeRoll[1] ;
-			// 	$validation = false;
-			// 	foreach ($input as $row) {
-			// 		$getKodeRoll=explode("@",$row);
-			// 		if($compareKodeRoll != $getKodeRoll[1] ){
-			// 			$validation = false;
-			// 			break;
-			// 		}else{
-			// 			$data["hasilBaik"] = $data["hasilBaik"] + $getKodeRoll[2];
-			// 			$validation = true;
-			// 		}
-			// 						}
-			// 	if($validation){
-			// 		//If validation true then
-			// 		//Use kode_roll_asal in table tbl_detail_emboss as kode_roll_baru in tbl_mutasi_emboss
-			// 		$data["kodeRollBaru"] = $compareKodeRoll;
-					
-			// 		//System add BAIK_METER
-					
-			// 		for($i=0; $i<count($dataMutasi); $i++){
-			// 			$data["idRoll"] =  $dataMutasi[$i]->ID_ROLL;
-			// 		}
-					
-			// 	}else{
-			// 		//If validation false then
-			// 		//User redirected to v_mutasi.php
-			// 	   $this->session->set_flashdata('warning', 'Kode Roll Berbeda');
-			// 	   echo "<meta http-equiv='refresh' content='0; url=".base_url()."index.php/AdminProduksiEmboss/mutasiBarang'>";
-			// 	}
-			// }
 			$data['dataInput'] = $showInput;
 			if($data["status"]=="ADMEMBOSS"){
 				$this->load->view('AdminProduksiEmboss/v_header',$data);
