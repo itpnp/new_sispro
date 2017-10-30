@@ -31,8 +31,23 @@
                         </div>
                 <?php endif; ?>
                 <div class="form-group">
+                  <label>Tahun Desain</label>
+                  <div class="form-group">
+                      <select class="form-control" name="tahunDesain" id = 'tahunDesain' onChange="chooseKKAndBapob()">
+                        <option value="2017">2017</option>
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
                   <label>No. KK</label>
-                        <!-- <input class="form-control" name="noKK" id="noKK" value="<?php if($header!="") echo $header['NO_KK']; ?>" onBlur="UrlExists()" placeholder="No KK" required> -->
                     <input class="form-control" name="noKK" id="noKK" value="<?php if($nomorKkBaru!="") echo $nomorKkBaru; ?>" onBlur="UrlExists()" placeholder="No KK" readonly>
                 </div>
                 <div class="form-group">
@@ -266,6 +281,14 @@ function numberWithCommas(x) {
     var parts = x.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
+}
+
+function chooseKKAndBapob() {
+    var opt = document.getElementById("tahunDesain");
+    var  tahunDesain = opt.options[opt.selectedIndex].value;
+
+    
+    
 }
 
  window.onload = function() {

@@ -871,45 +871,123 @@ function reportPage(){
 					$array[0] = "-";
 					$array[1] = "1";
 					$stamp = strtotime($row->TGL_PRODUKSI);
-					$array[2] = date("m",$stamp);
-					$array[3] = $row->TGL_PRODUKSI;
-					$array[4] = $row->NOMOR_KK;
-					$array[5] = $row->MESIN_EMBOSS;
-					$array[6] = $row->SHIFT_EMBOSS;
-					$array[7] = $row->KODE_ROLL;
-					$array[8] = $row->TOTAL_BAHAN;
-					$array[9] = $row->BAIK_METER;
-					$array[10] = $row->RETUR_METER;
-					$array[11] = $row->REJECT_METER;
-					$array[12] = "EMPTY";
-					$array[13] = $row->SISA_BAIK;
-					$array[14] = $row->START_JAM_PRODUKSI;
-					$array[15] = "s/d";
-					$array[16] = $row->FINISH_JAM_PRODUKSI;
-					$array[18] = $row->START_JAM_PERSIAPAN;
-					$array[19] = "s/d";
-					$array[20] = $row->FINISH_JAM_PERSIAPAN;
-					$array[22] = $row->START_JAM_TROUBLE_PRODUKSI;
-					$array[23] = "s/d";
-					$array[24] = $row->FINISH_JAM_TROUBLE_PRODUKSI;
-					$array[26] = $row->START_JAM_TROUBLE_MESIN;
-					$array[27] = "s/d";
-					$array[28] = $row->FINISH_JAM_TROUBLE_MESIN;
-					$array[30] = $row->START_JAM_TUNGGU_BAHAN;
-					$array[31] = "s/d";
-					$array[32] = $row->FINISH_JAM_TUNGGU_BAHAN;
-					$array[34] = $row->START_JAM_TUNGGU_CORE;
-					$array[35] = "s/d";
-					$array[36] = $row->FINISH_JAM_TUNGGU_CORE;
-					$array[38] = $row->START_JAM_GANTI_SILINDER_SERI;
-					$array[39] = "s/d";
-					$array[40] = $row->FINISH_JAM_GANTI_SILINDER_SERI;
-					$array[42] = $row->START_JAM_FORCE_MAJOR;
-					$array[43] = "s/d";
-					$array[44] = $row->FINISH_JAM_FORCE_MAJOR;
-					$array[46] = $row->START_JAM_LAIN_LAIN;
-					$array[47] = "s/d";
-					$array[48] = $row->START_JAM_LAIN_LAIN;
+					$array[2] 	= date("m",$stamp);
+					$array[3] 	= $row->TGL_PRODUKSI;
+					$array[4] 	= $row->NOMOR_KK;
+					$array[5] 	= $row->MESIN_EMBOSS;
+					$array[6] 	= $row->SHIFT_EMBOSS;
+					$array[7] 	= $row->KODE_ROLL;
+					$array[8] 	= $row->TOTAL_BAHAN;
+					$array[9] 	= $row->BAIK_METER;
+					$array[10] 	= $row->RETUR_METER;
+					$array[11] 	= $row->REJECT_METER;
+					$array[12] 	= "EMPTY";
+					$array[13] 	= $row->SISA_BAIK;
+					if($row->START_JAM_PRODUKSI == '1970-01-01 07:00'){
+						$array[14] 	= '00:00:00';
+					}else{
+						$array[14] 	= date('H:m:s',strtotime($row->START_JAM_PRODUKSI));
+					}
+					$array[15] 	= "s/d";
+					if($row->FINISH_JAM_PRODUKSI == '1970-01-01 07:00'){
+						$array[16] 	= '00:00:00';
+					}else{
+						$array[16] 	= date('H:m:s',strtotime($row->FINISH_JAM_PRODUKSI));
+					}
+					if($row->START_JAM_PERSIAPAN == '1970-01-01 07:00'){
+						$array[18] 	= 0;
+					}else{
+						$array[18] 	= $row->START_JAM_PERSIAPAN;	
+					}
+					$array[19] 	= "s/d";
+					if($row->FINISH_JAM_PERSIAPAN == '1970-01-01 07:00'){
+						$array[20] 	= '00:00:00';
+					}else{
+						$array[20] 	= $row->FINISH_JAM_PERSIAPAN;	
+					}
+
+					if($row->START_JAM_TROUBLE_PRODUKSI== '1970-01-01 07:00'){
+						$array[22] 	= '00:00:00';
+					}else{
+						$array[22] 	= $row->START_JAM_TROUBLE_PRODUKSI;	
+					}
+					$array[23] 	= "s/d";
+					if($row->FINISH_JAM_TROUBLE_PRODUKSI== '1970-01-01 07:00'){
+						$array[24] 	= '00:00:00';
+					}else{
+						$array[24] 	= $row->FINISH_JAM_TROUBLE_PRODUKSI;	
+					}
+					if($row->FINISH_JAM_TROUBLE_PRODUKSI== '1970-01-01 07:00'){
+						$array[24] 	= '00:00:00';
+					}else{
+						$array[24] 	= $row->FINISH_JAM_TROUBLE_PRODUKSI;	
+					}
+					if($row->START_JAM_TROUBLE_MESIN == '1970-01-01 07:00'){
+						$array[26] 	= '00:00:00';
+					}else{
+						$array[26] 	= $row->START_JAM_TROUBLE_MESIN;	
+					}
+					$array[27] 	= "s/d";
+					if($row->FINISH_JAM_TROUBLE_MESIN == '1970-01-01 07:00'){
+						$array[28] 	= '00:00:00';
+					}else{
+						$array[28] 	= $row->FINISH_JAM_TROUBLE_MESIN;	
+					}
+					if($row->START_JAM_TUNGGU_BAHAN == '1970-01-01 07:00'){
+						$array[30] 	= '00:00:00';
+					}else{
+						$array[30] 	= $row->START_JAM_TUNGGU_BAHAN;	
+					}
+					$array[31] 	= "s/d";
+					if($row->FINISH_JAM_TUNGGU_BAHAN == '1970-01-01 07:00'){
+						$array[32] 	= '00:00:00';
+					}else{
+						$array[32] 	= $row->FINISH_JAM_TUNGGU_BAHAN;	
+					}
+					if($row->START_JAM_TUNGGU_CORE == '1970-01-01 07:00'){
+						$array[34] 	= '00:00:00';
+					}else{
+						$array[34] 	= $row->START_JAM_TUNGGU_CORE;	
+					}
+					$array[35] 	= "s/d";
+					if($row->FINISH_JAM_TUNGGU_CORE == '1970-01-01 07:00'){
+						$array[36] 	= '00:00:00';
+					}else{
+						$array[36] 	= $row->FINISH_JAM_TUNGGU_CORE;	
+					}
+					if($row->START_JAM_GANTI_SILINDER_SERI == '1970-01-01 07:00'){
+						$array[38] 	= '00:00:00';
+					}else{
+						$array[38] 	= $row->START_JAM_GANTI_SILINDER_SERI;	
+					}
+					$array[39] 	= "s/d";
+					if($row->FINISH_JAM_GANTI_SILINDER_SERI == '1970-01-01 07:00'){
+						$array[40] 	= '00:00:00';
+					}else{
+						$array[40] 	= $row->FINISH_JAM_GANTI_SILINDER_SERI;	
+					}
+					if($row->START_JAM_FORCE_MAJOR == '1970-01-01 07:00'){
+						$array[42] 	= '00:00:00';
+					}else{
+						$array[42] 	= $row->START_JAM_FORCE_MAJOR;	
+					}
+					$array[43] 	= "s/d";
+					if($row->FINISH_JAM_FORCE_MAJOR == '1970-01-01 07:00'){
+						$array[44] 	= '00:00:00';
+					}else{
+						$array[44] 	= $row->FINISH_JAM_FORCE_MAJOR;	
+					}
+					if($row->START_JAM_LAIN_LAIN == '1970-01-01 07:00'){
+						$array[46] 	= '00:00:00';
+					}else{
+						$array[46] 	= $row->START_JAM_LAIN_LAIN;	
+					}
+					$array[47] 	= "s/d";
+					if($row->FINISH_JAM_LAIN_LAIN == '1970-01-01 07:00'){
+						$array[48] 	= '00:00:00';
+					}else{
+						$array[48] 	= $row->FINISH_JAM_LAIN_LAIN;	
+					}
 
 					for($i=0;$i<count($columnIndex);$i++){
 						$array[17] = '=sum(Q'.$rowIndex.'- O'.$rowIndex.')';

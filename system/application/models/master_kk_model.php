@@ -8,7 +8,7 @@ class Master_kk_model extends Model
 
 	function getLastNumber($tahun){
 		$this->oracle_db=$this->load->database('oracle',true);
-		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_KK where DESAIN = '$tahun' and TAHUN = '$tahun' order by NOMOR_KK DESC");
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_KK where DESAIN = '$tahun' order by NOMOR_KK DESC");
 		return $t->result();
 	}
 

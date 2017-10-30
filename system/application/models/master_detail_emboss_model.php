@@ -157,7 +157,7 @@ class Master_detail_emboss_model extends Model
 	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
 		$this->oracle_db->where('tgl_produksi >=', $startDate);
 		$this->oracle_db->where('tgl_produksi <=', $endDate);
-	   	$this->oracle_db->order_by('NO_URUT_EMBOSS','desc');
+	   	$this->oracle_db->order_by('TGL_PRODUKSI','asc');
 		$t=$this->oracle_db->get();
 		return $t->result();
 	}
@@ -167,7 +167,7 @@ class Master_detail_emboss_model extends Model
 	   	$this->oracle_db->select('*');
 	   	$this->oracle_db->from('TBL_DETAIL_EMBOSS');
 		$this->oracle_db->where('NOMOR_KK', $nomorKK);
-	   	$this->oracle_db->order_by('NO_URUT_EMBOSS','desc');
+	   	$this->oracle_db->order_by('TGL_PRODUKSI','asc');
 		$t=$this->oracle_db->get();
 		return $t->result();
 	}
@@ -179,7 +179,7 @@ class Master_detail_emboss_model extends Model
 		$this->oracle_db->where('tgl_produksi >=', $startDate);
 		$this->oracle_db->where('tgl_produksi <=', $endDate);
 		$this->oracle_db->where('NOMOR_KK', $nomorKK);
-	   	$this->oracle_db->order_by('NO_URUT_EMBOSS','desc');
+	   	$this->oracle_db->order_by('TGL_PRODUKSI','asc');
 		$t=$this->oracle_db->get();
 		return $t->result();
 	}

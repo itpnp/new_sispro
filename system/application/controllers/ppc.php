@@ -154,8 +154,40 @@ class Ppc extends Controller {
 				$data["nim"]=$pecah[0];
 				$data["nama"]=$pecah[1];
 				$data["status"]=$pecah[2];
+
+				$kkAndBapob = array();
+				$index = 0;
+				echo sizeof($dataBapob);
+				// exit();
+				foreach ($dataBapob as $row) {
+					$kkAndBapob[$index][0] = $row->DESAIN;
+					$kkAndBapob[$index][1] = $row->NOMOR_BAPOB;
+					$getLastNumber = $this->Master_kk_model->getLastNumber($row->DESAIN);
+					$bulan = $this->convertToRomawi(date("m"));
+					if(sizeof($getLastNumber) >0){
+						$lastNumber = substr(($getLastNumber[0]->NOMOR_KK),0,3);
+						$currentNumber = intval($lastNumber)+1;
+						if($currentNumber <10){
+							$nomorBaru = "00".$currentNumber;
+						}else if($currentNumber >9 && $currentNumber <100){
+							$nomorBaru = "0".$currentNumber;
+						}
+						$nomorBaru = $nomorBaru."/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+					}else{
+						$nomorBaru = "001/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+					}
+					$kkAndBapob[$index][2] = $nomorBaru;
+					$index++;
+				}
+				
+				for($i=0; $i<sizeof($kkAndBapob);$i++){
+					echo $kkAndBapob[$i][0]." Bapob : ".$kkAndBapob[$i][1]." KK : ".$kkAndBapob[$i][2];
+					echo "<br>";
+				}
+				exit();
 				$data["bapob"] = $dataBapob[0];
 				$_SESSION['data_bapob']=$dataBapob[0];
+
 				$data["masterBahan"] = $this->Master_bahan_model->getAllData();
 				$getLastNumber = $this->Master_kk_model->getLastNumber(date("Y"));
 				$bulan = $this->convertToRomawi(date("m"));
@@ -181,8 +213,7 @@ class Ppc extends Controller {
 					$this->load->view('ppc/v_side_menu',$data);
 					$this->load->view('ppc/v_master_kk_add',$data);
 					$this->load->view('ppc/v_footer',$data);
-				}
-				else{
+				}else{
 					?>
 					<script type="text/javascript" language="javascript">
 						alert("Anda tidak berhak masuk ke Control Panel Admin...!!!");
@@ -200,6 +231,7 @@ class Ppc extends Controller {
 			}
 		}
 	}
+
 
 	function saveHeaderKK(){
 		$x = $this->input->post('chooseBahan');

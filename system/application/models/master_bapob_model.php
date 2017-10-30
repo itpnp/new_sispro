@@ -9,12 +9,12 @@ class Master_bapob_model extends Model
 	public function getDefaultBapob()
 		{
 		    $this->oracle_db=$this->load->database('oracle',true);
-		    $t=$this->oracle_db->query("select * from tbl_master_bapob a inner join tbl_master_bahan b on a.id_kode_bahan = b.kode_bahan  where a.status_default = 1");
+		    $t=$this->oracle_db->query("select * from tbl_master_bapob a inner join tbl_master_bahan b on a.id_kode_bahan = b.kode_bahan  where a.status_default = 1 order by a.desain");
 			return $t->result();
 
 		}
 
-		public function getAllData()
+	public function getAllData()
 	{
 		$this->oracle_db=$this->load->database('oracle',true);
 		$t=$this->oracle_db->query("SELECT t.*,a.nama_bahan from tbl_master_bapob t,tbl_master_bahan a where t.id_kode_bahan =a.kode_bahan order by nomor_bapob,tanggal_dibuat desc");
