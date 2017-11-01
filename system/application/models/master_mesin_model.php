@@ -16,6 +16,18 @@ class Master_mesin_model extends Model
 		return $t->result();
 	}
 
+	public function getDataMesin($idMesin, $desain)
+	{
+		$this->oracle_db=$this->load->database('oracle',true);
+		$this->oracle_db->select('a.*, b.WASTE_PROSES as waste_bapob');    
+	  	$this->oracle_db->from('TBL_MASTER_MESIN a');
+	  	$this->oracle_db->join('TBL_MASTER_PROSES_BAPOB b', 'a.ID_MESIN= b.ID_MESIN');
+	  	$this->oracle_db->where('a.ID_MESIN',$idMesin);
+	  	$this->oracle_db->where('a.DESAIN',$desain);
+		$t=$this->oracle_db->get();
+		return $t->result();
+	}
+
 	public function saveData($data)
 	{
 		try{
@@ -61,11 +73,11 @@ class Master_mesin_model extends Model
 		return $t;
 	}
 
-	public function findByName($namaMesin)
+	public function findByName($namaMesin,$tahunDesain)
 	{
 		try{
 		$this->oracle_db=$this->load->database('oracle',true);
-		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_MESIN where NAMA_MESIN = '$namaMesin'");
+		$t=$this->oracle_db->query("SELECT * FROM TBL_MASTER_MESIN where NAMA_MESIN = '$namaMesin' AND DESAIN = '$tahunDesain'");
 		return $t->result();
 		}catch(Exception $e){
 			var_dump($e);

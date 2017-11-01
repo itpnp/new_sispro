@@ -157,11 +157,8 @@ class Ppc extends Controller {
 
 				$kkAndBapob = array();
 				$index = 0;
-				echo sizeof($dataBapob);
-				// exit();
 				foreach ($dataBapob as $row) {
 					$kkAndBapob[$index][0] = $row->DESAIN;
-					$kkAndBapob[$index][1] = $row->NOMOR_BAPOB;
 					$getLastNumber = $this->Master_kk_model->getLastNumber($row->DESAIN);
 					$bulan = $this->convertToRomawi(date("m"));
 					if(sizeof($getLastNumber) >0){
@@ -176,35 +173,41 @@ class Ppc extends Controller {
 					}else{
 						$nomorBaru = "001/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
 					}
-					$kkAndBapob[$index][2] = $nomorBaru;
+					$kkAndBapob[$index][1] = $nomorBaru;
+					$kkAndBapob[$index][2] = $row->NOMOR_BAPOB;
+					$kkAndBapob[$index][3] = $row->WASTE_PEREKATAN;
+					$kkAndBapob[$index][4] = $row->WASTE_PITA;
+					$kkAndBapob[$index][5] = $row->WASTE_BELAH;
 					$index++;
 				}
 				
-				for($i=0; $i<sizeof($kkAndBapob);$i++){
-					echo $kkAndBapob[$i][0]." Bapob : ".$kkAndBapob[$i][1]." KK : ".$kkAndBapob[$i][2];
-					echo "<br>";
-				}
-				exit();
-				$data["bapob"] = $dataBapob[0];
-				$_SESSION['data_bapob']=$dataBapob[0];
+				// for($i=0; $i<sizeof($kkAndBapob);$i++){
+				// 	echo $kkAndBapob[$i][0]." Bapob : ".$kkAndBapob[$i][1]." KK : ".$kkAndBapob[$i][2];
+				// 	echo "<br>";
+				// }
+				// exit();
+				$data["kkAndBapob"] = $kkAndBapob;
+				// $data["bapob"] = $dataBapob[0];
+				
 
-				$data["masterBahan"] = $this->Master_bahan_model->getAllData();
-				$getLastNumber = $this->Master_kk_model->getLastNumber(date("Y"));
-				$bulan = $this->convertToRomawi(date("m"));
-				if(sizeof($getLastNumber) >0){
-					$lastNumber = substr(($getLastNumber[0]->NOMOR_KK),0,3);
-					$currentNumber = intval($lastNumber)+1;
-					if($currentNumber <10){
-						$nomorBaru = "00".$currentNumber;
-					}else if($currentNumber >9 && $currentNumber <100){
-						$nomorBaru = "0".$currentNumber;
-					}
-					$nomorBaru = $nomorBaru."/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
-					// $nomorBaru = "013/PNP-HLG/PPC/KKM/III/2017";
-				}else{
-					$nomorBaru = "001/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
-					// $nomorBaru = "001/PNP-HLG/PPC/KKM/XII/2016";
-				}
+				// $data["masterBahan"] = $this->Master_bahan_model->getAllData();
+				$data["masterBahan"] = $this->Master_bahan_model->getAllDataArray();
+				// $getLastNumber = $this->Master_kk_model->getLastNumber(date("Y"));
+				// $bulan = $this->convertToRomawi(date("m"));
+				// if(sizeof($getLastNumber) >0){
+				// 	$lastNumber = substr(($getLastNumber[0]->NOMOR_KK),0,3);
+				// 	$currentNumber = intval($lastNumber)+1;
+				// 	if($currentNumber <10){
+				// 		$nomorBaru = "00".$currentNumber;
+				// 	}else if($currentNumber >9 && $currentNumber <100){
+				// 		$nomorBaru = "0".$currentNumber;
+				// 	}
+				// 	$nomorBaru = $nomorBaru."/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+				// 	// $nomorBaru = "013/PNP-HLG/PPC/KKM/III/2017";
+				// }else{
+				// 	$nomorBaru = "001/PNP-HLG/PPC/KKM/".$bulan."/".date("Y");
+				// 	// $nomorBaru = "001/PNP-HLG/PPC/KKM/XII/2016";
+				// }
 				
 				$data["nomorKkBaru"] = $nomorBaru;
 				if($data["status"]=="PPC"){
@@ -246,7 +249,7 @@ class Ppc extends Controller {
 		if($bahanBaku[2] === ""){
 			$bahanBaku[2] = 0;
 		}
-		$tahun = $this->input->post('tahun');
+		$tahun = $this->input->post('tahunDesain');
 		$seri = $this->input->post('seri');
 
 		$data['NAMA_BAHAN_BAKU'] = $bahanBaku[1];
@@ -277,9 +280,11 @@ class Ppc extends Controller {
 		$x = str_replace(",", ".", $this->input->post('percentWasteBelah'));
 		$percentWasteBelahKonversi = str_replace("%", "", $x);
 		$data['percent_belah_konversi'] = $percentWasteBelahKonversi;
-
 		$jumlahPesanan = $this->replaceCommas($this->input->post('jumlahPesanan'));
-		$wasteProses = $_SESSION['data_bapob']->WASTE_BELAH;
+		$dataBapob = $this->Master_bapob_model->findByNumber($this->input->post('noBapob'));
+		$_SESSION['data_bapob']=$dataBapob;
+		$data['NAMA_BAHAN_BAPOB']=$dataBapob->BAHAN;
+		$wasteProses = $dataBapob->WASTE_BELAH;
 		$wasteDalamPersen = $wasteProses/100;
 		$data['PANJANG_BAHAN'] = $this->replaceCommas($this->input->post('panjangBahan'));
 		$data['JML_PESANAN_KONVERSI'] = $this->replaceCommas($this->input->post('jumlahPesananKonversi'));
@@ -350,14 +355,16 @@ class Ppc extends Controller {
 				$data["status"]=$pecah[2];
 				$data["header"] = $_SESSION['data_header'];
 				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Emboss');
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Emboss',$data["bapob"]->DESAIN);
 				$data["mesin"] = $dataMesin[0];
 				$idBapob = $data["bapob"]->ID_BAPOB;
 				$idMesin = $data["mesin"]->ID_MESIN;
 				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
 				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$_SESSION['prosesEmbossOnBapob']=$prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+
+				// $data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["masterMesin"] = $this->Master_mesin_model->getDataMesin($idMesin,$data["bapob"]->DESAIN);
 				// $data["delivery_time"] = $_SESSION['delivery_emboss'];
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
@@ -412,14 +419,15 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["emboss"] = $_SESSION['proses_emboss'];
 				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Demet');
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Demet',$data["bapob"]->DESAIN);
 				$data["mesin"] = $dataMesin[0];
 				$idBapob = $data["bapob"]->ID_BAPOB;
 				$idMesin = $data["mesin"]->ID_MESIN;
 				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
 				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$_SESSION['prosesDemetOnBapob']=$prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["masterMesin"] = $this->Master_mesin_model->getDataMesin($idMesin,$data["bapob"]->DESAIN);
+				// $data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -494,14 +502,15 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["demet"] = $_SESSION['proses_demet'];
 				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Rewind');
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Rewind',$data["bapob"]->DESAIN);
 				$data["mesin"] = $dataMesin[0];
 				$idBapob = $data["bapob"]->ID_BAPOB;
 				$idMesin = $data["mesin"]->ID_MESIN;
 				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
 				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$_SESSION['prosesRewindOnBapob']=$prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["masterMesin"] = $this->Master_mesin_model->getDataMesin($idMesin,$data["bapob"]->DESAIN);
+				// $data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -577,14 +586,15 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["rewind"] = $_SESSION['proses_rewind'];
 				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Sensitizing');
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Sensitizing',$data["bapob"]->DESAIN);
 				$data["mesin"] = $dataMesin[0];
 				$idBapob = $data["bapob"]->ID_BAPOB;
 				$idMesin = $data["mesin"]->ID_MESIN;
 				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
 				$data["prosesOnBapob"] = $prosesOnBapob[0];
 				$_SESSION['prosesSensiOnBapob']=$prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["masterMesin"] = $this->Master_mesin_model->getDataMesin($idMesin,$data["bapob"]->DESAIN);
+				// $data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -661,13 +671,14 @@ class Ppc extends Controller {
 				$data["header"] = $_SESSION['data_header'];
 				$data["sensi"] = $_SESSION['proses_sensi'];
 				$data["bapob"] = $_SESSION['data_bapob'];
-				$dataMesin = $this->Master_mesin_model->findByName('Mesin Belah');
+				$dataMesin = $this->Master_mesin_model->findByName('Mesin Belah',$data["bapob"]->DESAIN);
 				$data["mesin"] = $dataMesin[0];
 				$idBapob = $data["bapob"]->ID_BAPOB;
 				$idMesin = $data["mesin"]->ID_MESIN;
 				$prosesOnBapob = $this->Master_proses_bapob_model->findProsesByBapobAndMesin($idBapob, $idMesin);
 				$data["prosesOnBapob"] = $prosesOnBapob[0];
-				$data["masterMesin"] = $this->Master_mesin_model->getAllData();
+				$data["masterMesin"] = $this->Master_mesin_model->getDataMesin($idMesin,$data["bapob"]->DESAIN);
+				// $data["masterMesin"] = $this->Master_mesin_model->getAllData();
 				if($data["status"]=="PPC"){
 					$data["tanggal"] = mdate($datestring, $time);
 					$this->load->view('ppc/v_header',$data);
@@ -992,7 +1003,8 @@ class Ppc extends Controller {
 
 				$objSheet->mergeCells('C8:E8');
 				$objSheet->getStyle('C8')->getFont()->setBold(true)->setSize(12);
-				$objSheet->getCell('C8')->setValue($header["MACAM"]." Tahun ".$header["tahun"]." ".$header["seri"]);
+				$objSheet->getCell('C8')->setValue($header["MACAM"]." ".$header["seri"]);
+				// $objSheet->getCell('C8')->setValue($header["MACAM"]." Tahun ".$header["tahun"]." ".$header["seri"]);
 				$objSheet->getStyle('C9')->getNumberFormat()->setFormatCode('#,##0.00');
 				$objSheet->getCell('C9')->setValue($header["JML_PESANAN_KONVERSI"]);
 				$objSheet->getCell('A10')->setValue("Waste Pita ");
@@ -1126,9 +1138,9 @@ class Ppc extends Controller {
 				$objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(1);
 	            ob_end_clean();
 	            $filename = str_replace("/","-",$header["NO_KK"]);
-	            // $objWriter->save("//192.168.17.102/Test/".$filename.".xlsx");
-	            // / $objWriter->save("..E://Test/".$filename.".xlsx");
-	            $objWriter->save("E://KK/".$filename.".xlsx");
+	            $objWriter->save("//192.168.17.102/Test/".$filename.".xlsx");
+	            // $objWriter->save("E://Test/".$filename.".xlsx");
+	            // $objWriter->save("E://KK/".$filename.".xlsx");
 	            // $objWriter->save("V://Kartu Kerja Mesin/".$filename.".xlsx");
 	            // $objWriter->save("..//..//..//..//saveHere/".$filename.".xlsx");
             }//end if - else
@@ -1145,7 +1157,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('A'.$row)->setValue('Bahan');
         	$objSheet->getCell('B'.$row)->setValue(':');
         	$objSheet->mergeCells('C'.$row.':G'.$row);
-        	$objSheet->getCell('C'.$row)->setValue('PETM 12 mic. Gudang Soft Yellow TA '.$header["tahun"]);
+        	$objSheet->getCell('C'.$row)->setValue($header["NAMA_BAHAN_BAPOB"]);
         	$objSheet->getCell('I'.$row)->setValue('Target Prod');
         	$objSheet->getCell('J'.$row)->setValue(':');
         	$objSheet->mergeCells('K'.($row).':L'.($row));
@@ -1158,9 +1170,19 @@ class Ppc extends Controller {
 
         	$row++;
         	$row++;
+        	$idMesin = $emboss["ID_MESIN"];
+        	$formula = $this->Master_formula_model->findFormula1ByIdMesin($idMesin);
         	$objSheet->getCell('A'.$row)->setValue('Formula');
         	$objSheet->getCell('B'.$row)->setValue(':');
-        	$objSheet->getCell('C'.$row)->setValue($emboss["FORMULA"]);
+        	if(count($formula)>0){
+        		$objSheet->getCell('C'.$row)->setValue($formula[0]->NAMA_FORMULA_ANAK);
+        	}else{
+        		echo $idMesin;
+        		echo "<br>";
+        		echo " Ukuran di mesin emboss kosong, mohon check database";
+        		exit();	
+        	}
+        	// $objSheet->getCell('C'.$row)->setValue($emboss["FORMULA"]);
         	$objSheet->getCell('I'.$row)->setValue('WAKTU');
         	$objSheet->getCell('J'.$row)->setValue(':');
         	$objSheet->getCell('k'.$row)->setValue('Stel PCH'); 
@@ -1175,11 +1197,13 @@ class Ppc extends Controller {
         	$row++;
         	$objSheet->getCell('C'.$row)->setValue("Jumlah");
         	$objSheet->getCell('D'.$row)->setValue(":");
-        	$idMesin = $emboss["ID_MESIN"];
-        	$formula = $this->Master_formula_model->findFormula1ByIdMesin($idMesin);
+        	
+        	
         	if(count($formula)>0){
         		$ukuran = $formula[0]->UKURAN;
         	}else{
+        		echo $idMesin;
+        		echo "<br>";
         		echo " Ukuran di mesin emboss kosong, mohon check database";
         		exit();
         	}
@@ -1220,7 +1244,7 @@ class Ppc extends Controller {
 				$objSheet->getCell('A'.($row+1))->setValue('Bahan');
 				$objSheet->getCell('B'.($row+1))->setValue(':');
 				$objSheet->mergeCells('C'.($row+1).':G'.($row+1));
-				$objSheet->getCell('C'.($row+1))->setValue('PETM 12 mic. Holo Emboss Soft Yellow TA '.$header["tahun"]);
+				$objSheet->getCell('C'.($row+1))->setValue($header["NAMA_BAHAN_BAPOB"]);
 				$objSheet->getCell('I'.($row+1))->setValue('Target Prod');
 				$objSheet->getCell('J'.($row+1))->setValue(':');
 				$objSheet->mergeCells('K'.($row).':L'.($row));
@@ -1337,7 +1361,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
         	$objSheet->mergeCells('C'.$row.':G'.$row);
-        	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
+        	$objSheet->getCell('C'.($row))->setValue($header["NAMA_BAHAN_BAPOB"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
         	$objSheet->mergeCells('K'.($row).':L'.($row));
@@ -1388,7 +1412,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
         	$objSheet->mergeCells('C'.$row.':G'.$row);
-        	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Demet Soft Yellow TA '.$header["tahun"]);
+        	$objSheet->getCell('C'.($row))->setValue($header["NAMA_BAHAN_BAPOB"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
         	$objSheet->mergeCells('K'.($row).':L'.($row));
@@ -1431,31 +1455,28 @@ class Ppc extends Controller {
 			$listFormula2 = $this->Master_formula_model->findFormula2ByIdMesin($idMesin);
 			$listFormula3 = $this->Master_formula_model->findFormula3ByIdMesin($idMesin);
 			
-			
 			if(count($listFormula1) >0){
-
 				$objSheet->getCell('A'.($start))->setValue('Formula 01');
         		$objSheet->getCell('B'.($start))->setValue(':');
         		$mediumPs = 0;
         		$message = "";
         		foreach($listFormula1 as $r){
 					$namaFormula = $r->NAMA_FORMULA_ANAK;
-					$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					if(stristr($namaFormula, 'silinder') !== FALSE ){
+						$objSheet->getCell('C'.($start))->setValue($namaFormula." ,".$header["seri"]);
+					}else{
+						$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					}
 					if(stristr($namaFormula, 'general') !== FALSE ){
 						$gsm = str_replace(",", ".", $r->GRAMATURE);
 						$gsm = floatval($gsm);
-						
 						if($gsm == 0){
 							$message = " GRAMATURE Di Database == 0";
 						}else if($r->SOLID_CONTAIN == 0){
 							$message = " SOLID CONTAIN Di Database == 0";
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}
-						// else if($header["GSM_BAHAN_BAKU"] == 0){
-						// 	$message = "GSM Bahan Di Database == 0";
-						// }
-						else{
+						}else{
 							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000;
     						$display = round($mediumPs, 2);
     						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
@@ -1467,22 +1488,37 @@ class Ppc extends Controller {
 						$solvent = round($solvent, 2);
 						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
 						$objSheet->getCell('E'.($start))->setValue(($solvent)." Kg");
-
 					}else if(stristr($namaFormula, 'pigment') !== FALSE){
-						
 						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
 						$objSheet->getCell('E'.($start))->setValue(round($mediumPs*($r->UKURAN)/100,2)." Kg");					
+					}else if(stristr($namaFormula, 'medium') !== FALSE){
+						$gsm = str_replace(",", ".", $r->GRAMATURE);
+						$gsm = floatval($gsm);
+						
+						if($gsm == 0){
+							$message = " GRAMATURE Di Database == 0";
+						}else if($r->SOLID_CONTAIN == 0){
+							$message = " SOLID CONTAIN Di Database == 0";
+						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
+							$message = "lebar Bahan Di Database == 0";
+						}else{
+							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*($r->GRAMATURE))/$r->SOLID_CONTAIN/1000 ;
+    						$display = round($mediumPs, 2);
+    						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+							$objSheet->getCell('E'.($start))->setValue($display." Kg");
+						}
+					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
+						$toluol = $sensi["HASIL"]/$r->UKURAN;
+						$toluol = round($toluol, 2);
+						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+						$objSheet->getCell('E'.($start))->setValue(($toluol)." Kg");
 					}
-
-
 					$start++;
 				}
 				if($message !== ""){
-						echo $message;
-						exit();
+					echo $message;
+					exit();
 				}
-				$objSheet->getCell('C'.($start))->setValue("Silinder Motif Bingkai BC ".$header["tahun"]." ,".$header["seri"]);
-
 			}
 
 			$start++;
@@ -1493,8 +1529,32 @@ class Ppc extends Controller {
         		$message = "";
         		foreach($listFormula2 as $r){
 					$namaFormula = $r->NAMA_FORMULA_ANAK;
-					$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					if(stristr($namaFormula, 'silinder') !== FALSE ){
+						$objSheet->getCell('C'.($start))->setValue($namaFormula." ,".$header["seri"]);
+					}else{
+						$objSheet->getCell('C'.($start))->setValue($namaFormula);
+					}
 					if(stristr($namaFormula, 'medium') !== FALSE ){
+						$gsm = str_replace(",", ".", $r->GRAMATURE);
+						$gsm = floatval($gsm);
+						if($gsm == 0){
+							$message = " GRAMATURE Di Database == 0";
+						}else if($r->SOLID_CONTAIN == 0){
+							$message = " SOLID CONTAIN Di Database == 0";
+						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
+							$message = "lebar Bahan Di Database == 0";
+						}else{
+							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*($r->GRAMATURE))/$r->SOLID_CONTAIN/1000 ;
+    						$display = round($mediumPs, 2);
+    						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+							$objSheet->getCell('E'.($start))->setValue($display." Kg");
+						}
+					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
+						$toluol = $sensi["HASIL"]/$r->UKURAN;
+						$toluol = round($toluol, 2);
+						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
+						$objSheet->getCell('E'.($start))->setValue(($toluol)." Kg");
+					}else if(stristr($namaFormula, 'readible') !== FALSE ){
 						$gsm = str_replace(",", ".", $r->GRAMATURE);
 						$gsm = floatval($gsm);
 						
@@ -1504,33 +1564,19 @@ class Ppc extends Controller {
 							$message = " SOLID CONTAIN Di Database == 0";
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
-						}
-						// else if($header["GSM_BAHAN_BAKU"] == 0){
-						// 	$message = "GSM Bahan Di Database == 0";
-						// }
-						else{
-							$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*($r->GRAMATURE))/$r->SOLID_CONTAIN/1000 ;
+						}else{
+						$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000 ;
     						$display = round($mediumPs, 2);
     						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
 							$objSheet->getCell('E'.($start))->setValue($display." Kg");
-							// $objSheet->getCell('E'.($start))->setValue($r->GRAMATURE);
 						}
-					}else if (stristr($namaFormula, 'toluol') !== FALSE) {
-						$toluol = $sensi["HASIL"]/$r->UKURAN;
-						$toluol = round($toluol, 2);
-						$objSheet->getStyle('E'.($start))->getNumberFormat()->setFormatCode('#,##0.00');
-						$objSheet->getCell('E'.($start))->setValue(($toluol)." Kg");
-
 					}
-
 					$start++;
 				}
 				if($message !== ""){
 						echo $message;
 						exit();
-				
 				}
-				$objSheet->getCell('C'.($start))->setValue("Silinder Raster 80 Barcode ");
 
 			}
 			$start++;
@@ -1552,9 +1598,6 @@ class Ppc extends Controller {
 						}else if($header["LEBAR_BAHAN_BAKU"] == 0){
 							$message = "lebar Bahan Di Database == 0";
 						}
-						// else if($header["GSM_BAHAN_BAKU"] == 0){
-						// 	$message = "GSM Bahan Di Database == 0";
-						// }
 						else{
 						$mediumPs = (intval($rewind["HASIL"])*($header["LEBAR_BAHAN_BAKU"]/100)*$r->GRAMATURE)/$r->SOLID_CONTAIN/1000 ;
     						$display = round($mediumPs, 2);
@@ -1611,7 +1654,7 @@ class Ppc extends Controller {
         	$objSheet->getCell('A'.($row))->setValue('Bahan');
         	$objSheet->getCell('B'.($row))->setValue(':');
         	$objSheet->mergeCells('C'.$row.':G'.$row);
-        	$objSheet->getCell('C'.($row))->setValue('PETM 12 mic. Holo Sensi Soft Yellow TA '.$header["tahun"]);
+        	$objSheet->getCell('C'.($row))->setValue($header["NAMA_BAHAN_BAPOB"]);
         	$objSheet->getCell('I'.($row))->setValue('Target Prod');
         	$objSheet->getCell('J'.($row))->setValue(':');
         	$objSheet->mergeCells('K'.($row).':L'.($row));

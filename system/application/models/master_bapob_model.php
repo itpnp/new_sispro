@@ -52,4 +52,13 @@ class Master_bapob_model extends Model
 
 	}
 
+	public function findByNumber($number) 
+		{
+			$this->oracle_db=$this->load->database('oracle',true);
+			$this->oracle_db->where("NOMOR_BAPOB", $number);
+			$query=$this->oracle_db->get('TBL_MASTER_BAPOB');
+			$data = $query->row();
+			return $data;
+		}
+
 }

@@ -31,6 +31,7 @@
           <input type ="hidden" class="form-control" name="delTimeInd" id="delTimeInd" value=""> -->
         </div>
      </div>
+     <div class = "row">
         <div class="col-lg-6">
           <div class="form-group">
             <label>Urutan Produksi</label>
@@ -89,7 +90,7 @@
           <button type="submit" class="btn btn-success">SIMPAN</button>
         </div>
       </div>
-
+    </div>
     </div><!--end of Panel Body-->
   </div><!-- end of panel-->
 </div>

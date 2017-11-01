@@ -60,7 +60,7 @@
           </div>
           <div class="form-group">
             <label>Formula</label>
-            <input class="form-control" name="formula" value="<?php if($header!="") echo "PCH ".$header['MACAM']." ".$header['tahun']; ?>" id="formula" required readonly>
+            <input class="form-control" name="formula" value="<?php if($header!="") echo "PCH ".$header['MACAM']; ?>" id="formula" required readonly>
           </div>
         </div>
         <div class="col-lg-6">

@@ -48,11 +48,11 @@
                 </div>
                 <div class="form-group">
                   <label>No. KK</label>
-                    <input class="form-control" name="noKK" id="noKK" value="<?php if($nomorKkBaru!="") echo $nomorKkBaru; ?>" onBlur="UrlExists()" placeholder="No KK" readonly>
+                    <input class="form-control" name="noKK" id="noKK" onBlur="UrlExists()" placeholder="No KK" readonly>
                 </div>
                 <div class="form-group">
                   <label>No. BAPOB</label>
-                  <input class="form-control" name="noBapob" value="<?php if($bapob!="") echo $bapob->NOMOR_BAPOB; ?>" placeholder="No. BAPOB" readonly>
+                  <input class="form-control" name="noBapob" id="noBapob" placeholder="No. BAPOB" readonly>
                 </div>
                   <div class="form-group">
                     <label>Tanggal Proses Mesin</label>
@@ -61,23 +61,10 @@
                   <div class="form-group">
                     <label>Macam</label>
                     <div class="form-group">
-                      <div class="col-sm-3">
-                      <input class="form-control" name="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" value="BCRI">
+                      <div class="col-sm-6">
+                      <input class="form-control" name="macam" id="macam" value="<?php if($header!="") echo $header['MACAM']; ?>" readonly>
                       </div>
-                      <div class="col-sm-4">
-                        <select class="form-control" name="tahun">
-                          <option value="2017">2017</option>
-                          <option value="2018">2018</option>
-                          <option value="2019">2019</option>
-                          <option value="2020">2020</option>
-                          <option value="2021">2021</option>
-                          <option value="2022">2022</option>
-                          <option value="2023">2023</option>
-                          <option value="2024">2024</option>
-                          <option value="2025">2025</option>
-                        </select>
-                      </div>
-                      <div class="col-sm-4">
+                      <div class="col-sm-6">
                         <select class="form-control" name="seri" id="seri">
                           <option value="Seri I">Seri I</option>
                           <option value="Seri II/III">Seri II/III</option>
@@ -89,9 +76,10 @@
                   <br>
                   <div class="form-group">
                     <label>Bahan</label>
-                    <select class="form-control" name="chooseBahan" id="namaMesin">
-                      <option value="0-0">-- Pilih Bahan --</option>
-                      <?php 
+                    <select class="form-control" name="chooseBahan" id="chooseBahan" required>
+                      <option value="">-- Pilih Bahan --</option>
+
+                      <!-- <?php 
                       foreach($masterBahan as $row){
                         if ($row->NAMA_BAHAN === $header['NAMA_BAHAN_BAKU']) {
                          $selected = 'selected';
@@ -101,14 +89,14 @@
                        echo '<option value="'.$row->KODE_BAHAN.'@'.$row->NAMA_BAHAN.'@'.$row->LEBAR.'@'.$row->GSM.'@'.$row->PANJANG.'"'.$selected.'>'.$row->NAMA_BAHAN.'</option>';
                      }
 
-                     ?>
+                     ?> -->
 
                    </select>
                  </div>
                  <div class="form-group">
                   <label>Jumlah Pesanan</label>
                   <div class="form-group input-group">
-                    <input class="form-control" name="jumlahPesanan" id="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan" onBlur=count()>
+                    <input class="form-control" name="jumlahPesanan" id="jumlahPesanan" value="<?php if($header!="") echo $header['JML_PESANAN']; ?>" placeholder="Jumlah Pesanan" onBlur=count() required>
                     <span class="input-group-addon">Meter</span>
                   </div>
                 </div>
@@ -149,7 +137,7 @@
                   <label>Waste PET</label>
                   <div class="form-group">
                     <div class="col-sm-3">
-                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>%" name="percentWasteBelah" placeholder="Waste Belah" readonly>
+                      <input class="form-control col-sm-2" name="percentWasteBelah" id = "percentWasteBelah" placeholder="Waste Belah" readonly>
                     </div>
                     <div class="col-sm-6 form-group input-group">
                       <input class="form-control col-sm-2" name="jumlahWasteBelah" placeholder="Waste Belah" value="<?php if($header!="") echo $header['panjangWasteBelah']; ?>" readonly>
@@ -161,7 +149,7 @@
                   <label>Waste Pita</label>
                   <div class="form-group">
                     <div class="col-sm-3">
-                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>%" name="percentWastePita" id = "percentWastePita"  readonly>
+                      <input class="form-control col-sm-2" name="percentWastePita" id = "percentWastePita"  readonly>
                     </div>
                     <div class="col-sm-6 form-group input-group">
                       <input class="form-control col-sm-2"  name="jumlahWastePita" id="jumlahWastePita" value="<?php if($header!="") echo $header['panjangWastePita']; ?>" placeholder="Waste Pita" readonly>
@@ -173,7 +161,7 @@
                   <label>Waste Perekatan</label>
                   <div class="form-group">
                     <div class="col-sm-3">
-                      <input class="form-control col-sm-2" value="<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>%" name="percentWastePerekatan" id = "percentWastePerekatan" placeholder="Waste Perekatan" readonly>
+                      <input class="form-control col-sm-2" name="percentWastePerekatan" id = "percentWastePerekatan" placeholder="Waste Perekatan" readonly>
                     </div>
                     <div class="col-sm-6 form-group input-group">
                       <input class="form-control col-sm-2"  name="jumlahWastePerekatan" id="jumlahWastePerekatan" value="<?php if($header!="") echo $header['panjangWastePerekatan']; ?>" placeholder="Waste Perekatan" readonly>
@@ -205,12 +193,20 @@
 function count(){
     var e = document.getElementById("seri");
     var seri = e.options[e.selectedIndex].value;
-    percentWastePerekatan = "<?php if($bapob!="") echo $bapob->WASTE_PEREKATAN; ?>";
-    percentWastePita      = "<?php if($bapob!="") echo $bapob->WASTE_PITA; ?>";
-    percentWasteBelah     = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
+    var dataBapob = document.getElementById("noBapob").value;
+    var kkAndBapob = <?php echo json_encode($kkAndBapob); ?>;
+    for(var i=0; i<kkAndBapob.length;i++){
+      if(dataBapob == kkAndBapob[i][2]){
+        percentWastePerekatan = kkAndBapob[i][3];
+        percentWastePita      = kkAndBapob[i][4];
+        percentWasteBelah     = kkAndBapob[i][5];
+        break;
+      }
+    }
+
 
     if(seri == "Seri MMEA"){
-      percentWasteBelah     = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
+      
       panjangWastePerekatan = parseFloat(document.getElementById("jumlahPesanan").value) + ((parseFloat(percentWastePerekatan)/100)*parseFloat(document.getElementById("jumlahPesanan").value) );
       panjangWastePita = panjangWastePerekatan + ((parseFloat(percentWastePita)/100)*parseFloat(panjangWastePerekatan));
       panjangWasteBelah = panjangWastePita + ((parseFloat(percentWasteBelah)/100)*parseFloat(panjangWastePita));
@@ -263,7 +259,16 @@ function count(){
 }
 
 function checkWasteBelah(){
-  var wasteBapob = "<?php if($bapob!="") echo $bapob->WASTE_BELAH; ?>";
+  var dataBapob = document.getElementById("noBapob").value;
+  var kkAndBapob = <?php echo json_encode($kkAndBapob); ?>;
+  var wasteBapob = null;
+  for(var i=0; i<kkAndBapob.length;i++){
+    if(dataBapob == kkAndBapob[i][2]){
+      wasteBapob = kkAndBapob[i][5];
+      break;
+    }
+  }
+  
   var wasteKonversi = "<?php if($header!="") echo $header['percent_belah_konversi']; ?>";
 
   if(wasteKonversi > 0){
@@ -285,13 +290,44 @@ function numberWithCommas(x) {
 
 function chooseKKAndBapob() {
     var opt = document.getElementById("tahunDesain");
-    var  tahunDesain = opt.options[opt.selectedIndex].value;
-
-    
-    
+    var tahunDesain = opt.options[opt.selectedIndex].value;
+    var data = <?php echo json_encode($kkAndBapob); ?>;
+    var kk = document.getElementById("noKK");
+    var bapob = document.getElementById("noBapob");
+    var percentWasteBelah = document.getElementById("percentWasteBelah");
+    var percentWastePita = document.getElementById("percentWastePita");
+    var percentWastePerekatan = document.getElementById("percentWastePerekatan");
+    var macam = document.getElementById("macam");
+    macam.value = "BCRI TAHUN "+tahunDesain;
+    // console.log(data.length);
+    for(var i=0; i<data.length; i++){
+      if(data[i][0]==tahunDesain){
+        kk.value = data[i][1];
+        bapob.value = data[i][2];
+        percentWastePerekatan.value = data[i][3]+"%";
+        percentWastePita.value = data[i][4]+"%";
+        percentWasteBelah.value = data[i][5]+"%";
+      }
+    }
+    var dataBahan = <?php echo json_encode($masterBahan); ?>;
+    var f = document.getElementById("chooseBahan");
+    f.options.length = 0;
+    var firstRow = document.createElement('option');
+    firstRow.value = "";
+    firstRow.innerHTML = "-- Pilih Bahan --";
+    f.appendChild(firstRow);
+    for (var i = 0; i<dataBahan.length; i++){
+      if(dataBahan[i][0]==tahunDesain){
+        var opt = document.createElement('option');
+        opt.value = dataBahan[i][1]+"@"+dataBahan[i][2]+"@"+dataBahan[i][3]+"@"+dataBahan[i][4]+"@"+dataBahan[i][5];
+        opt.innerHTML = dataBahan[i][2];
+        f.appendChild(opt);
+      }
+    }
 }
 
  window.onload = function() {
+  chooseKKAndBapob();
   checkWasteBelah();
 };
 

@@ -14,6 +14,28 @@ class Master_bahan_model extends Model
 		$t=$this->oracle_db->get('TBL_MASTER_BAHAN');
 		return $t->result();
 	}
+
+	public function getAllDataArray() 
+		{
+			$this->oracle_db=$this->load->database('oracle',true);
+			$this->oracle_db->where("(AKTIF='1')", NULL, FALSE);
+			$this->oracle_db->where("(JENIS='FL')", NULL, FALSE);
+			$this->oracle_db->order_by("DESAIN", "asc");
+			$query=$this->oracle_db->get('TBL_MASTER_BAHAN');
+			$data = array();
+			$list = $query->result();
+			$indexRow = 0;
+			foreach ($list as $row) {
+				$data[$indexRow][0] = $row->DESAIN;
+				$data[$indexRow][1] = $row->KODE_BAHAN;
+				$data[$indexRow][2] = $row->NAMA_BAHAN;
+				$data[$indexRow][3] = $row->LEBAR;
+				$data[$indexRow][4] = $row->GSM;
+				$data[$indexRow][5] = $row->PANJANG;
+				$indexRow++;
+			}
+			return $data;
+		}
 	function getBahanFoil()
 		{
 		    $this->oracle_db=$this->load->database('oracle',true);
