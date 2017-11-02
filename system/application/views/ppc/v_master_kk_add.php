@@ -34,7 +34,19 @@
                   <label>Tahun Desain</label>
                   <div class="form-group">
                       <select class="form-control" name="tahunDesain" id = 'tahunDesain' onChange="chooseKKAndBapob()">
-                        <option value="2017">2017</option>
+                      <?php 
+                      for($i=17; $i<26; $i++){
+                        $tahun = "20".$i;
+                        if ($tahun === $header['tahun']) {
+                          $selected = 'selected';
+                         } else {
+                           $selected = '';
+                         }
+                       echo '<option value="'.$tahun.'"'.$selected.'>'.$tahun.'</option>';
+                        }
+
+                      ?>
+                       <!--  <option value="2017">2017</option>
                         <option value="2018">2018</option>
                         <option value="2019">2019</option>
                         <option value="2020">2020</option>
@@ -42,7 +54,7 @@
                         <option value="2022">2022</option>
                         <option value="2023">2023</option>
                         <option value="2024">2024</option>
-                        <option value="2025">2025</option>
+                        <option value="2025">2025</option> -->
                       </select>
                   </div>
                 </div>
@@ -78,19 +90,6 @@
                     <label>Bahan</label>
                     <select class="form-control" name="chooseBahan" id="chooseBahan" required>
                       <option value="">-- Pilih Bahan --</option>
-
-                      <!-- <?php 
-                      foreach($masterBahan as $row){
-                        if ($row->NAMA_BAHAN === $header['NAMA_BAHAN_BAKU']) {
-                         $selected = 'selected';
-                       } else {
-                         $selected = '';
-                       }
-                       echo '<option value="'.$row->KODE_BAHAN.'@'.$row->NAMA_BAHAN.'@'.$row->LEBAR.'@'.$row->GSM.'@'.$row->PANJANG.'"'.$selected.'>'.$row->NAMA_BAHAN.'</option>';
-                     }
-
-                     ?> -->
-
                    </select>
                  </div>
                  <div class="form-group">
@@ -310,20 +309,30 @@ function chooseKKAndBapob() {
       }
     }
     var dataBahan = <?php echo json_encode($masterBahan); ?>;
+    var namaBahanBaku = "<?php if($header!="") echo $header['NAMA_BAHAN_BAKU']; ?>";
     var f = document.getElementById("chooseBahan");
     f.options.length = 0;
     var firstRow = document.createElement('option');
     firstRow.value = "";
     firstRow.innerHTML = "-- Pilih Bahan --";
     f.appendChild(firstRow);
+    var pilih = null;
     for (var i = 0; i<dataBahan.length; i++){
       if(dataBahan[i][0]==tahunDesain){
         var opt = document.createElement('option');
         opt.value = dataBahan[i][1]+"@"+dataBahan[i][2]+"@"+dataBahan[i][3]+"@"+dataBahan[i][4]+"@"+dataBahan[i][5];
         opt.innerHTML = dataBahan[i][2];
         f.appendChild(opt);
+        if(namaBahanBaku != null){
+          if(dataBahan[i][2]===namaBahanBaku){
+            pilih = dataBahan[i][1]+"@"+dataBahan[i][2]+"@"+dataBahan[i][3]+"@"+dataBahan[i][4]+"@"+dataBahan[i][5];
+          }
+        }else{
+          pilih = "";
+        }        
       }
     }
+    f.value = pilih;
 }
 
  window.onload = function() {

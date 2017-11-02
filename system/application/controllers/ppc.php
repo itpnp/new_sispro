@@ -147,8 +147,10 @@ class Ppc extends Controller {
 			if($session!=""){
 				if($sessionHeader != ""){
 					$data["header"] = $_SESSION['data_header'];
+					$namaBahanBaku =  $data["header"]["NAMA_BAHAN_BAKU"];
 				}else{
 					$data["header"] = "";
+					$namaBahanBaku = 0;
 				}
 				$pecah=explode("|",$session);
 				$data["nim"]=$pecah[0];
